@@ -1,0 +1,13 @@
+{
+    "problemname": "ecg200",
+    "timestamps": false,
+    "missing": false,
+    "univariate": true,
+    "equallength": true,
+    "classlabel": true,
+    "targetlabel": false,
+    "class_values": [
+        "-1",
+        "1"
+    ]
+}
