@@ -1,5 +1,5 @@
-use std::io::Error;
 use csv::Reader;
+use std::io::Error;
 
 /// Loads a CSV file from ../../data/{dataset}/{dataset}.csv
 /// Returns a Vec of Vec<f64> for features and a Vec<String> for labels.
