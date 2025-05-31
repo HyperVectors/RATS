@@ -1,7 +1,7 @@
 use std::env;
 mod augmenters;
 mod readcsv;
-use augmenters::{AddNoise, Augmenter, Repeat};
+use augmenters::{AddNoise, Augmenter, AugmentationPipeline, Repeat};
 
 struct Dataset {
     pub features: Vec<Vec<f64>>,
@@ -45,10 +45,11 @@ fn main() {
         data.features[0].iter().take(10).collect::<Vec<&f64>>()
     );
 
-    Repeat::new(5).augment_dataset(&mut data);
+    let pipeline = AugmentationPipeline::new() 
+                                        + Repeat::new(5)
+                                        + AddNoise::new((-0.1, 0.1));
 
-    let augmenter = AddNoise::new((-0.1, 0.1));
-    augmenter.augment_dataset(&mut data);
+    pipeline.augment_dataset(&mut data);
 
     println!(
         "After {:?}\nLength: {}",
