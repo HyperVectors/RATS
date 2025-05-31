@@ -2,6 +2,7 @@ use crate::Dataset;
 
 use super::base::Augmenter;
 
+/// Augmenter that repeats all data rows n times
 pub struct Repeat {
     n: usize,
 }
