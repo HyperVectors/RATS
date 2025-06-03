@@ -46,7 +46,6 @@ fn main() {
     );
 
     let pipeline = AugmentationPipeline::new() 
-                                        + Repeat::new(5)
                                         + Crop::new(250)
                                         + ConditionalAugmenter::new(Rotation::new(2.0), 0.5)
                                         + Scaling::new(0.5, 2.0);
@@ -59,4 +58,12 @@ fn main() {
         data.features[0].iter().take(10).collect::<Vec<&f64>>(),
         data.features.len()
     );
+
+    // Write augmented dataset to CSV
+    let out_filename = format!("{}_augmented.csv", dataset_name);
+    if let Err(e) = readcsv::write_dataset_csv(&data.features, &data.labels, dataset_name, &out_filename) {
+        eprintln!("Failed to write augmented CSV: {e}");
+    } else {
+        println!("Augmented dataset written to {out_filename}");
+    }
 }
