@@ -2,7 +2,7 @@ use std::env;
 mod augmenters;
 mod readcsv;
 mod transforms; // <-- Add this line
-use augmenters::{AddNoise, AugmentationPipeline, Augmenter, ConditionalAugmenter, Crop, Jittering, Repeat, Rotation, Scaling};
+use augmenters::{AddNoise, AugmentationPipeline, Augmenter, ConditionalAugmenter, Crop, Drop, Jittering, Repeat, Rotation, Scaling};
 use transforms::fastfourier::{dataset_fft, dataset_ifft, compare_datasets_within_tolerance};
 use crate::augmenters::NoiseType;
 
@@ -58,7 +58,8 @@ fn main() {
                                             Some((-2.0, 2.0)),
                                             None,
                                             None
-                                        );
+                                        )
+                                        + Drop::new(0.05, None);
 
     pipeline.augment_dataset(&mut data);
 
