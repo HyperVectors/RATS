@@ -1,6 +1,6 @@
 use super::base::Augmenter;
 
-/// Augmenter that rotates the data 180 degrees around specified anchor
+/// Augmenter that crops each row into a random continuous slice of specified size
 pub struct Crop { 
     size: usize
 }

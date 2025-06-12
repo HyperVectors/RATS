@@ -7,7 +7,7 @@ mod rotation;
 mod crop;
 
 pub use base::{ Augmenter, AugmentationPipeline, ConditionalAugmenter };
-pub use addnoise::AddNoise;
+pub use addnoise::{ AddNoise, NoiseType };
 pub use repeat::Repeat;
 pub use jittering::Jittering;
 pub use scaling::Scaling;

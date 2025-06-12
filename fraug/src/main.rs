@@ -4,6 +4,7 @@ mod readcsv;
 mod transforms; // <-- Add this line
 use augmenters::{AddNoise, AugmentationPipeline, Augmenter, ConditionalAugmenter, Crop, Jittering, Repeat, Rotation, Scaling};
 use transforms::fastfourier::{dataset_fft, dataset_ifft, compare_datasets_within_tolerance};
+use crate::augmenters::NoiseType;
 
 pub struct Dataset {
     pub features: Vec<Vec<f64>>,
@@ -48,11 +49,16 @@ fn main() {
         data.features[0].iter().take(10).collect::<Vec<&f64>>()
     );
 
-    let pipeline = AugmentationPipeline::new() 
+    let pipeline = AugmentationPipeline::new()
                                         + Crop::new(250)
                                         + ConditionalAugmenter::new(Rotation::new(2.0), 0.5)
-                                        + Scaling::new(0.5, 2.0);
-                                        //+ Jittering::new(0.1);
+                                        + Scaling::new(0.5, 2.0)
+                                        + AddNoise::new(
+                                            NoiseType::Spike,
+                                            Some((-2.0, 2.0)),
+                                            None,
+                                            None
+                                        );
 
     pipeline.augment_dataset(&mut data);
 
