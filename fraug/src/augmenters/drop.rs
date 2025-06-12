@@ -22,3 +22,28 @@ impl Augmenter for Drop {
         x.iter_mut().for_each(|val| if rand::random::<f64>() < self.percentage { *val = self.default });
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    
+    #[test]
+    fn drop_all() {
+        let mut series = vec![1.0; 100];
+        
+        let drop = Drop::new(1.0, None);
+        drop.augment_one(&mut series);
+        
+        assert_eq!(series, vec![0.0; 100]);
+    }
+    
+    #[test]
+    fn drop_none() {
+        let mut series = vec![1.0; 100];
+
+        let drop = Drop::new(0.0, None);
+        drop.augment_one(&mut series);
+
+        assert_eq!(series, vec![1.0; 100]);
+    }
+}

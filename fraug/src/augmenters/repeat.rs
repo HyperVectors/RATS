@@ -1,3 +1,4 @@
+use crate::augmenters::Crop;
 use crate::Dataset;
 
 use super::base::Augmenter;
@@ -9,6 +10,7 @@ pub struct Repeat {
 
 impl Repeat {
     pub fn new(times: usize) -> Self {
+        assert!(times > 0);
         Repeat { n: times }
     }
 }
@@ -29,5 +31,31 @@ impl Augmenter for Repeat {
         input.labels = new_labels;
     }
 
-    fn augment_one(&self, _x: &mut [f64]) {}
+    fn augment_one(&self, _x: &mut [f64]) {
+        unimplemented!("Repeat augmenter only works on the dataset directly!");
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::Dataset;
+    use super::*;
+
+    #[test]
+    fn repeat_2() {
+        let series = vec![1.0; 100];
+        let mut set = Dataset {
+            features: vec![series],
+            labels: vec![String::from("1")],
+        };
+
+        let augmenter = Repeat::new(2);
+        augmenter.augment_dataset(&mut set);
+
+        assert_eq!(set.features[0], vec![1.0; 100]);
+        assert_eq!(set.features[1], vec![1.0; 100]);
+        assert_eq!(set.features.len(), 2);
+        assert_eq!(set.labels, vec![String::from("1"); 2]);
+    }
+
 }

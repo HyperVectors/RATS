@@ -32,5 +32,42 @@ impl Augmenter for Crop {
         input.features = new_features;
     }
 
-    fn augment_one(&self, _x: &mut [f64]) {}
+    fn augment_one(&self, _x: &mut [f64]) {
+        unimplemented!("Use augment_dataset instead!");
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::Dataset;
+    use super::*;
+
+    #[test]
+    fn crop_larger() {
+        let series = vec![1.0; 100];
+        let mut set = Dataset {
+            features: vec![series],
+            labels: vec![String::from("1")],
+        };
+
+        let augmenter = Crop::new(200);
+        augmenter.augment_dataset(&mut set);
+
+        assert_eq!(set.features[0], vec![1.0; 100]);
+    }
+
+    #[test]
+    fn crop_smaller() {
+        let series = vec![1.0; 100];
+        let mut set = Dataset {
+            features: vec![series],
+            labels: vec![String::from("1")],
+        };
+
+        let augmenter = Crop::new(50);
+        augmenter.augment_dataset(&mut set);
+        
+        assert_eq!(set.features[0], vec![1.0; 50]);
+    }
+
 }

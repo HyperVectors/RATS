@@ -13,6 +13,8 @@ pub trait Augmenter {
 }
 
 /// Augmenter that executes another augmenter on a row with a given probability p
+/// 
+/// Only works for augmenters that can operate on a single time series (that implement augment_one)
 pub struct ConditionalAugmenter {
     inner: Box<dyn Augmenter>,
     p: f64,

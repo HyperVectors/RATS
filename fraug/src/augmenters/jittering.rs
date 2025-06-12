@@ -1,6 +1,7 @@
 use super::base::Augmenter;
 use rand::prelude::*;
 use rand_distr::Normal;
+use crate::augmenters::{AddNoise, NoiseType};
 
 /// Augmenter that adds white gaussian noise of the specified standard deviation and a mean of 0
 pub struct Jittering {
@@ -19,5 +20,20 @@ impl Augmenter for Jittering {
         let dist = Normal::new(0.0, self.deviation)
             .expect("Couldn't create normal distribution from specified standard deviation");
         x.iter_mut().for_each(|val| *val += dist.sample(&mut rng));
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn gaussian() {
+        let mut series = vec![1.0; 100];
+
+        let augmenter = Jittering::new(0.5);
+        augmenter.augment_one(&mut series);
+
+        assert_ne!(series, vec![1.0; 100]);
     }
 }

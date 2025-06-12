@@ -1,15 +1,11 @@
 use std::env;
 mod augmenters;
 mod readcsv;
-mod transforms; // <-- Add this line
+mod transforms;
+use fraug::Dataset;
 use augmenters::{AddNoise, AugmentationPipeline, Augmenter, ConditionalAugmenter, Crop, Drop, Jittering, Repeat, Rotation, Scaling};
 use transforms::fastfourier::{dataset_fft, dataset_ifft, compare_datasets_within_tolerance};
 use crate::augmenters::NoiseType;
-
-pub struct Dataset {
-    pub features: Vec<Vec<f64>>,
-    pub labels: Vec<String>,
-}
 
 fn main() {
     // Get dataset name from CLI argument | USAGE : cargo run -- <dataset_name>
