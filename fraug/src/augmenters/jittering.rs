@@ -1,16 +1,17 @@
 use super::base::Augmenter;
 use rand::prelude::*;
 use rand_distr::Normal;
-use crate::augmenters::{AddNoise, NoiseType};
 
 /// Augmenter that adds white gaussian noise of the specified standard deviation and a mean of 0
 pub struct Jittering {
-    deviation: f64
+    deviation: f64,
 }
 
 impl Jittering {
     pub fn new(standard_deviation: f64) -> Self {
-        Jittering { deviation: standard_deviation }
+        Jittering {
+            deviation: standard_deviation,
+        }
     }
 }
 

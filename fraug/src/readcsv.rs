@@ -1,7 +1,7 @@
 use csv::Reader;
 use std::fs::File;
-use std::io::Write;
 use std::io::Error;
+use std::io::Write;
 
 /// Loads a CSV file from ../../data/{dataset}/{dataset}.csv
 /// Returns a Vec of Vec<f64> for features and a Vec<String> for labels.
@@ -44,7 +44,8 @@ pub fn write_dataset_csv(
 
     // data rows
     for (row, label) in features.iter().zip(labels) {
-        let mut line = row.iter()
+        let mut line = row
+            .iter()
             .map(|v| v.to_string())
             .collect::<Vec<String>>()
             .join(",");

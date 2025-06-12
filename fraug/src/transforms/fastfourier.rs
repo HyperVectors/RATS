@@ -1,5 +1,5 @@
-use rustfft::{FftPlanner, num_complex::Complex};
 use crate::Dataset;
+use rustfft::{FftPlanner, num_complex::Complex};
 
 /// FFT on each sample in the dataset
 pub fn dataset_fft(dataset: &Dataset) -> Dataset {
@@ -9,7 +9,8 @@ pub fn dataset_fft(dataset: &Dataset) -> Dataset {
     for sample in &dataset.features {
         let len = sample.len();
         let fft = planner.plan_fft_forward(len);
-        let mut buffer: Vec<Complex<f64>> = sample.iter().map(|&x| Complex{ re: x, im: 0.0 }).collect();
+        let mut buffer: Vec<Complex<f64>> =
+            sample.iter().map(|&x| Complex { re: x, im: 0.0 }).collect();
         fft.process(&mut buffer);
         // as [re0, im0, re1, im1, ...]
         let mut spectrum = Vec::with_capacity(2 * len);
@@ -35,7 +36,10 @@ pub fn dataset_ifft(dataset: &Dataset) -> Dataset {
         let len = sample.len() / 2;
         let ifft = planner.plan_fft_inverse(len);
         let mut buffer: Vec<Complex<f64>> = (0..len)
-            .map(|i| Complex{ re: sample[2*i], im: sample[2*i+1] })
+            .map(|i| Complex {
+                re: sample[2 * i],
+                im: sample[2 * i + 1],
+            })
             .collect();
         ifft.process(&mut buffer);
         // Normalize and extract real part

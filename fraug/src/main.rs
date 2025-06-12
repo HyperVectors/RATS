@@ -2,10 +2,13 @@ use std::env;
 mod augmenters;
 mod readcsv;
 mod transforms;
-use fraug::Dataset;
-use augmenters::{AddNoise, AugmentationPipeline, Augmenter, ConditionalAugmenter, Crop, Drop, Jittering, Repeat, Rotation, Scaling};
-use transforms::fastfourier::{dataset_fft, dataset_ifft, compare_datasets_within_tolerance};
 use crate::augmenters::NoiseType;
+use augmenters::{
+    AddNoise, AugmentationPipeline, Augmenter, ConditionalAugmenter, Crop, Drop, Jittering, Repeat,
+    Rotation, Scaling,
+};
+use fraug::Dataset;
+use transforms::fastfourier::{compare_datasets_within_tolerance, dataset_fft, dataset_ifft};
 
 fn main() {
     // Get dataset name from CLI argument | USAGE : cargo run -- <dataset_name>
@@ -35,7 +38,6 @@ fn main() {
             eprintln!("Failed to load dataset '{}': {}", dataset_name, e);
         }
     }
-    
 
     // Here we can do augmentations to the data
 
@@ -46,16 +48,11 @@ fn main() {
     );
 
     let pipeline = AugmentationPipeline::new()
-                                        + Crop::new(250)
-                                        + ConditionalAugmenter::new(Rotation::new(2.0), 0.5)
-                                        + Scaling::new(0.5, 2.0)
-                                        + AddNoise::new(
-                                            NoiseType::Spike,
-                                            Some((-2.0, 2.0)),
-                                            None,
-                                            None
-                                        )
-                                        + Drop::new(0.05, None);
+        + Crop::new(250)
+        + ConditionalAugmenter::new(Rotation::new(2.0), 0.5)
+        + Scaling::new(0.5, 2.0)
+        + AddNoise::new(NoiseType::Spike, Some((-2.0, 2.0)), None, None)
+        + Drop::new(0.05, None);
 
     pipeline.augment_dataset(&mut data);
 
@@ -67,15 +64,13 @@ fn main() {
 
     // Write augmented dataset to CSV
     let out_filename = format!("{}_augmented.csv", dataset_name);
-    if let Err(e) = readcsv::write_dataset_csv(&data.features, &data.labels, dataset_name, &out_filename) {
+    if let Err(e) =
+        readcsv::write_dataset_csv(&data.features, &data.labels, dataset_name, &out_filename)
+    {
         eprintln!("Failed to write augmented CSV: {e}");
     } else {
         println!("Augmented dataset written to {out_filename}");
     }
-
-
-
-
 
     // FFT transform of the dataset
     let freq_data = dataset_fft(&data);
@@ -86,7 +81,12 @@ fn main() {
 
     // frequency domain dataset to CSV
     let freq_out_filename = format!("{}_fft.csv", dataset_name);
-    if let Err(e) = readcsv::write_dataset_csv(&freq_data.features, &freq_data.labels, dataset_name, &freq_out_filename) {
+    if let Err(e) = readcsv::write_dataset_csv(
+        &freq_data.features,
+        &freq_data.labels,
+        dataset_name,
+        &freq_out_filename,
+    ) {
         eprintln!("Failed to write frequency domain CSV: {e}");
     } else {
         println!("Frequency domain dataset written to {freq_out_filename}");
@@ -101,7 +101,12 @@ fn main() {
 
     // reconstructed time domain dataset to CSV
     let time_out_filename = format!("{}_ifft.csv", dataset_name);
-    if let Err(e) = readcsv::write_dataset_csv(&time_data.features, &time_data.labels, dataset_name, &time_out_filename) {
+    if let Err(e) = readcsv::write_dataset_csv(
+        &time_data.features,
+        &time_data.labels,
+        dataset_name,
+        &time_out_filename,
+    ) {
         eprintln!("Failed to write time domain CSV: {e}");
     } else {
         println!("Time domain dataset written to {time_out_filename}");
@@ -113,6 +118,4 @@ fn main() {
         "Max absolute difference after FFT->IFFT: {:.3e}, All within tolerance: {}",
         max_diff, all_within
     );
-
-
 }

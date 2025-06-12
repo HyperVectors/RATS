@@ -1,15 +1,17 @@
-use crate::augmenters::Rotation;
 use super::base::Augmenter;
 
 /// Augmenter that scales a time series with a random scalar within the specified range
 pub struct Scaling {
     min_factor: f64,
-    max_factor: f64
+    max_factor: f64,
 }
 
 impl Scaling {
     pub fn new(min: f64, max: f64) -> Self {
-        Scaling { min_factor: min, max_factor: max }
+        Scaling {
+            min_factor: min,
+            max_factor: max,
+        }
     }
 }
 
@@ -31,7 +33,8 @@ mod tests {
         let augmenter = Scaling::new(2.0, 4.0);
         augmenter.augment_one(&mut series);
 
-        series.iter().for_each(|&val| assert!(val >= 2.0 && val <= 4.0));
+        series
+            .iter()
+            .for_each(|&val| assert!(val >= 2.0 && val <= 4.0));
     }
-
 }

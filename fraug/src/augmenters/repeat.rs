@@ -1,4 +1,3 @@
-use crate::augmenters::Crop;
 use crate::Dataset;
 
 use super::base::Augmenter;
@@ -38,8 +37,8 @@ impl Augmenter for Repeat {
 
 #[cfg(test)]
 mod tests {
-    use crate::Dataset;
     use super::*;
+    use crate::Dataset;
 
     #[test]
     fn repeat_2() {
@@ -57,5 +56,4 @@ mod tests {
         assert_eq!(set.features.len(), 2);
         assert_eq!(set.labels, vec![String::from("1"); 2]);
     }
-
 }

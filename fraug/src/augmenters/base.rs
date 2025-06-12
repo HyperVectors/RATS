@@ -1,5 +1,5 @@
-use std::ops::{Add, Rem};
 use rand::prelude::*;
+use std::ops::Add;
 
 use crate::Dataset;
 
@@ -13,7 +13,7 @@ pub trait Augmenter {
 }
 
 /// Augmenter that executes another augmenter on a row with a given probability p
-/// 
+///
 /// Only works for augmenters that can operate on a single time series (that implement augment_one)
 pub struct ConditionalAugmenter {
     inner: Box<dyn Augmenter>,
@@ -22,14 +22,21 @@ pub struct ConditionalAugmenter {
 
 impl ConditionalAugmenter {
     pub fn new<T: Augmenter + 'static>(augmenter: T, probabilty: f64) -> Self {
-        ConditionalAugmenter { inner: Box::new(augmenter), p: probabilty}
+        ConditionalAugmenter {
+            inner: Box::new(augmenter),
+            p: probabilty,
+        }
     }
 }
 
 impl Augmenter for ConditionalAugmenter {
     fn augment_dataset(&self, input: &mut Dataset) {
         let mut rng = rand::rng();
-        input.features.iter_mut().for_each(|x| if rng.random::<f64>() < self.p { self.inner.augment_one(x) });
+        input.features.iter_mut().for_each(|x| {
+            if rng.random::<f64>() < self.p {
+                self.inner.augment_one(x)
+            }
+        });
     }
 
     fn augment_one(&self, x: &mut [f64]) {
@@ -41,12 +48,14 @@ impl Augmenter for ConditionalAugmenter {
 
 /// Augmenter that includes multiple other augmenters to build a pipeline
 pub struct AugmentationPipeline {
-    augmenters: Vec<Box<dyn Augmenter>>
+    augmenters: Vec<Box<dyn Augmenter>>,
 }
 
 impl AugmentationPipeline {
     pub fn new() -> Self {
-        AugmentationPipeline { augmenters: Vec::new() }
+        AugmentationPipeline {
+            augmenters: Vec::new(),
+        }
     }
 
     pub fn add<T: Augmenter + 'static>(&mut self, augmenter: T) {
@@ -55,12 +64,16 @@ impl AugmentationPipeline {
 }
 
 impl Augmenter for AugmentationPipeline {
-    fn augment_dataset(&self, input: &mut Dataset){
-        self.augmenters.iter().for_each(|augmenter| augmenter.augment_dataset(input));
+    fn augment_dataset(&self, input: &mut Dataset) {
+        self.augmenters
+            .iter()
+            .for_each(|augmenter| augmenter.augment_dataset(input));
     }
 
-    fn augment_one(&self, x: &mut [f64]){
-        self.augmenters.iter().for_each(|augmenter| augmenter.augment_one(x));
+    fn augment_one(&self, x: &mut [f64]) {
+        self.augmenters
+            .iter()
+            .for_each(|augmenter| augmenter.augment_one(x));
     }
 }
 
@@ -71,6 +84,8 @@ impl<T: Augmenter + 'static> Add<T> for AugmentationPipeline {
         let mut augmenters = self.augmenters;
         augmenters.push(Box::new(rhs));
 
-        AugmentationPipeline{ augmenters: augmenters }
+        AugmentationPipeline {
+            augmenters: augmenters,
+        }
     }
 }

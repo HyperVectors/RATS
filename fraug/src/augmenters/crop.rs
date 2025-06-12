@@ -1,8 +1,8 @@
 use super::base::Augmenter;
 
 /// Augmenter that crops each row into a random continuous slice of specified size
-pub struct Crop { 
-    size: usize
+pub struct Crop {
+    size: usize,
 }
 
 impl Crop {
@@ -17,9 +17,9 @@ impl Crop {
             return x.to_vec();
         }
 
-        let start: usize = rand::random_range(0..(n-self.size));
+        let start: usize = rand::random_range(0..(n - self.size));
 
-        x[start..(start+self.size)].to_vec()
+        x[start..(start + self.size)].to_vec()
     }
 }
 
@@ -27,7 +27,10 @@ impl Augmenter for Crop {
     fn augment_dataset(&self, input: &mut crate::Dataset) {
         let mut new_features: Vec<Vec<f64>> = Vec::with_capacity(input.features.len());
 
-        input.features.iter().for_each(|x| new_features.push(self.get_slice(x)) );
+        input
+            .features
+            .iter()
+            .for_each(|x| new_features.push(self.get_slice(x)));
 
         input.features = new_features;
     }
@@ -39,8 +42,8 @@ impl Augmenter for Crop {
 
 #[cfg(test)]
 mod tests {
-    use crate::Dataset;
     use super::*;
+    use crate::Dataset;
 
     #[test]
     fn crop_larger() {
@@ -66,8 +69,7 @@ mod tests {
 
         let augmenter = Crop::new(50);
         augmenter.augment_dataset(&mut set);
-        
+
         assert_eq!(set.features[0], vec![1.0; 50]);
     }
-
 }
