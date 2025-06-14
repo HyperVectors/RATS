@@ -59,6 +59,6 @@ fn pyfraug(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<augmenters::Rotation>()?;
     m.add_class::<augmenters::NoiseType>()?;
     m.add_class::<augmenters::AddNoise>()?;
-    // m.add_class::<augmenters::ConditionalAugmenter>()?;
+    m.add_class::<augmenters::PyAugmenter>()?;
     Ok(())
 }
