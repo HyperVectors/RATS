@@ -17,7 +17,7 @@ impl Crop {
             return x.to_vec();
         }
 
-        let start: usize = rand::random_range(0..(n - self.size));
+        let start: usize = rand::random_range(0..(n - self.size + 1));
 
         x[start..(start + self.size)].to_vec()
     }

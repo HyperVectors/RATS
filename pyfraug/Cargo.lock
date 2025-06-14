@@ -82,6 +82,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f4c7245a08504955605670dbf141fceab975f15ca21570696aebe9d2e71576bd"
 
 [[package]]
+name = "inventory"
+version = "0.3.20"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ab08d7cd2c5897f2c949e5383ea7c7db03fb19130ffcfbf7eda795137ae3cb83"
+dependencies = [
+ "rustversion",
+]
+
+[[package]]
 name = "itoa"
 version = "1.0.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -240,6 +249,7 @@ dependencies = [
  "ndarray",
  "numpy",
  "pyo3",
+ "rand",
 ]
 
 [[package]]
@@ -249,6 +259,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f239d656363bcee73afef85277f1b281e8ac6212a1d42aa90e55b90ed43c47a4"
 dependencies = [
  "indoc",
+ "inventory",
  "libc",
  "memoffset",
  "once_cell",
@@ -384,6 +395,12 @@ dependencies = [
  "transpose",
  "version_check",
 ]
+
+[[package]]
+name = "rustversion"
+version = "1.0.21"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8a0d197bd2c9dc6e53b84da9556a69ba4cdfab8619eb41a8bd1cc2027a0f6b1d"
 
 [[package]]
 name = "ryu"
