@@ -1,0 +1,326 @@
+% ===
+%
+% Official LaTeX beamer template of 
+% Chair for AI Methodology (AIM)
+% RWTH Aachen University, Aachen, Germany
+%
+% Author: Jakob Bossek (bossek@aim.rwth-aachen.de)
+% Based on earlier presentation slide templates by 
+% Jakob Bossek and Holger H. Hoos.
+% 
+% AIM website: https://aim.rwth-aachen.de/
+%
+% ===
+
+% HINT: add option aspectratio=169 for 16:9 aspect ratio
+% HINT: add 'handout' to activate handout mode (without overlays for printing)
+\documentclass[t,english]{beamer}
+
+% include package import and macro defintions
+\input{includes/preamble}
+\input{includes/rgb}
+\input{includes/macros/general}
+\input{includes/macros/commenting}
+
+% add (multiple) bibliography sources for biblatex
+\addbibresource{bib.bib}
+
+% NOTE: the predefined options are best practices of AIM!
+%       Do not change for seminar talks!
+% Set authorinfo={0,1} to (de)activate short author and short title in footer
+% Set progress={0,1} to switch between x and x/total display of pages in the bottom right corner
+% Set outline={0,1} to (de)activate outline slides at the beginning of each section
+\usetheme[authorinfo=1, progress=0, outline=0]{AIM}
+
+% metadata
+\title[The AIM \LaTeX{} Beamer Template]{Official \LaTeX{} Beamer Template \newline of the Chair for AI Methodology~(\textbf{AIM}) 
+\newline 
+RWTH Aachen University}
+\subtitle{Quick Guide}
+\author[Bossek \& Hoos]{\underline{Jakob Bossek}\inst{1} \and Holger H. Hoos\inst{1,2}}
+\institute{
+\inst{1}Dept. of Computer Science, RWTH Aachen University, Germany\\
+\inst{2}LIACS, Universiteit Leiden, The Netherlands
+}
+\date{\small\today}
+
+% optional
+\titlegraphic{
+  \includegraphics[width=2cm]{figures/rwth-logo.png}
+}
+
+%%% NOTE: do not remove the following marker. We use it for automatic compilation of multiple versions
+%%% of the slides (e.g., handout, presentation with overlays) via compile.py
+%%%pythonmarker
+
+\begin{document}
+
+\begin{frame}[plain]
+\titlepage
+\end{frame}
+
+\addtocounter{framenumber}{-1}
+
+% BASICS
+% ======
+
+\begin{frame}
+  \frametitle{Introduction}
+  
+  \begin{itemize}
+      \item Please take the time to briefly go over the instructions in this example presentation. 
+      In particular, how to cite correctly.
+      Make sure that your slides are overall not too busy $\rightarrow$ tables and figures should not contain too much information and you should not overwhelm listeners with walls of text. 
+      \item Use an introductory slide (or introductory slides) to motivate the topic and to raise interest.
+      \item You can show an outline of the talk (table of contents) if you want, but we strongly recommend to place it after the introduction and \emph{not} before.
+  \end{itemize}
+    
+\end{frame}
+
+
+\section{Basics}
+
+\begin{frame}
+  \frametitle{Blocks}
+
+  \begin{block}{Regular block}
+    This is a plain and simple block.
+  \end{block}
+
+  \begin{exampleblock}{Example block}
+    This is for examples.
+  \end{exampleblock}
+
+  \begin{alertblock}{Alert block}
+    Use this one to state important information.
+  \end{alertblock}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Lists}
+
+  \begin{itemize}[<+->]
+    \item Lorem ipsum ...
+    \item dolor sit amet ...
+    \begin{itemize}
+      \item Consequetur amibilisque utero
+      \item Anhilore deus et arendum
+    \end{itemize}
+    \item[$\leadsto$] Custom label
+    \begin{enumerate}
+      \item Idiquit et collequt deribur
+      \item Canum meum id comedid
+    \end{enumerate}
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Citations with biblatex}
+  \framesubtitle{Good alternative to natbib}
+
+  Sample citation:~\cite{BNPS2019}\\
+  Sample citation in parenthesis:~\parencite{BNPS2019}\\
+  Sample full citation via \verb|\fullcite|\\[0.5cm]
+  \fullcite{BNPS2019}.\\[0.5cm]
+
+  \bigskip
+
+  Only use full citations if \textit{really} necessary, otherwise full citations should only be shown at the end of the presentation.
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Images}
+
+  Use macro \verb|\ig{width}{path-to-file}| for a single \textbf{centered} image:
+  \ig{0.4}{example-image-a}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Figure environment}
+
+  Feel free to use the figure environment. Note that in the captions \textbf{(also for tables)} our template \textit{deliberately} omits the label 'Figure:' before the caption (everyone can see that it is a Figure or a Table):
+
+  \begin{figure}[H]
+    \includegraphics[width=0.5\textwidth]{example-image-a}
+    \caption{test}
+  \end{figure}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Tables}
+
+  We recommend to take a look at the presentation \href{https://people.inf.ethz.ch/markusp/teaching/guides/guide-tables.pdf}{Small Guide to Making Nice Tables} by Markus P\"uschel.
+  Note that in the captions \textbf{(also for figures)} our template \textit{deliberately} omits the label 'Table:' before the caption (everyone can see that it is a Figure or a Table):
+
+  \begin{center}
+    \renewcommand{\tabcolsep}{4pt}
+    \renewcommand{\arraystretch}{1.1}
+    \begin{footnotesize}
+    \begin{tabular}{ccrrrrrr}
+    \toprule
+    \multirow{2}{*}{\textbf{TSP Set}} & \multirow{2}{*}{\textbf{Mutation}} & \multicolumn{2}{c}{\bfseries RTS\textsuperscript{*}} & \multicolumn{2}{c}{\bfseries FR\textsuperscript{\dag}} & \multicolumn{2}{c}{\bfseries PAR10} \\
+    \cmidrule(l{2pt}r{2pt}){3-4} \cmidrule(l{2pt}r{2pt}){5-6} \cmidrule(l{2pt}r{2pt}){7-8}
+     &  & \textbf{EAX} & \textbf{LKH} & \textbf{EAX} & \textbf{LKH} & \textbf{EAX} & \textbf{LKH}\\
+    \midrule
+    RUE & - & 1.26 & 0.74 & 0.00 & 0.00 & 1.26 & 0.74\\
+    \midrule
+    Easy for & simple & 1.34 & 912.78 & 0.00 & 0.20 & 1.34 & 7\,608.11\\
+    \cmidrule{2-8}
+    EAX & sophistic. & 0.97 & 830.80 & 0.00 & 0.22 & 0.97 & 8\,230.61\\
+    \midrule
+    Easy for & simple & 117.97 & 0.74 & 0.00 & 0.00 & 117.97 & 0.74\\
+    \cmidrule{2-8}
+    LKH & sophistic. & 67.90 & 0.88 & 0.00 & 0.00 & 67.90 & 0.88\\
+    \bottomrule
+    \multicolumn{8}{l}{\textsuperscript{*} \tiny RTS: Running time of successful runs, \textsuperscript{\dag} FR: Failure ratio}\\%
+    \end{tabular}
+    \end{footnotesize}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Columns}
+
+  The \verb|\twocol{...}{...}|-macro aligns stuff on top and uses two equally sized columns:
+  \twocol{
+    \begin{itemize}
+      \item Lorem ipsum
+      \item dolor sit amet
+      \item consequetur deribilis auret
+      \begin{itemize}
+        \item Alamat deceductovo ameritol
+        \item Consequencias pavit
+      \end{itemize}
+    \end{itemize}
+  }{
+    \vskip-15pt
+    \ig{1}{example-image-b}
+  }
+\end{frame}
+
+
+% MATHEMATICS
+% ===========
+
+\begin{frame}
+  \frametitle{Math}
+  \framesubtitle{... looks awesome in \LaTeX{}}
+
+  \begin{block}{Sample formula}
+    Math looks so \alert<2->{awesome} in \LaTeX{}!
+
+    \begin{align*}
+      \hat{\theta}_{\text{ML}} = T(X_1, \ldots, X_n) = \frac{n}{n-1} \sum_{\frac{i=1}{i \neq k}}^{m} \left(X_i^2 - \exp(X_i - X_k)\right)^{k/2}
+    \end{align*}
+  \end{block}
+
+  \begin{theorem}[\cite{BNPS2019}]
+    For every tree with $n$ nodes and maximum degree $\Delta$ the expected time until RLS and (1+1) EA find an optimal $\Delta$-edge-coloring is $O(\Delta \ell^2 m \log m)$ where $\ell$ is the length of the longest path in the tree.
+  \end{theorem}
+\end{frame}
+
+
+% SOURCE CODE
+% ===========
+
+\begin{frame}[fragile]
+  \frametitle{Pseudo-code}
+  \framesubtitle{... with \texttt{algorithm2e}}
+
+  % NOTE: H is necessary as well as the fragile option for the frame
+  \begin{algorithm}[H]
+  \caption{Sample algorithm (taken from Overleaf docs)}\label{alg:sample_algorithm}
+  \KwData{$n \geq 0$}
+  \KwResult{$y = x^n$}
+  $y \gets 1$, $X \gets x$, $N \gets n$\;
+  \While{$N \neq 0$}{
+    \eIf{$N$ is even}{
+      $X \gets X \times X$\;
+      $N \gets \frac{N}{2}$\tcp*[r]{This is a comment!}
+    }{\If{$N$ is odd}{
+        $y \gets y \times X$\;
+        $N \gets N - 1$\;
+      }
+    }
+  }
+  \end{algorithm}
+
+\end{frame}
+
+% PREDEFINED MACROS
+% =================
+
+\section{Predefined macros}
+
+\begin{frame}[fragile]
+  \frametitle{Useful macros}
+
+  \begin{itemize}
+    \item Use \verb|\refer{...}| to refer a paper quickly (without the need for a bibfile entry): \refer{Bossek et al., 2019}
+    \item Use \verb|\hide{...}| to temporarily hide block of code.
+    \item Use \verb|\plainframe{...}| for a visually reduced frame with horizontally and vertically centered message/image (see next slides for examples).
+    \item Use \verb|\plainframe[mycolor]{...}| to change the default background.
+  \end{itemize}
+
+\end{frame}
+
+% no header, just some centred text
+\plainframe{\textcolor{rwth-blue-100}{Plain slide (focus on certain element)}}
+
+% set specific background color with an optional argument
+\plainframe[black]{\includegraphics[width=0.5\textwidth]{example-image-a}}
+
+\begin{frame}[fragile]
+  \frametitle{Commenting macros}
+    
+  It is often useful to comment on different things while writing a report, adding ToDos or highlight changed or added parts. To this end the file \texttt{includes/commenting.tex} defines some useful macros.
+  \begin{itemize}
+    \item Use \verb|\todo{...}| to add a ToDo:\newline \todo{Do this, do that}
+    \item Use \verb|\changed{...}| to indicate changes:\newline \changed{This text was changed.}
+    \item Use \verb|\added{...}| to highlight additions:\newline \added{This text was added.}
+    \item Use author-specific macros, e.g., \verb|\jane{...}| or \verb|\john| for our two sample authors Jane and Joe, to add comments. Feel free to edit \texttt{includes/commenting.tex} to add/adapt the author-specific macros.\newline{}
+    \jane{Comment by Jane.}\newline
+    \john{Comment by Joe.}
+  \end{itemize}
+    
+\end{frame}
+
+% CONCLUSION
+% ==========
+
+\begin{frame}
+  \frametitle{Take-home message}
+  
+  \begin{itemize}
+      \item Briefly summarise the main finding. What are the most important aspects the audience should keep in mind?
+      \item Your presentation should never end with a slide showing the references or a plain slide with \emph{Questions?} I.e., our recommendation is to end the presentation with the take-home messages.
+  \end{itemize}
+\end{frame}
+
+\appendix
+
+% REFERENCES
+% ==========
+
+\begin{frame}[allowframebreaks]
+  \frametitle{References}
+  \printbibliography[heading=none]
+\end{frame}
+
+% BACKUP SLIDES
+% =============
+
+\begin{frame}
+  \frametitle{Backup slides}
+
+  Sequence of additional slides. Useful to keep more information in the background which can be revealed during discussions.
+
+\end{frame}
+
+\end{document}

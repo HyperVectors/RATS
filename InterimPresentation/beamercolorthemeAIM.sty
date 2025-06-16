@@ -1,0 +1,149 @@
+% Official LaTeX beamer template of the Chair for AI Methodology (AIM), RWTH Aachen University, Aachen, Germany
+%
+% Author: Jakob Bossek (http://www.jakobbossek.de/)
+% AIM website: https://aim.rwth-aachen.de/
+%
+
+\mode<presentation>
+
+% DEFINE COLORS
+% ===
+
+\definecolor{rwth-blue-100}{RGB}{0,84,159}
+\definecolor{rwth-blue-75}{RGB}{64,127,183}
+\definecolor{rwth-blue-50}{RGB}{142,186,229}
+\definecolor{rwth-blue-25}{RGB}{199,221,242}
+\definecolor{rwth-blue-10}{RGB}{232,241,250}
+
+% RWTH secondary colors
+\definecolor{rwth-black-100}{RGB}{0, 0, 0}
+\definecolor{rwth-black-75}{RGB}{100, 101, 103}
+\definecolor{rwth-black-50}{RGB}{156, 158, 159}
+\definecolor{rwth-black-25}{RGB}{207, 209, 210}
+\definecolor{rwth-black-10}{RGB}{236, 237, 237}
+
+\definecolor{rwth-magenta-100}{RGB}{227, 0, 102}
+\definecolor{rwth-magenta-75}{RGB}{233, 96, 136}
+\definecolor{rwth-magenta-50}{RGB}{241, 158, 177}
+\definecolor{rwth-magenta-25}{RGB}{249, 210, 218}
+\definecolor{rwth-magenta-10}{RGB}{253, 238, 240}
+
+\definecolor{rwth-yellow-100}{RGB}{255, 237, 0}
+\definecolor{rwth-yellow-75}{RGB}{255, 240, 85}
+\definecolor{rwth-yellow-50}{RGB}{255, 245, 155}
+\definecolor{rwth-yellow-25}{RGB}{255, 250, 209}
+\definecolor{rwth-yellow-10}{RGB}{255, 253, 238}
+
+% RWTH additional colors
+\definecolor{rwth-petrol-100}{RGB}{0, 97, 101}
+\definecolor{rwth-petrol-75}{RGB}{45, 127, 131}
+\definecolor{rwth-petrol-50}{RGB}{125, 164, 167}
+\definecolor{rwth-petrol-25}{RGB}{191, 208, 209}
+\definecolor{rwth-petrol-10}{RGB}{230, 236, 236}
+
+\definecolor{rwth-turquoise-100}{RGB}{0, 152, 161}
+\definecolor{rwth-turquoise-75}{RGB}{0, 177, 183}
+\definecolor{rwth-turquoise-50}{RGB}{137, 204, 207}
+\definecolor{rwth-turquoise-25}{RGB}{202, 231, 231}
+\definecolor{rwth-turquoise-10}{RGB}{235, 246, 246}
+
+\definecolor{rwth-green-100}{RGB}{87, 171, 39}
+\definecolor{rwth-green-75}{RGB}{141, 192, 96}
+\definecolor{rwth-green-50}{RGB}{184, 214, 152}
+\definecolor{rwth-green-25}{RGB}{221, 235, 206}
+\definecolor{rwth-green-10}{RGB}{242, 247, 236}
+
+\definecolor{rwth-maygreen-100}{RGB}{189, 205, 0}
+\definecolor{rwth-maygreen-75}{RGB}{208, 217, 92}
+\definecolor{rwth-maygreen-50}{RGB}{224, 230, 154}
+\definecolor{rwth-maygreen-25}{RGB}{240, 243, 208}
+\definecolor{rwth-maygreen-10}{RGB}{249, 250, 237}
+
+\definecolor{rwth-orange-100}{RGB}{246, 168, 0}
+\definecolor{rwth-orange-75}{RGB}{250, 190, 80}
+\definecolor{rwth-orange-50}{RGB}{253, 212, 143}
+\definecolor{rwth-orange-25}{RGB}{254, 234, 201}
+\definecolor{rwth-orange-10}{RGB}{255, 247, 234}
+
+\definecolor{rwth-red-100}{RGB}{204, 7, 30}
+\definecolor{rwth-red-75}{RGB}{216, 92, 65}
+\definecolor{rwth-red-50}{RGB}{230, 150, 121}
+\definecolor{rwth-red-25}{RGB}{243, 205, 187}
+\definecolor{rwth-red-10}{RGB}{250, 235, 227}
+
+\definecolor{rwth-maroon-100}{RGB}{161, 16, 53}
+\definecolor{rwth-maroon-75}{RGB}{182, 82, 86}
+\definecolor{rwth-maroon-50}{RGB}{205, 139, 135}
+\definecolor{rwth-maroon-25}{RGB}{229, 197, 192}
+\definecolor{rwth-maroon-10}{RGB}{245, 232, 229}
+
+\definecolor{rwth-violet-100}{RGB}{97, 33, 88}
+\definecolor{rwth-violet-75}{RGB}{131, 78, 117}
+\definecolor{rwth-violet-50}{RGB}{168, 133, 158}
+\definecolor{rwth-violet-25}{RGB}{210, 192, 205}
+\definecolor{rwth-violet-10}{RGB}{237, 229, 234}
+
+\definecolor{rwth-purple-100}{RGB}{122, 111, 172}
+\definecolor{rwth-purple-75}{RGB}{155, 145, 193}
+\definecolor{rwth-purple-50}{RGB}{188, 181, 215}
+\definecolor{rwth-purple-25}{RGB}{222, 218, 235}
+\definecolor{rwth-purple-10}{RGB}{242, 240, 247}
+
+\colorlet{highlight}{rwth-blue-75}
+
+% General color settings
+\setbeamercolor{normal text}{fg=black!90}
+\setbeamercolor{title like}{fg=black!90}
+
+% Color of title page elements
+\setbeamercolor{title page}{fg=rwth-blue-100}
+\setbeamercolor{title page header}{fg=rwth-blue-100}
+\setbeamercolor{title}{fg=rwth-blue-100}
+\setbeamercolor{subtitle}{fg=rwth-blue-100}
+\setbeamercolor{author}{fg=rwth-black-75}
+\setbeamercolor{date}{fg=rwth-black-50}
+\setbeamercolor{institute}{fg=rwth-black-75}
+
+% Highlight
+\setbeamercolor{alerted text}{fg=red}
+
+% Boxes
+\setbeamercolor{block title}{fg=rwth-blue-100}
+\setbeamercolor{block body}{bg=}
+\setbeamerfont*{block title}{series=\bfseries}
+\setbeamercolor{block title alerted}{fg=rwth-red-100}
+\setbeamercolor{block title example}{fg=rwth-green-100}
+
+% Table of Contents
+\setbeamertemplate{section in toc}[sections numbered]
+\setbeamertemplate{subsection in toc}[subsections numbered]
+
+% Lists
+\setbeamertemplate{itemize item}[triangle]
+\setbeamertemplate{itemize subitem}[triangle]
+\setbeamertemplate{itemize subsubitem}[triangle]
+\setbeamercolor{itemize item}{fg=rwth-blue-75}
+\setbeamercolor{itemize subitem}{fg=rwth-blue-75}
+\setbeamercolor{itemize subsubitem}{fg=rwth-blue-75}
+
+% Frames
+\setbeamercolor{frametitle}{fg=rwth-blue-100}
+\setbeamercolor{framesubtitle}{fg=rwth-blue-100}
+
+% Footer
+\setbeamercolor{footlinecolor}{fg=white,bg=rwth-blue-100}
+
+% Blocks
+\setbeamercolor{block title}{fg=rwth-blue-100}
+
+% Colors in bib-entries
+% omit those nasty icons!
+\setbeamertemplate{bibliography item}{} % {\insertbiblabel}
+\setbeamercolor{bibliography item}{fg=rwth-blue-100,bg=}
+\setbeamercolor{bibliography entry author}{fg=rwth-black-75,bg=}
+\setbeamercolor{bibliography entry title}{fg=rwth-blue-75,bg=}
+\setbeamercolor{bibliography entry booktitle}{fg=rwth-black-75,bg=}
+\setbeamercolor{bibliography entry location}{fg=rwth-black-75,bg=}
+\setbeamercolor{bibliography entry note}{fg=rwth-black-75,bg=}
+
+\mode<all>

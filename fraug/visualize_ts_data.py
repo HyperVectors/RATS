@@ -16,16 +16,20 @@ augmented_file = os.path.join(data_dir, f"{dataset_name}_augmented.csv")
 df_orig = pd.read_csv(original_file)
 df_aug = pd.read_csv(augmented_file)
 
+df_orig = df_orig.iloc[:,:-1]
+df_aug = df_aug.iloc[:,:-1]
+
 # minimum number of columns
 min_cols = min(df_orig.shape[1], df_aug.shape[1])
 
 # Plot the first time series (up to min_cols)
 plt.figure(figsize=(12, 6))
-plt.plot(df_orig.iloc[0, :min_cols], label='Original', alpha=0.7)
-plt.plot(df_aug.iloc[0, :min_cols], label='Augmented', alpha=0.7)
-plt.title(f'Comparison of Original vs Augmented Time Series (First Sample) - {dataset_name}')
-plt.xlabel('Time Step')
-plt.ylabel('Value')
+plt.plot(df_orig.iloc[0, :], label='Original', alpha=1.0)
+plt.plot(df_aug.iloc[0, :], label='Augmented', alpha=0.5)
+#plt.title(f'Comparison of Original vs Augmented Time Series (First Sample) - {dataset_name}')
+#plt.xlabel('Time Step')
+plt.xticks([], [])
+#plt.ylabel('Value')
 plt.legend()
 plt.savefig(os.path.join(data_dir, "comparison_first_sample.png"))
 

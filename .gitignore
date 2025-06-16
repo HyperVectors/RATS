@@ -1,2 +1,4 @@
 # ignore data folder
 data/
+
+.idea

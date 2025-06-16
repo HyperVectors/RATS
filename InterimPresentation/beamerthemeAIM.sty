@@ -1,0 +1,106 @@
+% PACKAGE OPTIONS
+% ===
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemeAIM}[2022/05/04 'AIM' beamer theme v1.0.0]
+
+\mode<presentation>
+
+% introduce options
+\DeclareOptionBeamer{progress}{\PassOptionsToPackage{progress=#1}{beamerinnerthemeAIM}}
+\DeclareOptionBeamer{authorinfo}{\PassOptionsToPackage{authorinfo=#1}{beamerinnerthemeAIM}}
+\ExecuteOptionsBeamer{authorinfo=0,progress=1} %defaults
+\ProcessOptionsBeamer
+
+\usepackage[english]{babel}
+
+% General settings
+\useinnertheme{AIM}
+\useoutertheme{AIM}
+\usefonttheme{AIM}
+\usecolortheme{AIM}
+
+% Deactivate clutter
+\setbeamertemplate{navigation symbols}{}
+
+\setbeamersize{text margin left=7mm,text margin right=7mm}
+
+% necessary to display footnotes
+\let\oldfootnote\footnote
+\renewcommand\footnote[1][]{\oldfootnote[frame,#1]}
+
+\setbeamertemplate{itemize item}{\tiny\raise1.25pt\hbox{\donotcoloroutermaths$\blacktriangleright$}}
+\setbeamertemplate{itemize subitem}{\tiny\raise1.25pt\hbox{\donotcoloroutermaths$\blacktriangleright$}}
+\setbeamertemplate{itemize subsubitem}{\tiny\raise1.25pt\hbox{\donotcoloroutermaths$\blacktriangleright$}}
+
+% Show TOC at the beginning of each section automatically
+\ifnum\beamer@AIM@outline=1\relax%
+\AtBeginSection[]
+{
+  \begingroup
+  \setbeamertemplate{footline}{} % hide footer on TOC frames
+  \begin{frame}[t]
+    \frametitle{Outline}
+    \tableofcontents[currentsection,subsectionstyle=show/show/hide]
+  \end{frame}
+  \endgroup
+  \addtocounter{framenumber}{-1} % do not count these frames!
+}
+\fi
+
+
+\setbeamertemplate{section page}
+{
+  \begin{minipage}[c][\paperheight]{\textwidth}
+    \begin{center}
+      \Large{\textcolor{mDarkTeal}{\insertsection}}\par
+    \end{center}
+  \end{minipage}
+}
+
+% Macros
+\newcommand{\ig}[2]{
+  \begin{figure}
+    \begin{center}
+      \includegraphics[width=#1\textwidth]{#2}
+    \end{center}
+  \end{figure}
+}
+
+\newcommand{\twocol}[2]{
+  \begin{columns}[t]
+    \column[t]{0.48\textwidth}
+    #1
+    \hfill
+    \column[t]{0.48\textwidth}
+    #2
+  \end{columns}
+}
+
+\renewcommand{\plainframe}[2][lightgrey]{
+  % first (optional) argument is the background color
+  {
+  \setbeamertemplate{footline}{}
+  \setbeamercolor{background canvas}{bg=#1}
+  % stuff is centered both vertically and horizontally
+  \begin{frame}[c]
+  \begin{minipage}[c][\paperheight]{\textwidth}
+    \begin{center}
+      \Large{\textcolor{white}{#2}}
+    \end{center}
+  \end{minipage}
+  \end{frame}
+  }
+}
+
+\newcommand{\wakeupframe}{
+  \plainframe{\textbf{Wake up!} The talk is over \smiley}
+}
+
+% hide stuff
+\newcommand{\hide}[1]{}
+
+% HH-like reference
+\newcommand{\refer}[1]{{\color{darkgrey}{#1}}}
+
+\mode<all>

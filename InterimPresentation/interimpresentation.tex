@@ -1,0 +1,274 @@
+% HINT: add option aspectratio=169 for 16:9 aspect ratio
+% HINT: add 'handout' to activate handout mode (without overlays for printing)
+\documentclass[t,english]{beamer}
+
+% include package import and macro defintions
+\input{includes/preamble}
+\input{includes/rgb}
+\input{includes/macros/general}
+\input{includes/macros/commenting}
+
+% Our own imports
+\usepackage{listings, listings-rust}
+\usepackage{pythonhighlight}
+
+% add (multiple) bibliography sources for biblatex
+\addbibresource{bib.bib}
+
+% NOTE: the predefined options are best practices of AIM!
+%       Do not change for seminar talks!
+% Set authorinfo={0,1} to (de)activate short author and short title in footer
+% Set progress={0,1} to switch between x and x/total display of pages in the bottom right corner
+% Set outline={0,1} to (de)activate outline slides at the beginning of each section
+\usetheme[authorinfo=1, progress=0, outline=0]{AIM}
+
+% metadata
+\title[Interim Presentation Group 2]{High-Performance Time Series Augmentation Library}
+\subtitle{Interim Presentation}
+\author[Basu Roy, Pradhan \& Kern]{Aryamaan Basu Roy \and Tejas Pradhan \and Felix Kern}
+\date{\small\today}
+
+% optional
+\titlegraphic{
+  \includegraphics[width=2cm]{figures/rwth-logo.png}
+}
+
+%%% NOTE: do not remove the following marker. We use it for automatic compilation of multiple versions
+%%% of the slides (e.g., handout, presentation with overlays) via compile.py
+%%%pythonmarker
+
+\begin{document}
+
+\begin{frame}[plain]
+\titlepage
+\end{frame}
+
+% Start with some background on what the actual problem is
+\begin{frame}{Time Series Augmentation}
+    
+\end{frame}
+
+% Present project plan as given in the pdf gradually
+\begin{frame}{Project Plan}
+    1. Implementation of core time series augmentation methods in Rust
+    \begin{itemize}
+        \item Basic transformations
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Basic Transformations}
+    \textbf{Jittering}: Add white noise to the data
+    \ig{1}{figures/timeseries/jittering.png}
+    Parameters: $\sigma$ of Gaussian noise
+\end{frame}
+
+\begin{frame}{Basic Transformations}
+    \textbf{Scaling}: Scale data points by random factor
+    \ig{1}{figures/timeseries/scaling.png}
+    Parameters: Min and max of random factor
+\end{frame}
+
+\begin{frame}{Basic Transformations}
+    \textbf{Rotation}: "Rotate" data 180\textdegree\ around an anchor
+    \only<1>{\ig{1}{figures/timeseries/rotation1.png}}
+    \only<2>{\ig{1}{figures/timeseries/rotation2.png}}
+    Parameters: Anchor value
+\end{frame}
+
+\begin{frame}{Basic Transformations}
+    \textbf{Drop}: Drop percentage of data points
+    \ig{1}{figures/timeseries/drop.png}
+    Parameters: Percentage and default value
+\end{frame}
+
+\begin{frame}{Basic Transformations}
+    Special Transformations:
+    
+    \vskip--15pt
+    \twocol{\onslide<2-3>{\textbf{Repeat}: Repeat each series in the dataset $n$ times}}{\onslide<3>{\textbf{Crop}: Crop each time series into a random continuous slice of specified size}}
+    
+    \only<2>{\ig{0.8}{figures/timeseries/repeat.png}}
+    \only<3>{\vskip--15pt \ig{0.8}{figures/timeseries/crop.png}}
+    
+\end{frame}
+
+\begin{frame}{Project Plan}
+    1. Implementation of core time series augmentation methods in Rust
+    \begin{itemize}
+        \item Basic transformations
+        \item Time warping techniques
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Time Warping}
+    
+\end{frame}
+
+\begin{frame}{Project Plan}
+    1. Implementation of core time series augmentation methods in Rust
+    \begin{itemize}
+        \item Basic transformations
+        \item Time warping techniques
+        \item Frequency-domain transformations
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Frequency-Domain Transformations}
+    
+\end{frame}
+
+\begin{frame}{Project Plan}
+    1. Implementation of core time series augmentation methods in Rust
+    \begin{itemize}
+        \item Basic transformations
+        \item Time warping techniques
+        \item Frequency-domain transformations
+        \item Noise injection methods
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Noise Injection}
+    AddNoise augmenter that supports different kinds of noise (according to~\refer{Wen et al., 2020}):
+    \begin{itemize}
+        \item<2-> Uniform
+        \item<3-> Gaussian (like jittering)
+        \item<4-> Spike
+        \item<5-> Slope
+    \end{itemize}
+    \only<2>{\ig{0.8}{figures/timeseries/uniform.png}}
+    \only<3>{\ig{0.8}{figures/timeseries/jittering.png}}
+    \only<4>{\ig{0.8}{figures/timeseries/spike.png}}
+    \only<5>{\ig{0.8}{figures/timeseries/slope.png}}
+\end{frame}
+
+\begin{frame}{Project Plan}
+    2. Develop a Python-friendly API that enables:
+    \begin{itemize}
+        \item<2-> Single-method augmentation calls
+        \item<3-> Composable augmentation pipelines 
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Implementation - Rust}
+    Every augmenter implements the Augmenter trait:
+    \vskip--20pt
+    \begin{lstlisting}[language=Rust, basicstyle=\small]
+pub trait Augmenter {
+    fn augment_dataset(&self, input: &mut Dataset) {
+        input.features
+            .iter_mut()
+            .for_each(|x| self.augment_one(x));
+    }
+    
+    fn augment_one(&self, x: &mut [f64]);
+}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Implementation - Rust}
+    $\Rightarrow$ Allows us to create "recursive" augmenters:
+    \vskip--20pt
+    \begin{lstlisting}[language=Rust, basicstyle=\small]
+pub struct ConditionalAugmenter {
+    inner: Box<dyn Augmenter>,
+    p: f64,
+}
+
+pub struct AugmentationPipeline {
+    augmenters: Vec<Box<dyn Augmenter>>,
+}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Implementation - Rust}
+    Example pipeline:
+    \vskip--5pt
+    \begin{lstlisting}[language=Rust, basicstyle=\small]
+let pipeline = AugmentationPipeline::new() 
+    + Repeat::new(10)
+    + Crop::new(100)
+    + ConditionalAugmenter::new(
+        AddNoise::new(
+            NoiseType::Slope, 
+            Some((0.01, 0.02)), 
+            None, 
+            None
+        ),
+        0.25
+    )
+    + Jittering::new(0.1);
+    
+pipeline.augment_dataset(&mut dataset);
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}{Implementation - Python}
+    \begin{itemize}
+        \item Python bindings using PyO3
+        \item<2-> In seperate package to Rust library
+        \item<3-> We bind the struct Dataset to pass the data around
+        \item<4-> Augmenter structs are exposed to Python as classes
+        \item<5-> Limitations with PyO3 don't allow for the same architecture
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Implementation - Python}
+    PyO3 makes the binding of the recursive augmenters difficult, so these are fully written in Python for now:
+    \vskip--5pt
+    \begin{python}
+class ConditionalAugmenter:
+    def __init__(self, augmenter, probability): ...
+    def augment_dataset(self, dataset: Dataset): ...
+    def augment_one(self, x): ...
+    
+class AugmentationPipeline:
+    def __init__(self): ...
+    def __add__(self, other): ...
+    def augment_dataset(self, dataset: Dataset): ...
+    def augment_one(self, x): ...
+    \end{python}
+\end{frame}
+
+\begin{frame}[fragile]{Implementation - Python}
+    Full python example:
+    \vskip--5pt
+    \begin{python}
+dataset = pf.Dataset(features, labels)
+
+pipeline = (pf.AugmentationPipeline()
+            + pf.Repeat(10)
+            + pf.Crop(100)
+            + pf.ConditionalAugmenter(
+                pf.AddNoise(
+                    pf.NoiseType.Slope, 
+                    bounds=(0.01, 0.02)
+                ),
+                0.25
+            )
+            + pf.Jittering(0.1))
+
+pipeline.augment_dataset(dataset)
+    \end{python}
+\end{frame}
+
+\begin{frame}{Project Plan}
+    2. Develop a Python-friendly API that enables:
+    \begin{itemize}
+        \item Single-method augmentation calls
+        \item Composable augmentation pipelines 
+        \item<2-> Batch processing capabilities
+        \item<3-> Parallel exection options
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Project Plan}
+    3. Analyse performance against python library tsaug
+    
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+  \frametitle{References}
+  \printbibliography[heading=none]
+\end{frame}
+
+\end{document}

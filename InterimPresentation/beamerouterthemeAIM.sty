@@ -1,0 +1,25 @@
+\mode<presentation>
+
+% Frame title
+\defbeamertemplate*{frametitle}{AIM}[1][]{
+  \begin{beamercolorbox}[wd=\paperwidth,ht=1.4cm]{frametitle}
+    \begin{tikzpicture}
+      %\fill[blue!50!black!60] (0,0) rectangle(\the\paperwidth,1.4cm); %blue!50!black!60
+      \ifx\insertframesubtitle\@empty
+      \useasboundingbox (0,0) rectangle(\the\paperwidth,1cm);
+      \node[anchor=west, rwth-blue-100, font=\large] at (0.51, 0.63){\bfseries{\insertframetitle}};
+      \else
+      \useasboundingbox (0,0) rectangle(\the\paperwidth,1.4cm);
+      \node[anchor=west, rwth-blue-100, font=\large] at (0.51, 0.63){\bfseries{\insertframetitle}};
+      \node[anchor=west, rwth-blue-100, font=\footnotesize] at (0.51, 0.24){\insertframesubtitle};
+      \fi
+    \end{tikzpicture}
+  \end{beamercolorbox}
+  \ifx\insertframesubtitle\@empty
+  \vspace*{-0.5cm}
+  \else
+  \vspace*{-0.15cm}
+  \fi
+}
+
+\mode<all>

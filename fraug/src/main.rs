@@ -47,12 +47,13 @@ fn main() {
         data.features[0].iter().take(10).collect::<Vec<&f64>>()
     );
 
-    let pipeline = AugmentationPipeline::new()
-        + Crop::new(250)
-        + ConditionalAugmenter::new(Rotation::new(2.0), 0.5)
-        + Scaling::new(0.5, 2.0)
-        + AddNoise::new(NoiseType::Spike, Some((-2.0, 2.0)), None, None)
-        + Drop::new(0.05, None);
+    let pipeline = AugmentationPipeline::new() + AddNoise::new(NoiseType::Slope, Some((0.01, 0.02)), None, None);
+    // let pipeline = AugmentationPipeline::new()
+    //     + Crop::new(250)
+    //     + ConditionalAugmenter::new(Rotation::new(2.0), 0.5)
+    //     + Scaling::new(0.5, 2.0)
+    //     + AddNoise::new(NoiseType::Spike, Some((-2.0, 2.0)), None, None)
+    //     + Drop::new(0.05, None);
 
     pipeline.augment_dataset(&mut data);
 

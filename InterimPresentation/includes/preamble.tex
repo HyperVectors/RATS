@@ -1,0 +1,60 @@
+% LOAD ESSENTIAL PACKAGES
+% ===
+
+\usepackage[english]{babel}
+
+% Handling bibliography
+\usepackage[backend=biber,sorting=none,style=authoryear]{biblatex}
+\usepackage[hang]{footmisc}
+
+% Math
+\usepackage{amsmath}
+\usepackage{upgreek}
+
+% Miscelaneous
+\usepackage{pgfpages}
+\usepackage{csquotes}
+\usepackage{placeins}
+
+% Captions
+\usepackage[labelformat=empty]{caption}
+
+% Colors
+\usepackage{xcolor}
+
+% Requirements
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows,shapes,positioning}
+
+% For \smiley{} and \frowney{}
+\usepackage{wasysym}
+
+% Pseudocode
+\usepackage[vlined, linesnumbered, ruled]{algorithm2e}
+\SetKwComment{Comment}{/* }{*/}
+\SetKwInput{KwData}{Input}
+\SetKwInput{KwResult}{Output}
+\IncMargin{1.5em}
+
+% nice icons
+\usepackage{fontawesome}
+
+% IMPORTANT NOTE: outputdir needs to be equal to output/aux dir of xelatex
+%\usepackage[outputdir=output]{minted}
+\usepackage{appendixnumberbeamer}
+
+% Tables
+\usepackage{booktabs}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{colortbl}
+
+% Date formatting
+\usepackage[short,nodayofweek]{datetime}
+
+% Hyperlinks
+\RequirePackage{hyperref}
+\hypersetup{colorlinks,linkcolor={rwth-blue-50},citecolor={rwth-black-75},urlcolor={rwth-blue-100}}
+\let\oldciteauthor=\citeauthor
+\def\citeauthor#1{\hypersetup{citecolor=rwth-black-50}\oldciteauthor{#1}}

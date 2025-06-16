@@ -1,0 +1,51 @@
+\mode<presentation>
+
+\DeclareOptionBeamer{authorinfo}{\def\beamer@AIM@authorinfo{#1}}
+\DeclareOptionBeamer{progress}{\def\beamer@AIM@progress{#1}}
+\DeclareOptionBeamer{outline}{\def\beamer@AIM@outline{#1}}
+\ExecuteOptionsBeamer{authorinfo=0,progress=1,outline=0} %defaults
+
+\ProcessOptionsBeamer
+
+% FRAME TITLE
+% ===
+
+\setbeamertemplate{background}{
+  \begin{tikzpicture}
+    \ifnum\thepage=1\relax%
+
+    \useasboundingbox (0,0) rectangle(\the\paperwidth,\the\paperheight);
+    \fill[color=white, opacity=1] (0,0) rectangle(\the\paperwidth,\the\paperheight);
+
+    % title page
+    %\fill[color=blue!50!black!60] (0,4cm) rectangle(\the\paperwidth,9.6cm);
+    \fi
+  \end{tikzpicture}
+} % \setbeamertemplate{background}
+
+
+\makeatletter
+\def\progressbar@progressbar{}
+\newcount\progressbar@current
+\newcount\progressbar@total
+\newcount\progressbar@maxprogress
+\newcount\progressbar@currentprogress
+
+\setbeamertemplate{footline}{%
+  \begin{beamercolorbox}[sep=0.8em,wd=\paperwidth,leftskip=0.5cm,rightskip=0.5cm]{footlinecolor}
+      \ifnum\beamer@AIM@authorinfo=1\relax%
+      \tiny{\insertshortauthor: \insertshorttitle}
+      \fi
+      \ifnum\beamer@AIM@progress=1\relax%
+      \hfill
+      \tiny\insertframenumber/\inserttotalframenumber
+      \fi
+      \ifnum\beamer@AIM@progress=0\relax%
+      \hfill
+      \tiny\insertframenumber
+      \fi
+  \end{beamercolorbox}%
+}
+
+\makeatother
+

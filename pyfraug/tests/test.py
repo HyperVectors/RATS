@@ -1,17 +1,20 @@
-import numpy as np
 import pyfraug as pf
+import pandas as pd
 
-x = np.array([1., 2., 3.])
+data = pd.read_csv("../data/Car/Car.csv").to_numpy()
 
-dataset = pf.Dataset(np.array([[1., 2., 3.], [4., 5., 6.]]), ["1", "2"])
+x = data[:,:-1]
+y = list(map(lambda a: str(a), data[:,-1]))
 
-aug = pf.AddNoise(pf.NoiseType.Uniform, bounds=(2.0,3.0))
+dataset = pf.Dataset(x, y)
 
-caug = pf.ConditionalAugmenter(aug, 0.5)
-
-pipeline = pf.AugmentationPipeline() + pf.Repeat(5) + caug
+pipeline = (pf.AugmentationPipeline()
+            + pf.Repeat(10)
+            + pf.Crop(100)
+            + pf.ConditionalAugmenter(
+                pf.AddNoise(pf.NoiseType.Slope, bounds=(0.01, 0.02)),
+                0.5
+            )
+            + pf.Jittering(0.1))
 
 pipeline.augment_dataset(dataset)
-
-print(dataset.features)
-print(dataset.labels)
