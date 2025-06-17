@@ -44,8 +44,79 @@
 \end{frame}
 
 % Start with some background on what the actual problem is
-\begin{frame}{Time Series Augmentation}
+
+\begin{frame}{Introduction}
+1. Time Series...What?
+\begin{itemize}
+        \item Finite Sequence
+        \item Time ordered indexing
+        \item Discrete Timestamps
+        \item Overlapping/Non-Overlapping
+    \end{itemize}
     
+\end{frame}
+
+\begin{frame}{Introduction}
+1. Time Series...What?
+\begin{itemize}
+        \item Finite Sequence
+        \item Time ordered indexing
+        \item Discrete Timestamps
+        \item Overlapping/Non-Overlapping
+    \end{itemize}
+    \vskip--15pt
+2. Why Augment ?
+\begin{itemize}
+        \item Improve Model Generalization
+        \item Granular Data Analysis
+        \item Simulate Real-World Noise
+        \item Overlapping/Non-Overlapping
+    \end{itemize}
+    
+\end{frame}
+
+\begin{frame}{Insights From The Paper}
+1. Time Domain Transformations
+\begin{itemize}
+        \item Computationally Cheap
+        \item Good baseline
+    \end{itemize}
+    
+\end{frame}
+
+\begin{frame}{Insights From The Paper}
+1. Time Domain Transformations
+\begin{itemize}
+        \item Computationally Cheap
+        \item Good baseline
+    \end{itemize}
+ \vskip--15pt
+2. Frequency Domain Transformations
+\begin{itemize}
+        \item Provides Global Structure 
+        \item Great for Anomaly Detection 
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Insights From The Paper}
+1. Time Domain Transformations
+\begin{itemize}
+        \item Computationally Cheap
+        \item Good baseline
+    \end{itemize}
+ \vskip--15pt
+2. Frequency Domain Transformations
+\begin{itemize}
+        \item Provides Global Structure 
+        \item Great for Anomaly Detection 
+    \end{itemize}
+\vskip--15pt
+3. Impact
+\begin{itemize}
+        \item 2\% Classification Accuracy Improvement 
+        \item 20-30\% Improvement - Anomaly Detection F1 Score
+        \item Reduced MASE error - Forecasting Use Cases
+    \end{itemize}
 \end{frame}
 
 % Present project plan as given in the pdf gradually
@@ -100,8 +171,15 @@
     \end{itemize}
 \end{frame}
 
+
 \begin{frame}{Time Warping}
-    
+    \textbf{Dynamic Time Warping (DTW):} Finds optimal warping path to generate different temporal variations.
+    \ig{1}{figures/timeseries/DTW.png}
+\end{frame}
+
+\begin{frame}{Time Warping}
+    \textbf{Window Warping:} Select a random window in the time series and stretch or compress it
+    \ig{1}{figures/timeseries/window_warping.png}
 \end{frame}
 
 \begin{frame}{Project Plan}
@@ -114,7 +192,41 @@
 \end{frame}
 
 \begin{frame}{Frequency-Domain Transformations}
+    \textbf{Fast Fourier Transform (FFT): } Converts a time-domain signal into its frequency components
+    \begin{itemize}
+        \item Time Domain
+    \end{itemize}
+    \ig{1}{figures/timeseries/fft_time.png}
+\end{frame}
+
+\begin{frame}{Frequency-Domain Transformations}
+    \textbf{Fast Fourier Transform (FFT): } Converts a time-domain signal into its frequency components
+    \begin{itemize}
+        \item Frequency Domain
+    \end{itemize}
+    \ig{1}{figures/timeseries/fft_freq.png}
+\end{frame}
+
+\begin{frame}{Frequency-Domain Transformations}
+    \textbf{Inverse Fast Fourier Transform (IFFT): } Converts frequency-domain data back to the time domain.
+    \ig{1}{figures/timeseries/ifft.png}
+\end{frame}
+
+\begin{frame}{Frequency-Domain Transformations}
+    \textbf{Inverse Fast Fourier Transform (IFFT): } Reconstruction error is negligible (below numerical threshold), ensuring lossless transform.
+    \ig{1}{figures/timeseries/ifft_error.png}
+\end{frame}
+
+\begin{frame}{Frequency-Domain Transformations}
+    \textbf{Frequency Masking: }Randomly zero out contiguous FFT bins around a center frequency to simulate narrowband interference or dropout in sensors.
     
+    \ig{1}{figures/timeseries/masking.png}
+\end{frame}
+
+\begin{frame}{Frequency-Domain Transformations}
+    \textbf{Amplitude \& Phase Perturbation (APP): }Add small Gaussian noise to each bin’s magnitude and phase to introduce realistic spectral jitter while preserving overall structure
+    
+    \ig{1}{figures/timeseries/APP.png}
 \end{frame}
 
 \begin{frame}{Project Plan}
