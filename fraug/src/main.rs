@@ -5,7 +5,7 @@ mod transforms;
 use crate::augmenters::NoiseType;
 use augmenters::{
     AddNoise, AugmentationPipeline, Augmenter, ConditionalAugmenter, Crop, Drop, Jittering, Repeat,
-    Rotation, Scaling, FrequencyMask
+    Rotation, Scaling, FrequencyMask, AmplitudePhasePerturbation,
 };
 use fraug::Dataset;
 use transforms::fastfourier::{compare_datasets_within_tolerance, dataset_fft, dataset_ifft};
@@ -41,37 +41,37 @@ fn main() {
 
     // Here we can do augmentations to the data
 
-    // Just some test augmentations
-    println!(
-        "Before {:?}",
-        data.features[0].iter().take(10).collect::<Vec<&f64>>()
-    );
+    // // Just some test augmentations
+    // println!(
+    //     "Before {:?}",
+    //     data.features[0].iter().take(10).collect::<Vec<&f64>>()
+    // );
 
-    let pipeline = AugmentationPipeline::new() + AddNoise::new(NoiseType::Slope, Some((0.01, 0.02)), None, None);
-    // let pipeline = AugmentationPipeline::new()
-    //     + Crop::new(250)
-    //     + ConditionalAugmenter::new(Rotation::new(2.0), 0.5)
-    //     + Scaling::new(0.5, 2.0)
-    //     + AddNoise::new(NoiseType::Spike, Some((-2.0, 2.0)), None, None)
-    //     + Drop::new(0.05, None);
+    // let pipeline = AugmentationPipeline::new() + AddNoise::new(NoiseType::Slope, Some((0.01, 0.02)), None, None);
+    // // let pipeline = AugmentationPipeline::new()
+    // //     + Crop::new(250)
+    // //     + ConditionalAugmenter::new(Rotation::new(2.0), 0.5)
+    // //     + Scaling::new(0.5, 2.0)
+    // //     + AddNoise::new(NoiseType::Spike, Some((-2.0, 2.0)), None, None)
+    // //     + Drop::new(0.05, None);
 
-    pipeline.augment_dataset(&mut data);
+    // pipeline.augment_dataset(&mut data);
 
-    println!(
-        "After {:?}\nLength: {}",
-        data.features[0].iter().take(10).collect::<Vec<&f64>>(),
-        data.features.len()
-    );
+    // println!(
+    //     "After {:?}\nLength: {}",
+    //     data.features[0].iter().take(10).collect::<Vec<&f64>>(),
+    //     data.features.len()
+    // );
 
-    // Write augmented dataset to CSV
-    let out_filename = format!("{}_augmented.csv", dataset_name);
-    if let Err(e) =
-        readcsv::write_dataset_csv(&data.features, &data.labels, dataset_name, &out_filename)
-    {
-        eprintln!("Failed to write augmented CSV: {e}");
-    } else {
-        println!("Augmented dataset written to {out_filename}");
-    }
+    // // Write augmented dataset to CSV
+    // let out_filename = format!("{}_augmented.csv", dataset_name);
+    // if let Err(e) =
+    //     readcsv::write_dataset_csv(&data.features, &data.labels, dataset_name, &out_filename)
+    // {
+    //     eprintln!("Failed to write augmented CSV: {e}");
+    // } else {
+    //     println!("Augmented dataset written to {out_filename}");
+    // }
 
     // FFT transform of the dataset
     let mut freq_data = dataset_fft(&data);
@@ -80,18 +80,27 @@ fn main() {
         freq_data.features[1].iter().take(10).collect::<Vec<&f64>>()
     );
 
-    // Frequency Masking Augmentation
-    let mask_width = 300; // Width of the frequency mask
-    let freq_masker = FrequencyMask::new(mask_width);
-    freq_masker.augment_dataset(&mut freq_data);
+    // Apply Amplitude & Phase Perturbation
+    let app = AmplitudePhasePerturbation::new(1.0, 0.5); // Adjust stddevs as needed
+    app.augment_dataset(&mut freq_data);
+
     println!(
-        "Applied frequency mask of width {} to dataset",
-        mask_width
+        "First 10 FFT values after APP: {:?}",
+        freq_data.features[0].iter().take(10).collect::<Vec<&f64>>()
     );
-    println!(
-        "First 10 FFT magnitudes after masking: {:?}",
-        freq_data.features[1].iter().take(10).collect::<Vec<&f64>>()
-    );
+
+    // // Frequency Masking Augmentation
+    // let mask_width = 300; // Width of the frequency mask
+    // let freq_masker = FrequencyMask::new(mask_width);
+    // freq_masker.augment_dataset(&mut freq_data);
+    // println!(
+    //     "Applied frequency mask of width {} to dataset",
+    //     mask_width
+    // );
+    // println!(
+    //     "First 10 FFT magnitudes after masking: {:?}",
+    //     freq_data.features[1].iter().take(10).collect::<Vec<&f64>>()
+    // );
 
     // frequency domain dataset to CSV
     let freq_out_filename = format!("{}_fft.csv", dataset_name);

@@ -7,6 +7,7 @@ mod repeat;
 mod rotation;
 mod scaling;
 mod frequency_mask;
+mod amplitude_phase_perturbation;
 
 pub use addnoise::{AddNoise, NoiseType};
 pub use base::{AugmentationPipeline, Augmenter, ConditionalAugmenter};
@@ -17,4 +18,5 @@ pub use repeat::Repeat;
 pub use rotation::Rotation;
 pub use scaling::Scaling;
 pub use frequency_mask::FrequencyMask;
+pub use amplitude_phase_perturbation::AmplitudePhasePerturbation;
 
