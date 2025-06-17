@@ -65,7 +65,7 @@
         \item Overlapping/Non-Overlapping
     \end{itemize}
     \vskip--15pt
-2. Why Augment ?
+2. Why Augment?
 \begin{itemize}
         \item Improve Model Generalization
         \item Granular Data Analysis
@@ -75,7 +75,7 @@
     
 \end{frame}
 
-\begin{frame}{Insights From The Paper}
+\begin{frame}{Insights From The Paper (\cite{wen2020time})}
 1. Time Domain Transformations
 \begin{itemize}
         \item Computationally Cheap
@@ -84,7 +84,7 @@
     
 \end{frame}
 
-\begin{frame}{Insights From The Paper}
+\begin{frame}{Insights From The Paper (\cite{wen2020time})}
 1. Time Domain Transformations
 \begin{itemize}
         \item Computationally Cheap
@@ -98,7 +98,7 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Insights From The Paper}
+\begin{frame}{Insights From The Paper (\cite{wen2020time})}
 1. Time Domain Transformations
 \begin{itemize}
         \item Computationally Cheap
@@ -127,32 +127,32 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Basic Transformations}
+\begin{frame}{Basic Transformations (\cite{um2017data})}
     \textbf{Jittering}: Add white noise to the data
     \ig{1}{figures/timeseries/jittering.png}
     Parameters: $\sigma$ of Gaussian noise
 \end{frame}
 
-\begin{frame}{Basic Transformations}
+\begin{frame}{Basic Transformations (\cite{um2017data})}
     \textbf{Scaling}: Scale data points by random factor
     \ig{1}{figures/timeseries/scaling.png}
     Parameters: Min and max of random factor
 \end{frame}
 
-\begin{frame}{Basic Transformations}
+\begin{frame}{Basic Transformations (\cite{um2017data})}
     \textbf{Rotation}: "Rotate" data 180\textdegree\ around an anchor
     \only<1>{\ig{1}{figures/timeseries/rotation1.png}}
     \only<2>{\ig{1}{figures/timeseries/rotation2.png}}
     Parameters: Anchor value
 \end{frame}
 
-\begin{frame}{Basic Transformations}
+\begin{frame}{Basic Transformations (\refer{tsaug})}
     \textbf{Drop}: Drop percentage of data points
     \ig{1}{figures/timeseries/drop.png}
     Parameters: Percentage and default value
 \end{frame}
 
-\begin{frame}{Basic Transformations}
+\begin{frame}{Basic Transformations (\refer{tsaug})}
     Special Transformations:
     
     \vskip--15pt
@@ -240,7 +240,7 @@
 \end{frame}
 
 \begin{frame}{Noise Injection}
-    AddNoise augmenter that supports different kinds of noise (according to~\refer{Wen et al., 2020}):
+    AddNoise augmenter that supports different kinds of noise (according to~\cite{wen2020time}):
     \begin{itemize}
         \item<2-> Uniform
         \item<3-> Gaussian (like jittering)
@@ -375,10 +375,15 @@ pipeline.augment_dataset(dataset)
 
 \begin{frame}{Project Plan}
     3. Analyse performance against python library tsaug
+    \begin{itemize}
+        \item Execution time benchmarks
+        \item Memory usage comparisons
+        \item Quality assessment of augmented data
+    \end{itemize}
     
 \end{frame}
 
-\begin{frame}[allowframebreaks]
+\begin{frame}
   \frametitle{References}
   \printbibliography[heading=none]
 \end{frame}
