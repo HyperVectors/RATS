@@ -5,7 +5,7 @@ mod transforms;
 use crate::augmenters::NoiseType;
 use augmenters::{
     AddNoise, AugmentationPipeline, Augmenter, ConditionalAugmenter, Crop, Drop, Jittering, Repeat,
-    Rotation, Scaling,
+    Rotation, Scaling, FrequencyMask
 };
 use fraug::Dataset;
 use transforms::fastfourier::{compare_datasets_within_tolerance, dataset_fft, dataset_ifft};
@@ -74,10 +74,23 @@ fn main() {
     }
 
     // FFT transform of the dataset
-    let freq_data = dataset_fft(&data);
+    let mut freq_data = dataset_fft(&data);
     println!(
         "First 10 FFT magnitudes of first sample: {:?}",
-        freq_data.features[0].iter().take(10).collect::<Vec<&f64>>()
+        freq_data.features[1].iter().take(10).collect::<Vec<&f64>>()
+    );
+
+    // Frequency Masking Augmentation
+    let mask_width = 300; // Width of the frequency mask
+    let freq_masker = FrequencyMask::new(mask_width);
+    freq_masker.augment_dataset(&mut freq_data);
+    println!(
+        "Applied frequency mask of width {} to dataset",
+        mask_width
+    );
+    println!(
+        "First 10 FFT magnitudes after masking: {:?}",
+        freq_data.features[1].iter().take(10).collect::<Vec<&f64>>()
     );
 
     // frequency domain dataset to CSV
@@ -97,7 +110,7 @@ fn main() {
     let time_data = dataset_ifft(&freq_data);
     println!(
         "First 10 reconstructed values of first sample: {:?}",
-        time_data.features[0].iter().take(10).collect::<Vec<&f64>>()
+        time_data.features[1].iter().take(10).collect::<Vec<&f64>>()
     );
 
     // reconstructed time domain dataset to CSV

@@ -10,7 +10,7 @@ dataset_name = sys.argv[1] if len(sys.argv) > 1 else "Car"
 # Derive file paths
 data_dir = os.path.join("..", "data", dataset_name)
 original_file = os.path.join(data_dir, f"{dataset_name}.csv")
-augmented_file = os.path.join(data_dir, f"{dataset_name}_augmented.csv")
+augmented_file = os.path.join(data_dir, f"{dataset_name}_ifft.csv")
 
 # Load datasets
 df_orig = pd.read_csv(original_file)
