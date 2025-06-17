@@ -8,6 +8,7 @@ mod rotation;
 mod scaling;
 mod frequency_mask;
 mod amplitude_phase_perturbation;
+mod dtw;
 
 pub use addnoise::{AddNoise, NoiseType};
 pub use base::{AugmentationPipeline, Augmenter, ConditionalAugmenter};
