@@ -9,6 +9,7 @@ mod scaling;
 mod frequency_mask;
 mod amplitude_phase_perturbation;
 mod dtw;
+mod window_time_warp;
 
 pub use addnoise::{AddNoise, NoiseType};
 pub use base::{AugmentationPipeline, Augmenter, ConditionalAugmenter};
