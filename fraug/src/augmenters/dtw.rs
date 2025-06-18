@@ -83,3 +83,27 @@ impl DynamicTimeWarpAugmenter {
         }
     }
 }
+
+impl Augmenter for DynamicTimeWarpAugmenter {
+    fn augment_one(&self, _x: &mut [f64]) {
+    }
+}
+
+#[cfg(test)]
+mod dtw_augment_tests {
+    use super::*;
+    use crate::Dataset;
+
+    #[test]
+    fn test_dtw_augmenter() {
+        let mut data = Dataset {
+            features: vec![vec![0.0,1.0,2.0], vec![0.0,2.0,4.0]],
+            labels: vec!["A".to_string(), "B".to_string()],
+        };
+        let augmenter = DynamicTimeWarpAugmenter::new();
+        augmenter.augment_dataset(&mut data);
+        // original 2 + 2 warps = 4
+        assert_eq!(data.features.len(), 4);
+        assert_eq!(data.labels.len(), 4);
+    }
+}
