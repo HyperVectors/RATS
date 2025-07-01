@@ -1,12 +1,13 @@
 use rand::prelude::*;
 use std::ops::Add;
+use rayon::prelude::*;
 
 use crate::Dataset;
 
 /// Trait for all augmenters, allows for augmentation of one time series or a whole dataset
 pub trait Augmenter {
-    fn augment_dataset(&self, input: &mut Dataset) {
-        input.features.iter_mut().for_each(|x| self.augment_one(x));
+    fn augment_dataset(&self, input: &mut Dataset) where Self: Sync {
+        input.features.par_iter_mut().for_each(|x| self.augment_one(x));
     }
 
     fn augment_one(&self, x: &mut [f64]);
@@ -21,18 +22,20 @@ pub struct ConditionalAugmenter {
 }
 
 impl ConditionalAugmenter {
-    pub fn new<T: Augmenter + 'static>(augmenter: T, probabilty: f64) -> Self {
+    pub fn new<T: Augmenter + 'static>(augmenter: T, probability: f64) -> Self {
         ConditionalAugmenter {
             inner: Box::new(augmenter),
-            p: probabilty,
+            p: probability,
         }
     }
 }
 
+unsafe impl Sync for ConditionalAugmenter {}
+
 impl Augmenter for ConditionalAugmenter {
     fn augment_dataset(&self, input: &mut Dataset) {
-        let mut rng = rand::rng();
-        input.features.iter_mut().for_each(|x| {
+        input.features.par_iter_mut().for_each(|x| {
+            let mut rng = rand::rng();
             if rng.random::<f64>() < self.p {
                 self.inner.augment_one(x)
             }
@@ -48,7 +51,7 @@ impl Augmenter for ConditionalAugmenter {
 
 /// Augmenter that includes multiple other augmenters to build a pipeline
 pub struct AugmentationPipeline {
-    augmenters: Vec<Box<dyn Augmenter>>,
+    augmenters: Vec<Box<dyn Augmenter + Sync>>,
 }
 
 impl AugmentationPipeline {
@@ -58,7 +61,7 @@ impl AugmentationPipeline {
         }
     }
 
-    pub fn add<T: Augmenter + 'static>(&mut self, augmenter: T) {
+    pub fn add<T: Augmenter + 'static + Sync>(&mut self, augmenter: T) {
         self.augmenters.push(Box::new(augmenter));
     }
 }
@@ -77,7 +80,7 @@ impl Augmenter for AugmentationPipeline {
     }
 }
 
-impl<T: Augmenter + 'static> Add<T> for AugmentationPipeline {
+impl<T: Augmenter + 'static + Sync> Add<T> for AugmentationPipeline {
     type Output = AugmentationPipeline;
 
     fn add(self, rhs: T) -> Self::Output {
@@ -85,7 +88,7 @@ impl<T: Augmenter + 'static> Add<T> for AugmentationPipeline {
         augmenters.push(Box::new(rhs));
 
         AugmentationPipeline {
-            augmenters: augmenters,
+            augmenters
         }
     }
 }
