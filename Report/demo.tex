@@ -1,0 +1,98 @@
+% ===
+%
+% Official LaTeX seminar report template of the
+% Chair for AI Methodology (AIM)
+% RWTH Aachen University, Aachen, Germany
+%
+% Author: Jakob Bossek (bossek@aim.rwth-aachen.de)
+%
+% AIM website: https://aim.rwth-aachen.de/
+%
+% ===
+
+% The 'review' option activates line numbering
+\documentclass[review]{AIM_report}
+
+% includes/preamble.tex is the right place to add new packages etc.
+\input{includes/preamble}
+
+% import commenting macros
+\input{includes/macros/commenting}
+
+% metadata
+\title{Your Topic Title (Title Abbreviation)}
+\subtitle{Seminar Name}
+\author{Jane Doe (123456) \and John Doe (654321)}
+
+\institute{RWTH Aachen University, Germany\\
+\email{$\{$jane.doe, john.doe$\}$@rwth-aachen.de}}
+
+% source file(s) with bibliography entries
+\addbibresource{bib.bib}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+We use the \LaTeX{} package \texttt{biblatex} for citations. Sample citation:~\cite{HutterEtAl2009}. You can also use full citations: \fullcite{HBPSTK2021TSPnormalization}
+
+You are free to use British, American, Canadian or Australian English, but whatever you choose should be used consistently.
+As Europeans, we recommend the use of British English (which is also well supported by spell and grammar checkers).
+
+\section{Notes}
+
+\begin{itemize}
+  \item In our seminars we usualy use abbreviations to quickly identify certain topics, e.g., \textbf{NAS-1} for some kind of \emph{\underline{N}eural \underline{A}rchitecture \underline{S}earch} related topic. Please add this abbreviation into the title of your report in parenthesis after the full title.
+  \item Please add your full names and your matriculation number in the \verb|\author{}| field.
+\end{itemize}
+
+\section{Figures and tables}
+
+Figure~\ref{fig:sample_image} shows a sample image and Table~\ref{fig:sample_table} shows an exemplary table. Use the \texttt{booktabs} package to design nice tables. Avoid vertical lines whenever possible. We recommend to take a look at the presentation \href{https://people.inf.ethz.ch/markusp/teaching/guides/guide-tables.pdf}{Small Guide to Making Nice Tables} by Markus P\"uschel.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.3\textwidth]{example-image-a}
+    \caption{Sample image.}
+    \label{fig:sample_image}
+\end{figure}
+
+\begin{table}
+  \centering
+    \renewcommand{\tabcolsep}{4pt}
+    \renewcommand{\arraystretch}{1.1}
+    \input{tables/sample_table}
+    \caption{Sample table taken from~\cite{BossekKN00T19TSPcreative}.}
+    \label{fig:sample_table}
+\end{table}
+
+\section{Macros}
+
+It is often useful to comment on different things while writing a report, adding ToDos or highlight changed or added parts. To this end the file \texttt{includes/commenting.tex} defines some useful macros.
+\begin{itemize}
+    \item Use \verb|\todo{...}| to add a ToDo:\newline \todo{Do this, do that}
+    \item Use \verb|\changed{...}| to indicate changes:\newline \changed{This text was changed.}
+    \item Use \verb|\added{...}| to highlight additions:\newline \added{This text was added.}
+    \item Use author-specific macros, e.g., \verb|\jane{...}| or \verb|\john| for our two sample authors Jane and Joe, to add comments. Feel free to edit \texttt{includes/commenting.tex} to add/adapt the author-specific macros.\newline{}
+    \jane{Comment by Jane.}\newline
+    \john{Comment by Joe.}
+\end{itemize}
+
+\section{Conclusion}
+
+Each report ends with a conclusion section, which summarises the main findings. 
+
+\section*{Statement of Contributions}
+
+Please indicate here the contributions of each single author/student. This section can be dropped if there is a single author only.
+
+\printbibliography
+
+\newpage
+\pagestyle{empty}
+
+\includepdf[pages=-,pagecommand={},width=\textwidth]{files/oathstatement.pdf}
+
+\end{document}
