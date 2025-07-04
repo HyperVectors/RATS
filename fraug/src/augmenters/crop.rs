@@ -1,3 +1,4 @@
+use rayon::prelude::*;
 use super::base::Augmenter;
 
 /// Augmenter that crops each row into a random continuous slice of specified size
@@ -24,13 +25,21 @@ impl Crop {
 }
 
 impl Augmenter for Crop {
-    fn augment_dataset(&self, input: &mut crate::Dataset) {
-        let mut new_features: Vec<Vec<f64>> = Vec::with_capacity(input.features.len());
+    fn augment_dataset(&self, input: &mut crate::Dataset, parallel: bool) {
 
-        input
-            .features
-            .iter()
-            .for_each(|x| new_features.push(self.get_slice(x)));
+        let new_features: Vec<Vec<f64>> = if parallel {
+            input
+                .features
+                .par_iter()
+                .map(|x| self.get_slice(x))
+                .collect()
+        } else {
+            input
+                .features
+                .iter()
+                .map(|x| self.get_slice(x))
+                .collect()
+        };
 
         input.features = new_features;
     }
@@ -54,7 +63,7 @@ mod tests {
         };
 
         let augmenter = Crop::new(200);
-        augmenter.augment_dataset(&mut set);
+        augmenter.augment_dataset(&mut set, true);
 
         assert_eq!(set.features[0], vec![1.0; 100]);
     }
@@ -68,7 +77,7 @@ mod tests {
         };
 
         let augmenter = Crop::new(50);
-        augmenter.augment_dataset(&mut set);
+        augmenter.augment_dataset(&mut set, true);
 
         assert_eq!(set.features[0], vec![1.0; 50]);
     }

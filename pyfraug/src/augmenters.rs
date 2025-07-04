@@ -9,8 +9,8 @@ macro_rules! wrap_augmentation_functions {
     ($struct_name:ident) => {
         #[pymethods]
         impl $struct_name {
-            fn augment_dataset(&self, dataset: &mut Dataset) {
-                self.inner.augment_dataset(&mut dataset.inner);
+            fn augment_dataset(&self, dataset: &mut Dataset, parallel: bool) {
+                self.inner.augment_dataset(&mut dataset.inner, parallel);
             }
 
             fn augment_one<'py>(&self, x: &Bound<'py, PyArray1<f64>>) {
@@ -30,7 +30,8 @@ pub struct PyAugmenter {}
 
 #[pymethods]
 impl PyAugmenter {
-    fn augment_dataset(&self, _dataset: &mut Dataset) {}
+    #[pyo3(signature = (dataset, *, parallel))]
+    fn augment_dataset(&self, dataset: &mut Dataset, parallel: bool) {}
 
     fn augment_one<'py>(&self, _x: &Bound<'py, PyArray1<f64>>) {}
 }

@@ -12,7 +12,7 @@ fn combine_two_augmenters() {
     };
 
     let pipeline = AugmentationPipeline::new() + Repeat::new(5) + Crop::new(20);
-    pipeline.augment_dataset(&mut set);
+    pipeline.augment_dataset(&mut set, true);
 
     assert_eq!(set.features.len(), 5);
     assert_eq!(set.features[3].len(), 20);
@@ -27,7 +27,7 @@ fn conditional_augmenter() {
     };
 
     let augmenter = ConditionalAugmenter::new(Drop::new(1.0, None), 0.5);
-    augmenter.augment_dataset(&mut set);
+    augmenter.augment_dataset(&mut set, true);
 
     assert_eq!(set.features.len(), 100);
     let mut dropped = 0;

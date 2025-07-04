@@ -22,9 +22,9 @@ dataset = pf.Dataset(x, y)
 aug = pf.AugmentationPipeline() + pf.AddNoise(pf.NoiseType.Gaussian, mean=0, std_dev=0.1)
 
 start = time.time()
-aug.augment_dataset(dataset)
+aug.augment_dataset(dataset, parallel=True)
 end = time.time()
-print(f"Pyfraug took {end - start:.4f} seconds")
+print(f"PyFraug took {end - start:.4f} seconds")
 
 
 from tsaug import AddNoise

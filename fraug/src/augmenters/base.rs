@@ -6,8 +6,12 @@ use crate::Dataset;
 
 /// Trait for all augmenters, allows for augmentation of one time series or a whole dataset
 pub trait Augmenter {
-    fn augment_dataset(&self, input: &mut Dataset) where Self: Sync {
-        input.features.par_iter_mut().for_each(|x| self.augment_one(x));
+    fn augment_dataset(&self, input: &mut Dataset, parallel: bool) where Self: Sync {
+        if parallel {
+            input.features.par_iter_mut().for_each(|x| self.augment_one(x));
+        } else {
+            input.features.iter_mut().for_each(|x| self.augment_one(x));
+        }
     }
 
     fn augment_one(&self, x: &mut [f64]);
@@ -33,17 +37,9 @@ impl ConditionalAugmenter {
 unsafe impl Sync for ConditionalAugmenter {}
 
 impl Augmenter for ConditionalAugmenter {
-    fn augment_dataset(&self, input: &mut Dataset) {
-        input.features.par_iter_mut().for_each(|x| {
-            let mut rng = rand::rng();
-            if rng.random::<f64>() < self.p {
-                self.inner.augment_one(x)
-            }
-        });
-    }
-
     fn augment_one(&self, x: &mut [f64]) {
-        if rand::random::<f64>() < self.p {
+        let mut rng = rand::rng();
+        if rng.random::<f64>() < self.p {
             self.inner.augment_one(x);
         }
     }
@@ -67,10 +63,10 @@ impl AugmentationPipeline {
 }
 
 impl Augmenter for AugmentationPipeline {
-    fn augment_dataset(&self, input: &mut Dataset) {
+    fn augment_dataset(&self, input: &mut Dataset, parallel: bool) {
         self.augmenters
             .iter()
-            .for_each(|augmenter| augmenter.augment_dataset(input));
+            .for_each(|augmenter| augmenter.augment_dataset(input, parallel));
     }
 
     fn augment_one(&self, x: &mut [f64]) {

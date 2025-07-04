@@ -15,7 +15,7 @@ impl Repeat {
 }
 
 impl Augmenter for Repeat {
-    fn augment_dataset(&self, input: &mut Dataset) {
+    fn augment_dataset(&self, input: &mut Dataset, _parallel: bool) {
         let mut new_features: Vec<Vec<f64>> = Vec::with_capacity(input.features.len() * self.n);
         let mut new_labels: Vec<String> = Vec::with_capacity(input.labels.len() * self.n);
 
@@ -49,7 +49,7 @@ mod tests {
         };
 
         let augmenter = Repeat::new(2);
-        augmenter.augment_dataset(&mut set);
+        augmenter.augment_dataset(&mut set, false);
 
         assert_eq!(set.features[0], vec![1.0; 100]);
         assert_eq!(set.features[1], vec![1.0; 100]);
