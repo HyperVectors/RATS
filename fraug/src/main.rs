@@ -40,12 +40,11 @@ fn main() {
     }
 
     // Here we can do augmentations to the data
-
-    // // Just some test augmentations
-    // println!(
-    //     "Before {:?}",
-    //     data.features[0].iter().take(10).collect::<Vec<&f64>>()
-    // );
+    
+    println!(
+         "Before {:?}",
+         data.features[0].iter().take(10).collect::<Vec<&f64>>()
+     );
 
     // let pipeline = AugmentationPipeline::new() + AddNoise::new(NoiseType::Slope, Some((0.01, 0.02)), None, None);
     // // let pipeline = AugmentationPipeline::new()
@@ -74,59 +73,21 @@ fn main() {
     // }
 
     // FFT transform of the dataset
-    let mut freq_data = dataset_fft(&data);
-    println!(
-        "First 10 FFT magnitudes of first sample: {:?}",
-        freq_data.features[1].iter().take(10).collect::<Vec<&f64>>()
-    );
+    //let mut freq_data = dataset_fft(&data);
+    //println!(
+    //    "First 10 FFT magnitudes of first sample: {:?}",
+    //    freq_data.features[1].iter().take(10).collect::<Vec<&f64>>()
+    //);
 
     // Apply Amplitude & Phase Perturbation
-    let app = AmplitudePhasePerturbation::new(1.0, 0.5); // Adjust stddevs as needed
-    app.augment_dataset(&mut freq_data);
-
-    println!(
-        "First 10 FFT values after APP: {:?}",
-        freq_data.features[0].iter().take(10).collect::<Vec<&f64>>()
-    );
-
-    // // Frequency Masking Augmentation
-    // let mask_width = 300; // Width of the frequency mask
-    // let freq_masker = FrequencyMask::new(mask_width);
-    // freq_masker.augment_dataset(&mut freq_data);
-    // println!(
-    //     "Applied frequency mask of width {} to dataset",
-    //     mask_width
-    // );
-    // println!(
-    //     "First 10 FFT magnitudes after masking: {:?}",
-    //     freq_data.features[1].iter().take(10).collect::<Vec<&f64>>()
-    // );
-
-    // frequency domain dataset to CSV
-    let freq_out_filename = format!("{}_fft.csv", dataset_name);
-    if let Err(e) = readcsv::write_dataset_csv(
-        &freq_data.features,
-        &freq_data.labels,
-        dataset_name,
-        &freq_out_filename,
-    ) {
-        eprintln!("Failed to write frequency domain CSV: {e}");
-    } else {
-        println!("Frequency domain dataset written to {freq_out_filename}");
-    }
-
-    // IFFT (reconstruction) of the frequency domain dataset
-    let time_data = dataset_ifft(&freq_data);
-    println!(
-        "First 10 reconstructed values of first sample: {:?}",
-        time_data.features[1].iter().take(10).collect::<Vec<&f64>>()
-    );
-
+    let app = AmplitudePhasePerturbation::new(2.5, 0.0); // Adjust stddevs as needed
+    app.augment_dataset(&mut data, true);
+    
     // reconstructed time domain dataset to CSV
-    let time_out_filename = format!("{}_ifft.csv", dataset_name);
+    let time_out_filename = format!("{}app.csv", dataset_name);
     if let Err(e) = readcsv::write_dataset_csv(
-        &time_data.features,
-        &time_data.labels,
+        &data.features,
+        &data.labels,
         dataset_name,
         &time_out_filename,
     ) {
@@ -136,9 +97,9 @@ fn main() {
     }
 
     // Compare original and reconstructed datasets
-    let (max_diff, all_within) = compare_datasets_within_tolerance(&data, &time_data, 1e-10);
-    println!(
-        "Max absolute difference after FFT->IFFT: {:.3e}, All within tolerance: {}",
-        max_diff, all_within
-    );
+    //let (max_diff, all_within) = compare_datasets_within_tolerance(&data, &original_data, 1e-10);
+    //println!(
+    //    "Max absolute difference after FFT->IFFT: {:.3e}, All within tolerance: {}",
+    //    max_diff, all_within
+    //);
 }

@@ -3,6 +3,7 @@ use crate::Dataset;
 use rand_distr::{Normal, Distribution};
 use rand::rng;
 use std::f64::consts::PI;
+use crate::transforms::fastfourier::{dataset_fft, dataset_ifft};
 
 /// Amplitude & Phase Perturbation (APP) augmenter.
 /// Adds small Gaussian noise to each bin’s magnitude and phase.
@@ -17,10 +18,21 @@ impl AmplitudePhasePerturbation {
     }
 
     /// Augment all samples in the dataset in-place
-    pub fn augment_dataset(&self, data: &mut Dataset) {
-        for sample in data.features.iter_mut() {
-            self.augment_one(sample);
+    pub fn augment_dataset(&self, data: &mut Dataset, is_time_domain:bool) {
+        if is_time_domain {
+            let mut transformed_dataset = dataset_fft(data);
+
+            for sample in transformed_dataset.features.iter_mut() {
+                self.augment_one(sample);
+            }
+            let inverse_dataset = dataset_ifft(&transformed_dataset);
+            *data = inverse_dataset;
+        }else {
+            for sample in data.features.iter_mut() {
+                self.augment_one(sample);
+            }    
         }
+        
     }
 }
 
@@ -58,7 +70,7 @@ mod tests {
     use crate::Dataset;
 
     #[test]
-    fn test_app_augmenter() {
+    fn test_app_augmenter_frequency() {
         let mut data = Dataset {
             features: vec![
                 vec![1.0, 0.0].repeat(16),
@@ -68,7 +80,22 @@ mod tests {
         };
         let app = AmplitudePhasePerturbation::new(0.1, 0.1);
         let orig = data.features[0].clone();
-        app.augment_dataset(&mut data);
+        app.augment_dataset(&mut data, false);
+        assert_ne!(orig, data.features[0]);
+    }
+
+    #[test]
+    fn test_app_augmenter_time() {
+        let mut data = Dataset {
+            features: vec![vec![0.0,1.0,2.0], vec![0.0,2.0,4.0]],
+            labels: vec!["A".to_string(), "B".to_string()],
+        };
+        let orig = data.features[0].clone();
+        
+        let app = AmplitudePhasePerturbation::new(0.1, 0.1);
+        
+        app.augment_dataset(&mut data, true);
+        
         assert_ne!(orig, data.features[0]);
     }
 }
