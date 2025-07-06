@@ -1,4 +1,4 @@
 # ignore data folder
-data/
-
+**/data/
+*.png
 .idea
