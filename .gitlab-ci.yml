@@ -1,6 +1,11 @@
+image: rust:1.78
+
+stages:
+  - build
+
 build-job:
   stage: build
   script:
     - echo "Starting Rust Build"
     - cd fraug
-    - cargo build 
+    - cargo build
