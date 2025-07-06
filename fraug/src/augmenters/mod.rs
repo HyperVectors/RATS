@@ -21,4 +21,5 @@ pub use rotation::Rotation;
 pub use scaling::Scaling;
 pub use frequency_mask::FrequencyMask;
 pub use amplitude_phase_perturbation::AmplitudePhasePerturbation;
+pub use dtw::DynamicTimeWarpAugmenter;
 

@@ -5,7 +5,7 @@ mod transforms;
 use crate::augmenters::NoiseType;
 use augmenters::{
     AddNoise, AugmentationPipeline, Augmenter, ConditionalAugmenter, Crop, Drop, Jittering, Repeat,
-    Rotation, Scaling, FrequencyMask, AmplitudePhasePerturbation,
+    Rotation, Scaling, FrequencyMask, AmplitudePhasePerturbation,DynamicTimeWarpAugmenter
 };
 use fraug::Dataset;
 use transforms::fastfourier::{compare_datasets_within_tolerance, dataset_fft, dataset_ifft};
@@ -42,35 +42,42 @@ fn main() {
     // Here we can do augmentations to the data
     
     println!(
-         "Before {:?}",
-         data.features[0].iter().take(10).collect::<Vec<&f64>>()
+         "Before {:?} Length: {}",
+         data.features[0].iter().take(10).collect::<Vec<&f64>>(),
+         data.features.len()
      );
 
     // let pipeline = AugmentationPipeline::new() + AddNoise::new(NoiseType::Slope, Some((0.01, 0.02)), None, None);
-    // // let pipeline = AugmentationPipeline::new()
-    // //     + Crop::new(250)
-    // //     + ConditionalAugmenter::new(Rotation::new(2.0), 0.5)
-    // //     + Scaling::new(0.5, 2.0)
-    // //     + AddNoise::new(NoiseType::Spike, Some((-2.0, 2.0)), None, None)
-    // //     + Drop::new(0.05, None);
+    // let pipeline = AugmentationPipeline::new()
+    //     + Crop::new(250)
+    //     + ConditionalAugmenter::new(Rotation::new(2.0), 0.5)
+    //     + Scaling::new(0.5, 2.0)
+    //     + AddNoise::new(NoiseType::Spike, Some((-2.0, 2.0)), None, None)
+    //     + Drop::new(0.05, None)
+    //     + AmplitudePhasePerturbation::new(-10.0, 1.7, true);
 
     // pipeline.augment_dataset(&mut data);
 
-    // println!(
-    //     "After {:?}\nLength: {}",
-    //     data.features[0].iter().take(10).collect::<Vec<&f64>>(),
-    //     data.features.len()
-    // );
+    
+    let dtw_augmenter = DynamicTimeWarpAugmenter:: new(10);
 
-    // // Write augmented dataset to CSV
-    // let out_filename = format!("{}_augmented.csv", dataset_name);
-    // if let Err(e) =
-    //     readcsv::write_dataset_csv(&data.features, &data.labels, dataset_name, &out_filename)
-    // {
-    //     eprintln!("Failed to write augmented CSV: {e}");
-    // } else {
-    //     println!("Augmented dataset written to {out_filename}");
-    // }
+    dtw_augmenter.augment_dataset(&mut data);
+
+    println!(
+        "After {:?}\nLength: {}",
+        data.features[0].iter().take(10).collect::<Vec<&f64>>(),
+        data.features.len()
+    );
+    
+    // Write augmented dataset to CSV
+    let out_filename = format!("{}_augmented.csv", dataset_name);
+    if let Err(e) =
+        readcsv::write_dataset_csv(&data.features, &data.labels, dataset_name, &out_filename)
+    {
+        eprintln!("Failed to write augmented CSV: {e}");
+    } else {
+        println!("Augmented dataset written to {out_filename}");
+    }
 
     // FFT transform of the dataset
     //let mut freq_data = dataset_fft(&data);
@@ -80,21 +87,21 @@ fn main() {
     //);
 
     // Apply Amplitude & Phase Perturbation
-    let app = AmplitudePhasePerturbation::new(2.5, 0.0); // Adjust stddevs as needed
-    app.augment_dataset(&mut data, true);
+    // let app = AmplitudePhasePerturbation::new(-10.0, 1.7); // Adjust stddevs as needed
+    // app.augment_dataset(&mut data, true);
     
     // reconstructed time domain dataset to CSV
-    let time_out_filename = format!("{}app.csv", dataset_name);
-    if let Err(e) = readcsv::write_dataset_csv(
-        &data.features,
-        &data.labels,
-        dataset_name,
-        &time_out_filename,
-    ) {
-        eprintln!("Failed to write time domain CSV: {e}");
-    } else {
-        println!("Time domain dataset written to {time_out_filename}");
-    }
+    // let time_out_filename = format!("{}app.csv", dataset_name);
+    // if let Err(e) = readcsv::write_dataset_csv(
+    //     &data.features,
+    //     &data.labels,
+    //     dataset_name,
+    //     &time_out_filename,
+    // ) {
+    //     eprintln!("Failed to write time domain CSV: {e}");
+    // } else {
+    //     println!("Time domain dataset written to {time_out_filename}");
+    // }
 
     // Compare original and reconstructed datasets
     //let (max_diff, all_within) = compare_datasets_within_tolerance(&data, &original_data, 1e-10);

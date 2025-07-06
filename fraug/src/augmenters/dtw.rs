@@ -1,41 +1,41 @@
-use super::base::Augmenter;
 use crate::Dataset;
-
-pub struct DynamicTimeWarpAugmenter;
+use rand::{rng, Rng};
+pub struct DynamicTimeWarpAugmenter {
+    window_size:usize
+}
 
 pub fn dtw(a: &[f64], b: &[f64]) -> (f64, Vec<(usize, usize)>) {
     let n = a.len();
     let m = b.len();
     let mut cost = vec![vec![f64::INFINITY; m + 1]; n + 1];
     cost[0][0] = 0.0;
-
     for i in 1..=n {
         for j in 1..=m {
             let diff = (a[i - 1] - b[j - 1]).abs();
-            let prev = cost[i - 1][j]
+            let min_prev = cost[i - 1][j]
                 .min(cost[i][j - 1])
                 .min(cost[i - 1][j - 1]);
-            cost[i][j] = diff + prev;
+            cost[i][j] = diff + min_prev;
         }
     }
     let distance = cost[n][m];
-
+    // Backtrack to get the best path
     let mut path = Vec::new();
     let (mut i, mut j) = (n, m);
     while i > 0 || j > 0 {
-        path.push((i.saturating_sub(1), j.saturating_sub(1)));
+        path.push((i - 1, j - 1));
         if i == 0 {
             j -= 1;
         } else if j == 0 {
             i -= 1;
         } else {
-            let c_diag = cost[i - 1][j - 1];
-            let c_up = cost[i - 1][j];
-            let c_left = cost[i][j - 1];
-            if c_diag <= c_up && c_diag <= c_left {
+            let diag = cost[i - 1][j - 1];
+            let up = cost[i - 1][j];
+            let left = cost[i][j - 1];
+            if diag <= up && diag <= left {
                 i -= 1;
                 j -= 1;
-            } else if c_up < c_left {
+            } else if up < left {
                 i -= 1;
             } else {
                 j -= 1;
@@ -47,45 +47,50 @@ pub fn dtw(a: &[f64], b: &[f64]) -> (f64, Vec<(usize, usize)>) {
 }
 
 impl DynamicTimeWarpAugmenter {
-    pub fn new() -> Self {
-        DynamicTimeWarpAugmenter
+
+    
+
+    pub fn new(window_size:usize) -> Self {
+        DynamicTimeWarpAugmenter { window_size: window_size }
     }
 
     /// Augment all samples in the dataset in-place by appending DTW-warped series.
     /// This will help us for graph plotting and checking if the warping worked later so just appending aug to original
     pub fn augment_dataset(&self, data: &mut Dataset) {
-        let original_features = data.features.clone();
-        let original_labels = data.labels.clone();
-        let n = original_features.len();
+        let originals = data.features.clone();
+        let orig_labels = data.labels.clone();
+        if self.window_size == 0 || self.window_size > originals.len() { 
+            
+         }
+        let mut rng = rng();
 
-        for i in 0..n {
-            for j in 0..n {
-                if i == j { continue; }
-                let (_dist, path) = dtw(&original_features[i], &original_features[j]);
-                let target_len = original_features[j].len();
-                let mut accum: Vec<Vec<f64>> = vec![Vec::new(); target_len];
-                for &(ai, bj) in &path {
-                    accum[bj].push(original_features[i][ai]);
-                }
-                let warped: Vec<f64> = accum.into_iter().enumerate().map(|(idx, vals)| {
-                    if !vals.is_empty() {
-                        let sum: f64 = vals.iter().sum();
-                        sum / vals.len() as f64
-                    } else {
-                        let xi = idx.min(original_features[i].len() - 1);
-                        original_features[i][xi]
-                    }
-                }).collect();
-
-                data.features.push(warped);
-                data.labels.push(original_labels[i].clone());
+        // Slide window over series indices
+        for start in 0..=(originals.len() - self.window_size) {
+            // prepare uniform distribution once per window
+            let mut i = rng.random_range(start..start+self.window_size);
+            let mut j = rng.random_range(start..start + self.window_size);
+            // ensure distinct
+            while j == i {
+                j = rng.random_range(start..start + self.window_size);
             }
+            // compute DTW path
+            let (_dist, path) = dtw(&originals[i], &originals[j]);
+            let len = originals[i].len();  // same as originals[j].len()
+            let mut buckets: Vec<Vec<f64>> = vec![Vec::new(); len];
+            for &(ai, bj) in &path {
+                buckets[bj].push(originals[i][ai]);
+            }
+            // average or fallback directly from originals
+            let warped: Vec<f64> = buckets.into_iter().enumerate().map(|(idx, vals)| {
+                if !vals.is_empty() {
+                    vals.iter().copied().sum::<f64>() / vals.len() as f64
+                } else {
+                    originals[i][idx]
+                }
+            }).collect();
+            data.features.push(warped);
+            data.labels.push(orig_labels[i].clone());
         }
-    }
-}
-
-impl Augmenter for DynamicTimeWarpAugmenter {
-    fn augment_one(&self, _x: &mut [f64]) {
     }
 }
 
@@ -100,7 +105,7 @@ mod dtw_augment_tests {
             features: vec![vec![0.0,1.0,2.0], vec![0.0,2.0,4.0]],
             labels: vec!["A".to_string(), "B".to_string()],
         };
-        let augmenter = DynamicTimeWarpAugmenter::new();
+        let augmenter = DynamicTimeWarpAugmenter::new(10);
         augmenter.augment_dataset(&mut data);
         // original 2 + 2 warps = 4
         assert_eq!(data.features.len(), 4);

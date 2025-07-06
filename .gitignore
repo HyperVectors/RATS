@@ -2,3 +2,4 @@
 **/data/
 *.png
 .idea
+**/*.csv
