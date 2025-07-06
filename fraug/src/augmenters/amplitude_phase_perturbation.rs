@@ -10,16 +10,17 @@ use crate::transforms::fastfourier::{dataset_fft, dataset_ifft};
 pub struct AmplitudePhasePerturbation {
     pub magnitude_std: f64,
     pub phase_std: f64,
+    pub is_time_domain: bool,
 }
 
 impl AmplitudePhasePerturbation {
-    pub fn new(magnitude_std: f64, phase_std: f64) -> Self {
-        Self { magnitude_std, phase_std }
+    pub fn new(magnitude_std: f64, phase_std: f64, is_time_domain:bool) -> Self {
+        Self { magnitude_std, phase_std, is_time_domain }
     }
 
     /// Augment all samples in the dataset in-place
-    pub fn augment_dataset(&self, data: &mut Dataset, is_time_domain:bool) {
-        if is_time_domain {
+    pub fn augment_dataset(&self, data: &mut Dataset) {
+        if self.is_time_domain {
             let mut transformed_dataset = dataset_fft(data);
 
             for sample in transformed_dataset.features.iter_mut() {
@@ -78,9 +79,9 @@ mod tests {
             ],
             labels: vec!["a".to_string(), "b".to_string()],
         };
-        let app = AmplitudePhasePerturbation::new(0.1, 0.1);
+        let app = AmplitudePhasePerturbation::new(0.1, 0.1 , false);
         let orig = data.features[0].clone();
-        app.augment_dataset(&mut data, false);
+        app.augment_dataset(&mut data);
         assert_ne!(orig, data.features[0]);
     }
 
@@ -92,9 +93,9 @@ mod tests {
         };
         let orig = data.features[0].clone();
         
-        let app = AmplitudePhasePerturbation::new(0.1, 0.1);
+        let app = AmplitudePhasePerturbation::new(0.1, 0.1, true);
         
-        app.augment_dataset(&mut data, true);
+        app.augment_dataset(&mut data);
         
         assert_ne!(orig, data.features[0]);
     }
