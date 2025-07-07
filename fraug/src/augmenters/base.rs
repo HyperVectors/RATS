@@ -1,14 +1,20 @@
 use rand::prelude::*;
-use std::ops::Add;
 use rayon::prelude::*;
+use std::ops::Add;
 
 use crate::Dataset;
 
 /// Trait for all augmenters, allows for augmentation of one time series or a whole dataset
 pub trait Augmenter {
-    fn augment_dataset(&self, input: &mut Dataset, parallel: bool) where Self: Sync {
+    fn augment_dataset(&self, input: &mut Dataset, parallel: bool)
+    where
+        Self: Sync,
+    {
         if parallel {
-            input.features.par_iter_mut().for_each(|x| self.augment_one(x));
+            input
+                .features
+                .par_iter_mut()
+                .for_each(|x| self.augment_one(x));
         } else {
             input.features.iter_mut().for_each(|x| self.augment_one(x));
         }
@@ -83,8 +89,6 @@ impl<T: Augmenter + 'static + Sync> Add<T> for AugmentationPipeline {
         let mut augmenters = self.augmenters;
         augmenters.push(Box::new(rhs));
 
-        AugmentationPipeline {
-            augmenters
-        }
+        AugmentationPipeline { augmenters }
     }
 }

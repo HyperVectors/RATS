@@ -1,9 +1,9 @@
 use super::base::Augmenter;
 use crate::Dataset;
-use rand_distr::{Normal, Distribution};
-use rand::rng;
-use std::f64::consts::PI;
 use crate::transforms::fastfourier::{dataset_fft, dataset_ifft};
+use rand::rng;
+use rand_distr::{Distribution, Normal};
+use std::f64::consts::PI;
 
 /// Amplitude & Phase Perturbation (APP) augmenter.
 /// Adds small Gaussian noise to each bin’s magnitude and phase.
@@ -15,7 +15,11 @@ pub struct AmplitudePhasePerturbation {
 
 impl AmplitudePhasePerturbation {
     pub fn new(magnitude_std: f64, phase_std: f64, is_time_domain: bool) -> Self {
-        Self { magnitude_std, phase_std, is_time_domain }
+        Self {
+            magnitude_std,
+            phase_std,
+            is_time_domain,
+        }
     }
 }
 
@@ -29,13 +33,13 @@ impl Augmenter for AmplitudePhasePerturbation {
             }
             let inverse_dataset = dataset_ifft(&transformed_dataset);
             *data = inverse_dataset;
-        }else {
+        } else {
             for sample in data.features.iter_mut() {
                 self.augment_one(sample);
             }
         }
     }
-    
+
     fn augment_one(&self, x: &mut [f64]) {
         let num_bins = x.len() / 2;
         let mut rng = rng();
@@ -71,13 +75,10 @@ mod tests {
     #[test]
     fn test_app_augmenter_frequency() {
         let mut data = Dataset {
-            features: vec![
-                vec![1.0, 0.0].repeat(16),
-                vec![2.0, 0.0].repeat(16),
-            ],
+            features: vec![vec![1.0, 0.0].repeat(16), vec![2.0, 0.0].repeat(16)],
             labels: vec!["a".to_string(), "b".to_string()],
         };
-        let app = AmplitudePhasePerturbation::new(0.1, 0.1 , false);
+        let app = AmplitudePhasePerturbation::new(0.1, 0.1, false);
         let orig = data.features[0].clone();
         app.augment_dataset(&mut data, false);
         assert_ne!(orig, data.features[0]);
@@ -86,15 +87,15 @@ mod tests {
     #[test]
     fn test_app_augmenter_time() {
         let mut data = Dataset {
-            features: vec![vec![0.0,1.0,2.0], vec![0.0,2.0,4.0]],
+            features: vec![vec![0.0, 1.0, 2.0], vec![0.0, 2.0, 4.0]],
             labels: vec!["A".to_string(), "B".to_string()],
         };
         let orig = data.features[0].clone();
-        
+
         let app = AmplitudePhasePerturbation::new(0.1, 0.1, true);
-        
+
         app.augment_dataset(&mut data, false);
-        
+
         assert_ne!(orig, data.features[0]);
     }
 }

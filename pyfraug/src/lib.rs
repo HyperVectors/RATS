@@ -1,8 +1,8 @@
 mod augmenters;
 
-use pyo3::prelude::*;
-use numpy::{IntoPyArray, PyArray2, PyReadonlyArray2};
 use ndarray::Array2;
+use numpy::{IntoPyArray, PyArray2, PyReadonlyArray2};
+use pyo3::prelude::*;
 
 #[pyclass]
 struct Dataset {
@@ -18,13 +18,19 @@ impl Dataset {
 
         let features: Vec<Vec<f64>> = features.rows().into_iter().map(|x| x.to_vec()).collect();
 
-        Dataset { inner: fraug::Dataset { features, labels }}
+        Dataset {
+            inner: fraug::Dataset { features, labels },
+        }
     }
 
     #[getter]
     fn get_features<'py>(&self, py: Python<'py>) -> Bound<'py, PyArray2<f64>> {
         let features = self.inner.features.clone();
-        let features = Array2::from_shape_vec((features.len(), features[0].len()), features.iter().flatten().map(|&x| x).collect()).unwrap();
+        let features = Array2::from_shape_vec(
+            (features.len(), features[0].len()),
+            features.iter().flatten().map(|&x| x).collect(),
+        )
+        .unwrap();
         features.into_pyarray(py)
     }
 

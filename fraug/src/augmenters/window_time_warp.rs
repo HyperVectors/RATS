@@ -1,7 +1,7 @@
 use super::base::Augmenter;
 use crate::Dataset;
 use rand::rngs::ThreadRng;
-use rand::{rng, thread_rng, Rng};
+use rand::{Rng, rng};
 
 pub struct RandomWindowWarpAugmenter {
     /// Length of the window to warp - a window of this size will be selected randomly for every time series in the dataset
@@ -14,7 +14,10 @@ impl RandomWindowWarpAugmenter {
     /// Create a new augmenter with given window size.
     /// `speed_ratio_range` defines the min and max speed change (e.g. (0.5, 2.0)).
     pub fn new(window_size: usize, speed_ratio_range: (f64, f64)) -> Self {
-        RandomWindowWarpAugmenter { window_size, speed_ratio_range }
+        RandomWindowWarpAugmenter {
+            window_size,
+            speed_ratio_range,
+        }
     }
 
     /// Warp the segment series[start..end] by a random speed ratio within range.
@@ -39,7 +42,9 @@ impl RandomWindowWarpAugmenter {
         if let Some(&last) = times.last() {
             if last > 0.0 {
                 let scale = (seg_len - 1) as f64 / last;
-                for t in times.iter_mut() { *t *= scale; }
+                for t in times.iter_mut() {
+                    *t *= scale;
+                }
             }
         }
         let mut warped = Vec::with_capacity(seg_len);
@@ -79,7 +84,8 @@ impl Augmenter for RandomWindowWarpAugmenter {
                 let start = rng.gen_range(0..=len - self.window_size);
                 let end = start + self.window_size;
                 // Generate warped window segment
-                let warped_window = Self::warp_segment(series, start, end, self.speed_ratio_range, &mut rng);
+                let warped_window =
+                    Self::warp_segment(series, start, end, self.speed_ratio_range, &mut rng);
                 // Build new series: prefix + warped_window + suffix
                 let mut new_series = Vec::with_capacity(len);
                 new_series.extend_from_slice(&series[0..start]);
@@ -90,7 +96,7 @@ impl Augmenter for RandomWindowWarpAugmenter {
             }
         }
     }
-    
+
     fn augment_one(&self, _x: &mut [f64]) {
         unimplemented!("Use augment_dataset instead!");
     }
@@ -116,13 +122,16 @@ mod tests {
     #[test]
     fn test_random_window_warp_sub_segment() {
         let orig = vec![0.0, 1.0, 2.0, 3.0, 4.0];
-        let mut data = Dataset { features: vec![orig.clone()], labels: vec!["L".into()] };
+        let mut data = Dataset {
+            features: vec![orig.clone()],
+            labels: vec!["L".into()],
+        };
         let aug = RandomWindowWarpAugmenter::new(2, (0.5, 1.5));
         aug.augment_dataset(&mut data, false);
         assert_eq!(data.features.len(), 2);
         let warped = &data.features[1];
         assert_eq!(warped[0], orig[0]);
-        assert_eq!(warped[warped.len()-1], orig[orig.len()-1]);
+        assert_eq!(warped[warped.len() - 1], orig[orig.len() - 1]);
         assert_eq!(warped.len(), orig.len());
     }
 }

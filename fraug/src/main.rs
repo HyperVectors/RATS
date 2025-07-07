@@ -4,8 +4,8 @@ mod readcsv;
 mod transforms;
 use crate::augmenters::NoiseType;
 use augmenters::{
-    AddNoise, AugmentationPipeline, Augmenter, ConditionalAugmenter, Crop, Drop, Jittering, Repeat,
-    Rotation, Scaling, FrequencyMask, AmplitudePhasePerturbation, DynamicTimeWarpAugmenter
+    AddNoise, AmplitudePhasePerturbation, AugmentationPipeline, Augmenter, ConditionalAugmenter,
+    Crop, Drop, DynamicTimeWarpAugmenter, FrequencyMask, Jittering, Repeat, Rotation, Scaling,
 };
 use fraug::Dataset;
 use transforms::fastfourier::{compare_datasets_within_tolerance, dataset_fft, dataset_ifft};
@@ -40,12 +40,12 @@ fn main() {
     }
 
     // Here we can do augmentations to the data
-    
+
     println!(
-         "Before {:?} Length: {}",
-         data.features[0].iter().take(10).collect::<Vec<&f64>>(),
-         data.features.len()
-     );
+        "Before {:?} Length: {}",
+        data.features[0].iter().take(10).collect::<Vec<&f64>>(),
+        data.features.len()
+    );
 
     // let pipeline = AugmentationPipeline::new() + AddNoise::new(NoiseType::Slope, Some((0.01, 0.02)), None, None);
     // let pipeline = AugmentationPipeline::new()
@@ -58,8 +58,7 @@ fn main() {
 
     // pipeline.augment_dataset(&mut data);
 
-    
-    let dtw_augmenter = DynamicTimeWarpAugmenter:: new(10);
+    let dtw_augmenter = DynamicTimeWarpAugmenter::new(10);
 
     dtw_augmenter.augment_dataset(&mut data, false);
 
@@ -68,7 +67,7 @@ fn main() {
         data.features[0].iter().take(10).collect::<Vec<&f64>>(),
         data.features.len()
     );
-    
+
     // Write augmented dataset to CSV
     let out_filename = format!("{}_augmented.csv", dataset_name);
     if let Err(e) =
@@ -89,7 +88,7 @@ fn main() {
     // Apply Amplitude & Phase Perturbation
     // let app = AmplitudePhasePerturbation::new(-10.0, 1.7); // Adjust stddevs as needed
     // app.augment_dataset(&mut data, true);
-    
+
     // reconstructed time domain dataset to CSV
     // let time_out_filename = format!("{}app.csv", dataset_name);
     // if let Err(e) = readcsv::write_dataset_csv(
