@@ -158,6 +158,67 @@ impl AddNoise {
 
 wrap_augmentation_functions!(AddNoise);
 
+#[pyclass(extends=PyAugmenter)]
+pub struct AmplitudePhasePerturbation {
+    inner: fraug::augmenters::AmplitudePhasePerturbation,
+}
+
+#[pymethods]
+impl AmplitudePhasePerturbation {
+    #[new]
+    fn new(magnitude_std: f64, phase_std: f64, is_time_domain: bool) -> (Self, PyAugmenter) {
+        (AmplitudePhasePerturbation { inner: fraug::augmenters::AmplitudePhasePerturbation::new(magnitude_std, phase_std, is_time_domain) }, PyAugmenter {})
+    }
+}
+
+wrap_augmentation_functions!(AmplitudePhasePerturbation);
+
+#[pyclass(extends=PyAugmenter)]
+pub struct DynamicTimeWarpAugmenter {
+    inner: fraug::augmenters::DynamicTimeWarpAugmenter,
+}
+
+#[pymethods]
+impl DynamicTimeWarpAugmenter {
+    #[new]
+    fn new(window_size: usize) -> (Self, PyAugmenter) {
+        (DynamicTimeWarpAugmenter { inner: fraug::augmenters::DynamicTimeWarpAugmenter::new(window_size) }, PyAugmenter {})
+    }
+}
+
+wrap_augmentation_functions!(DynamicTimeWarpAugmenter);
+
+#[pyclass(extends=PyAugmenter)]
+pub struct FrequencyMask {
+    inner: fraug::augmenters::FrequencyMask,
+}
+
+#[pymethods]
+impl FrequencyMask {
+    #[new]
+    fn new(mask_width: usize) -> (Self, PyAugmenter) {
+        (FrequencyMask { inner: fraug::augmenters::FrequencyMask::new(mask_width) }, PyAugmenter {})
+    }
+}
+
+wrap_augmentation_functions!(FrequencyMask);
+
+#[pyclass(extends=PyAugmenter)]
+pub struct RandomWindowWarpAugmenter {
+    inner: fraug::augmenters::RandomWindowWarpAugmenter,
+}
+
+#[pymethods]
+impl RandomWindowWarpAugmenter {
+    #[new]
+    fn new(window_size: usize, speed_ratio_range: (f64, f64)) -> (Self, PyAugmenter) {
+        (RandomWindowWarpAugmenter { inner: fraug::augmenters::RandomWindowWarpAugmenter::new(window_size, speed_ratio_range) }, PyAugmenter {})
+    }
+}
+
+wrap_augmentation_functions!(RandomWindowWarpAugmenter);
+
+
 // #[pyclass(extends=PyAugmenter)]
 // pub struct ConditionalAugmenter {
 //     augmenter: PyAugmenter,

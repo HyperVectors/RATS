@@ -1,7 +1,8 @@
 use crate::Dataset;
+use super::base::Augmenter;
 use rand::{rng, Rng};
 pub struct DynamicTimeWarpAugmenter {
-    window_size:usize
+    window_size: usize
 }
 
 pub fn dtw(a: &[f64], b: &[f64]) -> (f64, Vec<(usize, usize)>) {
@@ -47,21 +48,22 @@ pub fn dtw(a: &[f64], b: &[f64]) -> (f64, Vec<(usize, usize)>) {
 }
 
 impl DynamicTimeWarpAugmenter {
-
     
-
     pub fn new(window_size:usize) -> Self {
         DynamicTimeWarpAugmenter { window_size: window_size }
     }
+    
+}
 
+impl Augmenter for DynamicTimeWarpAugmenter {
     /// Augment all samples in the dataset in-place by appending DTW-warped series.
-    /// This will help us for graph plotting and checking if the warping worked later so just appending aug to original
-    pub fn augment_dataset(&self, data: &mut Dataset) {
+    // This will help us for graph plotting and checking if the warping worked later so just appending aug to original
+    fn augment_dataset(&self, data: &mut Dataset, _parallel: bool) {
         let originals = data.features.clone();
         let orig_labels = data.labels.clone();
-        if self.window_size == 0 || self.window_size > originals.len() { 
-            
-         }
+        if self.window_size == 0 || self.window_size > originals.len() {
+
+        }
         let mut rng = rng();
 
         // Slide window over series indices
@@ -92,6 +94,10 @@ impl DynamicTimeWarpAugmenter {
             data.labels.push(orig_labels[i].clone());
         }
     }
+
+    fn augment_one(&self, x: &mut [f64]) {
+        unimplemented!("Use augment_dataset instead!");
+    }
 }
 
 #[cfg(test)]
@@ -106,7 +112,7 @@ mod dtw_augment_tests {
             labels: vec!["A".to_string(), "B".to_string()],
         };
         let augmenter = DynamicTimeWarpAugmenter::new(10);
-        augmenter.augment_dataset(&mut data);
+        augmenter.augment_dataset(&mut data, false);
         // original 2 + 2 warps = 4
         assert_eq!(data.features.len(), 4);
         assert_eq!(data.labels.len(), 4);

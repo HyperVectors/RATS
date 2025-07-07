@@ -10,13 +10,6 @@ impl FrequencyMask {
     pub fn new(mask_width: usize) -> Self {
         FrequencyMask { mask_width }
     }
-
-    /// Augment all samples in the dataset in-place
-    pub fn augment_dataset(&self, data: &mut Dataset) {
-        for sample in data.features.iter_mut() {
-            self.augment_one(sample);
-        }
-    }
 }
 
 impl Augmenter for FrequencyMask {
@@ -54,7 +47,7 @@ mod tests {
             labels: vec!["a".to_string(), "b".to_string()],
         };
         let mask = FrequencyMask::new(4);
-        mask.augment_dataset(&mut data);
+        mask.augment_dataset(&mut data, true);
         for sample in data.features {
             let mut zeroed_bins = 0;
             for bin in 0..(sample.len() / 2) {

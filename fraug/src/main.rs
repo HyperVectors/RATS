@@ -5,7 +5,7 @@ mod transforms;
 use crate::augmenters::NoiseType;
 use augmenters::{
     AddNoise, AugmentationPipeline, Augmenter, ConditionalAugmenter, Crop, Drop, Jittering, Repeat,
-    Rotation, Scaling, FrequencyMask, AmplitudePhasePerturbation,DynamicTimeWarpAugmenter
+    Rotation, Scaling, FrequencyMask, AmplitudePhasePerturbation, DynamicTimeWarpAugmenter
 };
 use fraug::Dataset;
 use transforms::fastfourier::{compare_datasets_within_tolerance, dataset_fft, dataset_ifft};
@@ -61,7 +61,7 @@ fn main() {
     
     let dtw_augmenter = DynamicTimeWarpAugmenter:: new(10);
 
-    dtw_augmenter.augment_dataset(&mut data);
+    dtw_augmenter.augment_dataset(&mut data, false);
 
     println!(
         "After {:?}\nLength: {}",

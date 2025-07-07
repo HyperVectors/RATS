@@ -14,12 +14,13 @@ pub struct AmplitudePhasePerturbation {
 }
 
 impl AmplitudePhasePerturbation {
-    pub fn new(magnitude_std: f64, phase_std: f64, is_time_domain:bool) -> Self {
+    pub fn new(magnitude_std: f64, phase_std: f64, is_time_domain: bool) -> Self {
         Self { magnitude_std, phase_std, is_time_domain }
     }
+}
 
-    /// Augment all samples in the dataset in-place
-    pub fn augment_dataset(&self, data: &mut Dataset) {
+impl Augmenter for AmplitudePhasePerturbation {
+    fn augment_dataset(&self, data: &mut Dataset, _parallel: bool) {
         if self.is_time_domain {
             let mut transformed_dataset = dataset_fft(data);
 
@@ -31,13 +32,10 @@ impl AmplitudePhasePerturbation {
         }else {
             for sample in data.features.iter_mut() {
                 self.augment_one(sample);
-            }    
+            }
         }
-        
     }
-}
-
-impl Augmenter for AmplitudePhasePerturbation {
+    
     fn augment_one(&self, x: &mut [f64]) {
         let num_bins = x.len() / 2;
         let mut rng = rng();
@@ -81,7 +79,7 @@ mod tests {
         };
         let app = AmplitudePhasePerturbation::new(0.1, 0.1 , false);
         let orig = data.features[0].clone();
-        app.augment_dataset(&mut data);
+        app.augment_dataset(&mut data, false);
         assert_ne!(orig, data.features[0]);
     }
 
@@ -95,7 +93,7 @@ mod tests {
         
         let app = AmplitudePhasePerturbation::new(0.1, 0.1, true);
         
-        app.augment_dataset(&mut data);
+        app.augment_dataset(&mut data, false);
         
         assert_ne!(orig, data.features[0]);
     }
