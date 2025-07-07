@@ -1,11 +1,19 @@
-image: rust:1.78
-
 stages:
-  - build
+  - test
+#  - build
 
-build-job:
-  stage: build
+tests:
+  stage: test
+  image: rust
   script:
-    - echo "Starting Rust Build"
     - cd fraug
-    - cargo build
+    - cargo test
+
+#build:amd64:
+#  stage: build
+#  image: rust
+#  script:
+#    - cargo build --release
+#  artifacts:
+#    paths:
+#      - target/release/rust-gitlab-example
