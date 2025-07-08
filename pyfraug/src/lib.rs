@@ -65,6 +65,10 @@ fn pyfraug(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<augmenters::Rotation>()?;
     m.add_class::<augmenters::NoiseType>()?;
     m.add_class::<augmenters::AddNoise>()?;
+    m.add_class::<augmenters::AmplitudePhasePerturbation>()?;
+    m.add_class::<augmenters::DynamicTimeWarpAugmenter>()?;
+    m.add_class::<augmenters::FrequencyMask>()?;
+    m.add_class::<augmenters::RandomWindowWarpAugmenter>()?;
     m.add_class::<augmenters::PyAugmenter>()?;
     Ok(())
 }
