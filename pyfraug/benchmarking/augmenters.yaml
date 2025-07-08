@@ -1,0 +1,44 @@
+- name: Repeat
+  pf_kwargs: {times: 3}
+  tsaug_class: null
+  tsaug_kwargs: null
+
+- name: Scaling
+  pf_kwargs: {min: 0.8, max: 1.2}
+  tsaug_class: null
+  tsaug_kwargs: null
+
+- name: Rotation
+  pf_kwargs: {anchor: 1.0}
+  tsaug_class: null
+  tsaug_kwargs: null
+
+- name: Jittering
+  pf_kwargs: {standard_deviation: 0.1}
+  tsaug_class: AddNoise
+  tsaug_kwargs: {scale: 0.1}
+
+- name: Drop
+  pf_kwargs: {percentage: 0.1, default: 0.0}
+  tsaug_class: null
+  tsaug_kwargs: null
+
+- name: Crop
+  pf_kwargs: {size: 64}
+  tsaug_class: Crop
+  tsaug_kwargs: {size: 64}
+
+- name: AmplitudePhasePerturbation
+  pf_kwargs: {magnitude_std: 0.1, phase_std: 0.1, is_time_domain: false}
+  tsaug_class: null
+  tsaug_kwargs: null
+
+- name: DynamicTimeWarpAugmenter
+  pf_kwargs: {window_size: 10}
+  tsaug_class: TimeWarp
+  tsaug_kwargs: {n_speed_change: 2, max_speed_ratio: 2.0}
+
+- name: FrequencyMask
+  pf_kwargs: {mask_width: 10}
+  tsaug_class: null
+  tsaug_kwargs: null
