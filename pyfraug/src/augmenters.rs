@@ -285,6 +285,42 @@ impl RandomWindowWarpAugmenter {
 
 wrap_augmentation_functions!(RandomWindowWarpAugmenter);
 
+#[pyclass]
+pub enum PoolingMethod {
+    Max,
+    Min,
+    Average
+}
+
+#[pyclass(extends=PyAugmenter)]
+pub struct Pool {
+    inner: fraug::augmenters::Pool,
+}
+
+#[pymethods]
+impl Pool {
+    #[new]
+    fn new(kind: &PoolingMethod, size: usize) -> (Self, PyAugmenter) {
+        let int_kind = match kind {
+            PoolingMethod::Max => fraug::augmenters::PoolingMethod::Max,
+            PoolingMethod::Min => fraug::augmenters::PoolingMethod::Min,
+            PoolingMethod::Average => fraug::augmenters::PoolingMethod::Average,
+        };
+
+        (
+            Pool {
+                inner: fraug::augmenters::Pool::new(
+                    int_kind,
+                    size
+                ),
+            },
+            PyAugmenter {},
+        )
+    }
+}
+
+wrap_augmentation_functions!(Pool);
+
 // #[pyclass(extends=PyAugmenter)]
 // pub struct ConditionalAugmenter {
 //     augmenter: PyAugmenter,
