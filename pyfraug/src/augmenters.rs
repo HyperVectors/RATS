@@ -321,6 +321,28 @@ impl Pool {
 
 wrap_augmentation_functions!(Pool);
 
+#[pyclass(extends=PyAugmenter)]
+pub struct Quantize {
+    inner: fraug::augmenters::Quantize,
+}
+
+#[pymethods]
+impl Quantize {
+    #[new]
+    fn new(levels: usize) -> (Self, PyAugmenter) {
+        (
+            Quantize {
+                inner: fraug::augmenters::Quantize::new(
+                    levels
+                ),
+            },
+            PyAugmenter {},
+        )
+    }
+}
+
+wrap_augmentation_functions!(Quantize);
+
 // #[pyclass(extends=PyAugmenter)]
 // pub struct ConditionalAugmenter {
 //     augmenter: PyAugmenter,

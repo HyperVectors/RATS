@@ -63,8 +63,8 @@ mod tests {
     fn pool_min() {
         let mut series = vec![1.0; 5].iter().enumerate().map(|(i, _)| i as f64).collect::<Vec<_>>();
 
-        let drop = Pool::new(PoolingMethod::Min, 3);
-        drop.augment_one(&mut series);
+        let aug = Pool::new(PoolingMethod::Min, 3);
+        aug.augment_one(&mut series);
 
         assert_eq!(series, vec![0.0, 0.0, 0.0, 3.0, 3.0]);
     }
@@ -73,8 +73,8 @@ mod tests {
     fn pool_max() {
         let mut series = vec![1.0; 5].iter().enumerate().map(|(i, _)| i as f64).collect::<Vec<_>>();
 
-        let drop = Pool::new(PoolingMethod::Max, 3);
-        drop.augment_one(&mut series);
+        let aug = Pool::new(PoolingMethod::Max, 3);
+        aug.augment_one(&mut series);
 
         assert_eq!(series, vec![2.0, 2.0, 2.0, 4.0, 4.0]);
     }
@@ -83,8 +83,8 @@ mod tests {
     fn pool_average() {
         let mut series = vec![1.0; 6].iter().enumerate().map(|(i, _)| i as f64).collect::<Vec<_>>();
 
-        let drop = Pool::new(PoolingMethod::Average, 4);
-        drop.augment_one(&mut series);
+        let aug = Pool::new(PoolingMethod::Average, 4);
+        aug.augment_one(&mut series);
 
         assert_eq!(series, vec![1.5, 1.5, 1.5, 1.5, 4.5, 4.5]);
     }
@@ -93,8 +93,8 @@ mod tests {
     fn pool_exact_match() {
         let mut series = vec![1.0; 6].iter().enumerate().map(|(i, _)| i as f64).collect::<Vec<_>>();
 
-        let drop = Pool::new(PoolingMethod::Min, 2);
-        drop.augment_one(&mut series);
+        let aug = Pool::new(PoolingMethod::Min, 2);
+        aug.augment_one(&mut series);
 
         assert_eq!(series, vec![0.0, 0.0, 2.0, 2.0, 4.0, 4.0]);
     }
