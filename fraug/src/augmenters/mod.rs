@@ -16,6 +16,7 @@ mod pool;
 mod quantize;
 mod resize;
 mod reverse;
+mod permutate;
 
 pub use addnoise::{AddNoise, NoiseType};
 pub use amplitude_phase_perturbation::AmplitudePhasePerturbation;
@@ -33,3 +34,4 @@ pub use pool::{Pool, PoolingMethod};
 pub use quantize::Quantize;
 pub use resize::Resize;
 pub use reverse::Reverse;
+pub use permutate::Permutate;

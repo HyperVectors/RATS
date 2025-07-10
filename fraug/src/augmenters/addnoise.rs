@@ -1,5 +1,5 @@
 use super::base::Augmenter;
-use rand::{distr::Uniform, prelude::*, random_range, thread_rng};
+use rand::{distr::Uniform, prelude::*, random_range};
 use rand_distr::Normal;
 
 /// Augmenter that allows different types of noise injection

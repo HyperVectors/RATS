@@ -327,3 +327,22 @@ impl Reverse {
 }
 
 wrap_augmentation_functions!(Reverse);
+
+#[pyclass]
+pub struct Permutate {
+    inner: fraug::augmenters::Permutate,
+}
+
+#[pymethods]
+impl Permutate {
+    #[new]
+    fn new(size: usize) -> Self {
+        Permutate {
+            inner: fraug::augmenters::Permutate::new(
+                size
+            ),
+        }
+    }
+}
+
+wrap_augmentation_functions!(Permutate);

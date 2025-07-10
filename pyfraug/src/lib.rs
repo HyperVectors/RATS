@@ -73,5 +73,6 @@ fn pyfraug(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<augmenters::Quantize>()?;
     m.add_class::<augmenters::Resize>()?;
     m.add_class::<augmenters::Reverse>()?;
+    m.add_class::<augmenters::Permutate>()?;
     Ok(())
 }
