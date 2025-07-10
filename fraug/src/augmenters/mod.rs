@@ -15,6 +15,7 @@ mod drift;
 mod pool;
 mod quantize;
 mod resize;
+mod reverse;
 
 pub use addnoise::{AddNoise, NoiseType};
 pub use amplitude_phase_perturbation::AmplitudePhasePerturbation;
@@ -31,3 +32,4 @@ pub use window_time_warp::RandomWindowWarpAugmenter;
 pub use pool::{Pool, PoolingMethod};
 pub use quantize::Quantize;
 pub use resize::Resize;
+pub use reverse::Reverse;

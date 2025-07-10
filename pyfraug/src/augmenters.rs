@@ -310,3 +310,20 @@ impl Resize {
 }
 
 wrap_augmentation_functions!(Resize);
+
+#[pyclass]
+pub struct Reverse {
+    inner: fraug::augmenters::Reverse,
+}
+
+#[pymethods]
+impl Reverse {
+    #[new]
+    fn new() -> Self {
+        Reverse {
+            inner: fraug::augmenters::Reverse::new(),
+        }
+    }
+}
+
+wrap_augmentation_functions!(Reverse);
