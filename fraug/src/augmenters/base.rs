@@ -4,23 +4,26 @@ use std::ops::Add;
 
 use crate::Dataset;
 
-/// Trait for all augmenters, allows for augmentation of one time series or a whole dataset
+/// Trait for all augmenters, allows for augmentation of one time series or a batch
 pub trait Augmenter {
     fn augment_dataset(&self, input: &mut Dataset, parallel: bool)
     where
-        Self: Sync,
+        Self: Sync
     {
         if parallel {
             input
                 .features
                 .par_iter_mut()
-                .for_each(|x| self.augment_one(x));
+                .for_each(|x| *x = self.augment_one(x));
         } else {
-            input.features.iter_mut().for_each(|x| self.augment_one(x));
+            input
+                .features
+                .iter_mut()
+                .for_each(|x| *x = self.augment_one(x));
         }
     }
 
-    fn augment_one(&self, x: &mut [f64]);
+    fn augment_one(&self, x: &[f64]) -> Vec<f64>;
 }
 
 /// Augmenter that executes another augmenter on a row with a given probability p
@@ -43,10 +46,12 @@ impl ConditionalAugmenter {
 unsafe impl Sync for ConditionalAugmenter {}
 
 impl Augmenter for ConditionalAugmenter {
-    fn augment_one(&self, x: &mut [f64]) {
+    fn augment_one(&self, x: &[f64]) -> Vec<f64> {
         let mut rng = rand::rng();
         if rng.random::<f64>() < self.p {
-            self.inner.augment_one(x);
+            self.inner.augment_one(x)
+        } else { 
+            x.to_vec()
         }
     }
 }
@@ -75,10 +80,12 @@ impl Augmenter for AugmentationPipeline {
             .for_each(|augmenter| augmenter.augment_dataset(input, parallel));
     }
 
-    fn augment_one(&self, x: &mut [f64]) {
-        self.augmenters
-            .iter()
-            .for_each(|augmenter| augmenter.augment_one(x));
+    fn augment_one(&self, x: &[f64]) -> Vec<f64> {
+        let mut res = x.to_vec();
+        for augmenter in self.augmenters.iter() {
+            res = augmenter.augment_one(&res);
+        }
+        res
     }
 }
 

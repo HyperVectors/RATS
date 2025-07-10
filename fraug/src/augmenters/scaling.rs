@@ -16,9 +16,9 @@ impl Scaling {
 }
 
 impl Augmenter for Scaling {
-    fn augment_one(&self, x: &mut [f64]) {
+    fn augment_one(&self, x: &[f64]) -> Vec<f64> {
         let scalar = rand::random_range(self.min_factor..self.max_factor);
-        x.iter_mut().for_each(|val| *val *= scalar);
+        x.iter().map(|val| *val * scalar).collect()
     }
 }
 
@@ -28,10 +28,10 @@ mod tests {
 
     #[test]
     fn scaling() {
-        let mut series = vec![1.0; 100];
+        let series = vec![1.0; 100];
 
         let augmenter = Scaling::new(2.0, 4.0);
-        augmenter.augment_one(&mut series);
+        let series = augmenter.augment_one(&series);
 
         series
             .iter()

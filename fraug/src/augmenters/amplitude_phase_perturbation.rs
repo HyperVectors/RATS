@@ -27,24 +27,27 @@ impl Augmenter for AmplitudePhasePerturbation {
     fn augment_dataset(&self, data: &mut Dataset, _parallel: bool) {
         if self.is_time_domain {
             let mut transformed_dataset = dataset_fft(data);
+            
+            transformed_dataset.features
+                .iter_mut()
+                .for_each(|sample| *sample = self.augment_one(sample));
 
-            for sample in transformed_dataset.features.iter_mut() {
-                self.augment_one(sample);
-            }
             let inverse_dataset = dataset_ifft(&transformed_dataset);
             *data = inverse_dataset;
         } else {
-            for sample in data.features.iter_mut() {
-                self.augment_one(sample);
-            }
+            data.features
+                .iter_mut()
+                .for_each(|sample| *sample = self.augment_one(sample));
         }
     }
 
-    fn augment_one(&self, x: &mut [f64]) {
+    fn augment_one(&self, x: &[f64]) -> Vec<f64> {
         let num_bins = x.len() / 2;
         let mut rng = rng();
         let mag_noise = Normal::new(0.0, self.magnitude_std).unwrap();
         let phase_noise = Normal::new(0.0, self.phase_std).unwrap();
+        
+        let mut x = x.to_vec();
 
         for bin in 0..num_bins {
             let re_idx = 2 * bin;
@@ -64,6 +67,8 @@ impl Augmenter for AmplitudePhasePerturbation {
             x[re_idx] = mag_perturbed * phase_perturbed.cos();
             x[im_idx] = mag_perturbed * phase_perturbed.sin();
         }
+        
+        x
     }
 }
 

@@ -30,7 +30,7 @@ impl Augmenter for Repeat {
         input.labels = new_labels;
     }
 
-    fn augment_one(&self, _x: &mut [f64]) {
+    fn augment_one(&self, _x: &[f64]) -> Vec<f64> {
         unimplemented!("Repeat augmenter only works on the dataset directly!");
     }
 }

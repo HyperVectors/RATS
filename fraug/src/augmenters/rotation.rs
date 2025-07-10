@@ -12,9 +12,10 @@ impl Rotation {
 }
 
 impl Augmenter for Rotation {
-    fn augment_one(&self, x: &mut [f64]) {
-        x.iter_mut()
-            .for_each(|val| *val = (*val - self.anchor) * -1.0 + self.anchor);
+    fn augment_one(&self, x: &[f64]) -> Vec<f64> {
+        x.iter()
+            .map(|val| (*val - self.anchor) * -1.0 + self.anchor)
+            .collect()
     }
 }
 
@@ -24,20 +25,20 @@ mod tests {
 
     #[test]
     fn flip() {
-        let mut series = vec![1.0; 100];
+        let series = vec![1.0; 100];
 
         let augmenter = Rotation::new(0.0);
-        augmenter.augment_one(&mut series);
+        let series = augmenter.augment_one(&series);
 
         assert_eq!(series, vec![-1.0; 100]);
     }
 
     #[test]
     fn anchor() {
-        let mut series = vec![1.0; 100];
+        let series = vec![1.0; 100];
 
         let augmenter = Rotation::new(0.5);
-        augmenter.augment_one(&mut series);
+        let series = augmenter.augment_one(&series);
 
         assert_eq!(series, vec![0.0; 100]);
     }

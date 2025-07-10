@@ -15,7 +15,7 @@ impl Convolve {
 }
 
 impl Augmenter for Convolve {
-    fn augment_one(&self, x: &mut [f64]) {
+    fn augment_one(&self, x: &[f64]) -> Vec<f64> {
         todo!();
     }
 }

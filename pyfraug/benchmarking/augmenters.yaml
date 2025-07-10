@@ -33,11 +33,6 @@
   tsaug_class: null
   tsaug_kwargs: null
 
-- name: DynamicTimeWarpAugmenter
-  pf_kwargs: {window_size: 10}
-  tsaug_class: TimeWarp
-  tsaug_kwargs: {n_speed_change: 2, max_speed_ratio: 2.0}
-
 - name: FrequencyMask
   pf_kwargs: {mask_width: 10}
   tsaug_class: null

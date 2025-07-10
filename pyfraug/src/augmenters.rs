@@ -1,8 +1,6 @@
 use crate::Dataset;
 use fraug::augmenters::Augmenter;
-use ndarray::ArrayViewMut1;
-use numpy::PyArray1;
-use numpy::PyArrayMethods;
+use numpy::{ PyArray1, PyArrayMethods, ToPyArray };
 use pyo3::prelude::*;
 
 macro_rules! wrap_augmentation_functions {
@@ -13,30 +11,20 @@ macro_rules! wrap_augmentation_functions {
                 self.inner.augment_dataset(&mut dataset.inner, parallel);
             }
 
-            fn augment_one<'py>(&self, x: &Bound<'py, PyArray1<f64>>) {
-                let mut x: ArrayViewMut1<f64> = unsafe { x.as_array_mut() };
-                let mut x_vec = x.as_slice().unwrap().to_vec();
+            fn augment_one<'py>(&self, py: Python<'py>, x: &Bound<'py, PyArray1<f64>>) -> Bound<'py, PyArray1<f64>> {
+                let x = x.to_owned_array();
+                let x_vec = x.as_slice().unwrap().to_vec();
 
-                self.inner.augment_one(&mut x_vec);
+                let x_vec = self.inner.augment_one(&x_vec);
 
-                x.as_slice_mut().unwrap().copy_from_slice(x_vec.as_slice());
+                let x = ndarray::Array::from_vec(x_vec);
+                x.to_pyarray(py)
             }
         }
     };
 }
 
-#[pyclass(name = "Augmenter", subclass)]
-pub struct PyAugmenter {}
-
-#[pymethods]
-impl PyAugmenter {
-    #[pyo3(signature = (dataset, *, parallel))]
-    fn augment_dataset(&self, dataset: &mut Dataset, parallel: bool) {}
-
-    fn augment_one<'py>(&self, _x: &Bound<'py, PyArray1<f64>>) {}
-}
-
-#[pyclass(extends=PyAugmenter)]
+#[pyclass]
 pub struct Repeat {
     inner: fraug::augmenters::Repeat,
 }
@@ -44,19 +32,16 @@ pub struct Repeat {
 #[pymethods]
 impl Repeat {
     #[new]
-    fn new(times: usize) -> (Self, PyAugmenter) {
-        (
-            Repeat {
-                inner: fraug::augmenters::Repeat::new(times),
-            },
-            PyAugmenter {},
-        )
+    fn new(times: usize) -> Self {
+        Repeat {
+            inner: fraug::augmenters::Repeat::new(times),
+        }
     }
 }
 
 wrap_augmentation_functions!(Repeat);
 
-#[pyclass(extends=PyAugmenter)]
+#[pyclass]
 pub struct Scaling {
     inner: fraug::augmenters::Scaling,
 }
@@ -64,19 +49,16 @@ pub struct Scaling {
 #[pymethods]
 impl Scaling {
     #[new]
-    fn new(min: f64, max: f64) -> (Self, PyAugmenter) {
-        (
-            Scaling {
-                inner: fraug::augmenters::Scaling::new(min, max),
-            },
-            PyAugmenter {},
-        )
+    fn new(min: f64, max: f64) -> Self {
+        Scaling {
+            inner: fraug::augmenters::Scaling::new(min, max),
+        }
     }
 }
 
 wrap_augmentation_functions!(Scaling);
 
-#[pyclass(extends=PyAugmenter)]
+#[pyclass]
 pub struct Rotation {
     inner: fraug::augmenters::Rotation,
 }
@@ -84,19 +66,16 @@ pub struct Rotation {
 #[pymethods]
 impl Rotation {
     #[new]
-    fn new(anchor: f64) -> (Self, PyAugmenter) {
-        (
-            Rotation {
-                inner: fraug::augmenters::Rotation::new(anchor),
-            },
-            PyAugmenter {},
-        )
+    fn new(anchor: f64) -> Self {
+        Rotation {
+            inner: fraug::augmenters::Rotation::new(anchor),
+        }
     }
 }
 
 wrap_augmentation_functions!(Rotation);
 
-#[pyclass(extends=PyAugmenter)]
+#[pyclass]
 pub struct Jittering {
     inner: fraug::augmenters::Jittering,
 }
@@ -104,19 +83,16 @@ pub struct Jittering {
 #[pymethods]
 impl Jittering {
     #[new]
-    fn new(standard_deviation: f64) -> (Self, PyAugmenter) {
-        (
-            Jittering {
-                inner: fraug::augmenters::Jittering::new(standard_deviation),
-            },
-            PyAugmenter {},
-        )
+    fn new(standard_deviation: f64) -> Self {
+        Jittering {
+            inner: fraug::augmenters::Jittering::new(standard_deviation),
+        }
     }
 }
 
 wrap_augmentation_functions!(Jittering);
 
-#[pyclass(extends=PyAugmenter)]
+#[pyclass]
 pub struct Drop {
     inner: fraug::augmenters::Drop,
 }
@@ -125,19 +101,16 @@ pub struct Drop {
 impl Drop {
     #[new]
     #[pyo3(signature = (percentage, *, default=None))]
-    fn new(percentage: f64, default: Option<f64>) -> (Self, PyAugmenter) {
-        (
-            Drop {
-                inner: fraug::augmenters::Drop::new(percentage, default),
-            },
-            PyAugmenter {},
-        )
+    fn new(percentage: f64, default: Option<f64>) -> Self {
+        Drop {
+            inner: fraug::augmenters::Drop::new(percentage, default),
+        }
     }
 }
 
 wrap_augmentation_functions!(Drop);
 
-#[pyclass(extends=PyAugmenter)]
+#[pyclass]
 pub struct Crop {
     inner: fraug::augmenters::Crop,
 }
@@ -145,13 +118,10 @@ pub struct Crop {
 #[pymethods]
 impl Crop {
     #[new]
-    fn new(size: usize) -> (Self, PyAugmenter) {
-        (
-            Crop {
-                inner: fraug::augmenters::Crop::new(size),
-            },
-            PyAugmenter {},
-        )
+    fn new(size: usize) -> Self {
+        Crop {
+            inner: fraug::augmenters::Crop::new(size),
+        }
     }
 }
 
@@ -165,7 +135,7 @@ pub enum NoiseType {
     Slope,
 }
 
-#[pyclass(extends=PyAugmenter)]
+#[pyclass]
 pub struct AddNoise {
     inner: fraug::augmenters::AddNoise,
 }
@@ -179,7 +149,7 @@ impl AddNoise {
         bounds: Option<(f64, f64)>,
         mean: Option<f64>,
         std_dev: Option<f64>,
-    ) -> (Self, PyAugmenter) {
+    ) -> Self {
         let int_noise_type = match noise_type {
             NoiseType::Uniform => fraug::augmenters::NoiseType::Uniform,
             NoiseType::Gaussian => fraug::augmenters::NoiseType::Gaussian,
@@ -187,18 +157,15 @@ impl AddNoise {
             NoiseType::Slope => fraug::augmenters::NoiseType::Slope,
         };
 
-        (
-            AddNoise {
-                inner: fraug::augmenters::AddNoise::new(int_noise_type, bounds, mean, std_dev),
-            },
-            PyAugmenter {},
-        )
+        AddNoise {
+            inner: fraug::augmenters::AddNoise::new(int_noise_type, bounds, mean, std_dev),
+        }
     }
 }
 
 wrap_augmentation_functions!(AddNoise);
 
-#[pyclass(extends=PyAugmenter)]
+#[pyclass]
 pub struct AmplitudePhasePerturbation {
     inner: fraug::augmenters::AmplitudePhasePerturbation,
 }
@@ -206,23 +173,20 @@ pub struct AmplitudePhasePerturbation {
 #[pymethods]
 impl AmplitudePhasePerturbation {
     #[new]
-    fn new(magnitude_std: f64, phase_std: f64, is_time_domain: bool) -> (Self, PyAugmenter) {
-        (
-            AmplitudePhasePerturbation {
-                inner: fraug::augmenters::AmplitudePhasePerturbation::new(
-                    magnitude_std,
-                    phase_std,
-                    is_time_domain,
-                ),
-            },
-            PyAugmenter {},
-        )
+    fn new(magnitude_std: f64, phase_std: f64, is_time_domain: bool) -> Self {
+        AmplitudePhasePerturbation {
+            inner: fraug::augmenters::AmplitudePhasePerturbation::new(
+                magnitude_std,
+                phase_std,
+                is_time_domain,
+            )
+        }
     }
 }
 
 wrap_augmentation_functions!(AmplitudePhasePerturbation);
 
-#[pyclass(extends=PyAugmenter)]
+#[pyclass]
 pub struct DynamicTimeWarpAugmenter {
     inner: fraug::augmenters::DynamicTimeWarpAugmenter,
 }
@@ -230,19 +194,16 @@ pub struct DynamicTimeWarpAugmenter {
 #[pymethods]
 impl DynamicTimeWarpAugmenter {
     #[new]
-    fn new(window_size: usize) -> (Self, PyAugmenter) {
-        (
-            DynamicTimeWarpAugmenter {
-                inner: fraug::augmenters::DynamicTimeWarpAugmenter::new(window_size),
-            },
-            PyAugmenter {},
-        )
+    fn new(window_size: usize) -> Self {
+        DynamicTimeWarpAugmenter {
+            inner: fraug::augmenters::DynamicTimeWarpAugmenter::new(window_size),
+        }
     }
 }
 
 wrap_augmentation_functions!(DynamicTimeWarpAugmenter);
 
-#[pyclass(extends=PyAugmenter)]
+#[pyclass]
 pub struct FrequencyMask {
     inner: fraug::augmenters::FrequencyMask,
 }
@@ -250,19 +211,16 @@ pub struct FrequencyMask {
 #[pymethods]
 impl FrequencyMask {
     #[new]
-    fn new(mask_width: usize) -> (Self, PyAugmenter) {
-        (
-            FrequencyMask {
-                inner: fraug::augmenters::FrequencyMask::new(mask_width),
-            },
-            PyAugmenter {},
-        )
+    fn new(mask_width: usize) -> Self {
+        FrequencyMask {
+            inner: fraug::augmenters::FrequencyMask::new(mask_width),
+        }
     }
 }
 
 wrap_augmentation_functions!(FrequencyMask);
 
-#[pyclass(extends=PyAugmenter)]
+#[pyclass]
 pub struct RandomWindowWarpAugmenter {
     inner: fraug::augmenters::RandomWindowWarpAugmenter,
 }
@@ -270,16 +228,13 @@ pub struct RandomWindowWarpAugmenter {
 #[pymethods]
 impl RandomWindowWarpAugmenter {
     #[new]
-    fn new(window_size: usize, speed_ratio_range: (f64, f64)) -> (Self, PyAugmenter) {
-        (
-            RandomWindowWarpAugmenter {
-                inner: fraug::augmenters::RandomWindowWarpAugmenter::new(
-                    window_size,
-                    speed_ratio_range,
-                ),
-            },
-            PyAugmenter {},
-        )
+    fn new(window_size: usize, speed_ratio_range: (f64, f64)) -> Self {
+        RandomWindowWarpAugmenter {
+            inner: fraug::augmenters::RandomWindowWarpAugmenter::new(
+                window_size,
+                speed_ratio_range,
+            ),
+        }
     }
 }
 
@@ -292,7 +247,7 @@ pub enum PoolingMethod {
     Average
 }
 
-#[pyclass(extends=PyAugmenter)]
+#[pyclass]
 pub struct Pool {
     inner: fraug::augmenters::Pool,
 }
@@ -300,28 +255,25 @@ pub struct Pool {
 #[pymethods]
 impl Pool {
     #[new]
-    fn new(kind: &PoolingMethod, size: usize) -> (Self, PyAugmenter) {
+    fn new(kind: &PoolingMethod, size: usize) -> Self {
         let int_kind = match kind {
             PoolingMethod::Max => fraug::augmenters::PoolingMethod::Max,
             PoolingMethod::Min => fraug::augmenters::PoolingMethod::Min,
             PoolingMethod::Average => fraug::augmenters::PoolingMethod::Average,
         };
 
-        (
-            Pool {
-                inner: fraug::augmenters::Pool::new(
-                    int_kind,
-                    size
-                ),
-            },
-            PyAugmenter {},
-        )
+        Pool {
+            inner: fraug::augmenters::Pool::new(
+                int_kind,
+                size
+            ),
+        }
     }
 }
 
 wrap_augmentation_functions!(Pool);
 
-#[pyclass(extends=PyAugmenter)]
+#[pyclass]
 pub struct Quantize {
     inner: fraug::augmenters::Quantize,
 }
@@ -329,48 +281,32 @@ pub struct Quantize {
 #[pymethods]
 impl Quantize {
     #[new]
-    fn new(levels: usize) -> (Self, PyAugmenter) {
-        (
-            Quantize {
-                inner: fraug::augmenters::Quantize::new(
-                    levels
-                ),
-            },
-            PyAugmenter {},
-        )
+    fn new(levels: usize) -> Self {
+        Quantize {
+            inner: fraug::augmenters::Quantize::new(
+                levels
+            ),
+        }
     }
 }
 
 wrap_augmentation_functions!(Quantize);
 
-// #[pyclass(extends=PyAugmenter)]
-// pub struct ConditionalAugmenter {
-//     augmenter: PyAugmenter,
-//     probability: f64
-// }
-//
-// #[pymethods]
-// impl ConditionalAugmenter {
-//     #[new]
-//     fn new<'py>(augmenter: Bound<'py, PyAugmenter>, probability: f64) -> (Self, PyAugmenter) {
-//         let augmenter: PyAugmenter = augmenter.extract().unwrap();
-//         (ConditionalAugmenter { augmenter, probability }, PyAugmenter {})
-//     }
-//
-//     // fn augment_dataset(&self, input: &mut Dataset) {
-//     //     let mut rng = rand::rng();
-//     //     input.inner.features.iter_mut().for_each(|x| {
-//     //         if rng.random::<f64>() < self.probability {
-//     //             self.augmenter.inner.augment_one(x)
-//     //         }
-//     //     });
-//     // }
-//
-//     fn augment_one<'py>(&self, x: &Bound<'py, PyArray1<f64>>) {
-//         if rand::random::<f64>() < self.probability {
-//             self.augmenter.augment_one(x);
-//         }
-//     }
-// }
+#[pyclass]
+pub struct Resize {
+    inner: fraug::augmenters::Resize,
+}
 
-// wrap_augmentation_functions!(ConditionalAugmenter);
+#[pymethods]
+impl Resize {
+    #[new]
+    fn new(size: usize) -> Self {
+        Resize {
+            inner: fraug::augmenters::Resize::new(
+                size
+            ),
+        }
+    }
+}
+
+wrap_augmentation_functions!(Resize);

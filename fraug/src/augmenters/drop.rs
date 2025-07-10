@@ -21,12 +21,14 @@ impl Drop {
 }
 
 impl Augmenter for Drop {
-    fn augment_one(&self, x: &mut [f64]) {
-        x.iter_mut().for_each(|val| {
+    fn augment_one(&self, x: &[f64]) -> Vec<f64> {
+        x.iter().map(|val| {
             if rand::random::<f64>() < self.percentage {
-                *val = self.default
+                self.default
+            } else { 
+                *val
             }
-        });
+        }).collect()
     }
 }
 
@@ -36,20 +38,20 @@ mod tests {
 
     #[test]
     fn drop_all() {
-        let mut series = vec![1.0; 100];
+        let series = vec![1.0; 100];
 
         let drop = Drop::new(1.0, None);
-        drop.augment_one(&mut series);
+        let series = drop.augment_one(&series);
 
         assert_eq!(series, vec![0.0; 100]);
     }
 
     #[test]
     fn drop_none() {
-        let mut series = vec![1.0; 100];
+        let series = vec![1.0; 100];
 
         let drop = Drop::new(0.0, None);
-        drop.augment_one(&mut series);
+        let series = drop.augment_one(&series);
 
         assert_eq!(series, vec![1.0; 100]);
     }

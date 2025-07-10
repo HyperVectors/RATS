@@ -39,7 +39,7 @@ impl Augmenter for Crop {
         input.features = new_features;
     }
 
-    fn augment_one(&self, _x: &mut [f64]) {
+    fn augment_one(&self, _x: &[f64]) -> Vec<f64> {
         unimplemented!("Use augment_dataset instead!");
     }
 }

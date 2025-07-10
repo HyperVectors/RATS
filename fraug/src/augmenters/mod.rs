@@ -14,6 +14,7 @@ mod convolve;
 mod drift;
 mod pool;
 mod quantize;
+mod resize;
 
 pub use addnoise::{AddNoise, NoiseType};
 pub use amplitude_phase_perturbation::AmplitudePhasePerturbation;
@@ -29,3 +30,4 @@ pub use scaling::Scaling;
 pub use window_time_warp::RandomWindowWarpAugmenter;
 pub use pool::{Pool, PoolingMethod};
 pub use quantize::Quantize;
+pub use resize::Resize;

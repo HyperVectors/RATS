@@ -1,5 +1,5 @@
 use super::base::Augmenter;
-use rand::{distr::Uniform, prelude::*, random_range};
+use rand::{distr::Uniform, prelude::*, random_range, thread_rng};
 use rand_distr::Normal;
 
 /// Augmenter that allows different types of noise injection
@@ -40,7 +40,7 @@ impl AddNoise {
 }
 
 impl Augmenter for AddNoise {
-    fn augment_one(&self, x: &mut [f64]) {
+    fn augment_one(&self, x: &[f64]) -> Vec<f64> {
         match self.noise_type {
             NoiseType::Uniform => {
                 let bounds = self.bounds.expect("Bounds not specified");
@@ -48,7 +48,7 @@ impl Augmenter for AddNoise {
                 let mut rng = rand::rng();
                 let dist = Uniform::new(bounds.0, bounds.1)
                     .expect("Couldn't create uniform distribution from specified bounds");
-                x.iter_mut().for_each(|val| *val += dist.sample(&mut rng));
+                x.iter().map(|val| *val + dist.sample(&mut rng)).collect()
             }
             NoiseType::Gaussian => {
                 let mean = self.mean.expect("Mean not specified");
@@ -57,7 +57,7 @@ impl Augmenter for AddNoise {
                 let mut rng = rand::rng();
                 let dist = Normal::new(mean, std_dev)
                     .expect("Couldn't create normal distribution from specified mean and standard deviation");
-                x.iter_mut().for_each(|val| *val += dist.sample(&mut rng));
+                x.iter().map(|val| *val + dist.sample(&mut rng)).collect()
             }
             NoiseType::Spike => {
                 let bounds = self.bounds.expect("Bounds not specified");
@@ -70,16 +70,19 @@ impl Augmenter for AddNoise {
                 // Add spike in random location with random magnitude
                 let idx: usize = random_range(0..n as usize);
                 let magnitude: f64 = random_range(bounds.0..bounds.1);
-
-                x[idx] = magnitude * std_dev;
+                
+                let mut res = x.to_vec();
+                res[idx] = magnitude * std_dev;
+                res
             }
             NoiseType::Slope => {
                 let bounds = self.bounds.expect("Bounds not specified");
 
                 let slope: f64 = random_range(bounds.0..bounds.1);
-                x.iter_mut()
+                x.iter()
                     .enumerate()
-                    .for_each(|(i, val)| *val += i as f64 * slope);
+                    .map(|(i, val)| *val + i as f64 * slope)
+                    .collect()
             }
         }
     }
@@ -91,10 +94,10 @@ mod tests {
 
     #[test]
     fn uniform() {
-        let mut series = vec![1.0; 100];
+        let series = vec![1.0; 100];
 
         let augmenter = AddNoise::new(NoiseType::Uniform, Some((-1.0, 1.0)), None, None);
-        augmenter.augment_one(&mut series);
+        let series = augmenter.augment_one(&series);
 
         series
             .iter()
@@ -104,20 +107,20 @@ mod tests {
 
     #[test]
     fn gaussian() {
-        let mut series = vec![1.0; 100];
+        let series = vec![1.0; 100];
 
         let augmenter = AddNoise::new(NoiseType::Gaussian, None, Some(0.0), Some(0.5));
-        augmenter.augment_one(&mut series);
+        let series = augmenter.augment_one(&series);
 
         assert_ne!(series, vec![1.0; 100]);
     }
 
     #[test]
     fn spike() {
-        let mut series = vec![1.0; 100];
+        let series = vec![1.0; 100];
 
         let augmenter = AddNoise::new(NoiseType::Spike, Some((-2.0, 2.0)), None, None);
-        augmenter.augment_one(&mut series);
+        let series = augmenter.augment_one(&series);
 
         let mut different = 0;
         series.iter().for_each(|&val| {
@@ -130,10 +133,10 @@ mod tests {
 
     #[test]
     fn slope() {
-        let mut series = vec![0.0; 100];
+        let series = vec![0.0; 100];
 
         let augmenter = AddNoise::new(NoiseType::Slope, Some((1.0, 2.0)), None, None);
-        augmenter.augment_one(&mut series);
+        let series = augmenter.augment_one(&series);
 
         assert_ne!(series, vec![0.0; 100]);
         assert!(series[99] >= 100.0 && series[99] <= 200.0);

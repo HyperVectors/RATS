@@ -16,11 +16,11 @@ impl Jittering {
 }
 
 impl Augmenter for Jittering {
-    fn augment_one(&self, x: &mut [f64]) {
+    fn augment_one(&self, x: &[f64]) -> Vec<f64> {
         let mut rng = rand::rng();
         let dist = Normal::new(0.0, self.deviation)
             .expect("Couldn't create normal distribution from specified standard deviation");
-        x.iter_mut().for_each(|val| *val += dist.sample(&mut rng));
+        x.iter().map(|val| *val + dist.sample(&mut rng)).collect()
     }
 }
 
@@ -30,10 +30,10 @@ mod tests {
 
     #[test]
     fn gaussian() {
-        let mut series = vec![1.0; 100];
+        let series = vec![1.0; 100];
 
         let augmenter = Jittering::new(0.5);
-        augmenter.augment_one(&mut series);
+        let series = augmenter.augment_one(&series);
 
         assert_ne!(series, vec![1.0; 100]);
     }
