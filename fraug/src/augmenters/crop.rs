@@ -2,6 +2,7 @@ use super::base::Augmenter;
 use rayon::prelude::*;
 
 /// Augmenter that crops each row into a random continuous slice of specified size
+/// Also known as window slicing
 pub struct Crop {
     size: usize,
 }
@@ -25,22 +26,8 @@ impl Crop {
 }
 
 impl Augmenter for Crop {
-    fn augment_dataset(&self, input: &mut crate::Dataset, parallel: bool) {
-        let new_features: Vec<Vec<f64>> = if parallel {
-            input
-                .features
-                .par_iter()
-                .map(|x| self.get_slice(x))
-                .collect()
-        } else {
-            input.features.iter().map(|x| self.get_slice(x)).collect()
-        };
-
-        input.features = new_features;
-    }
-
-    fn augment_one(&self, _x: &[f64]) -> Vec<f64> {
-        unimplemented!("Use augment_dataset instead!");
+    fn augment_one(&self, x: &[f64]) -> Vec<f64> {
+        self.get_slice(x)
     }
 }
 
