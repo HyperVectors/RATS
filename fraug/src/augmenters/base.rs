@@ -8,7 +8,7 @@ use crate::Dataset;
 pub trait Augmenter {
     fn augment_batch(&self, input: &mut Dataset, parallel: bool)
     where
-        Self: Sync
+        Self: Sync,
     {
         if parallel {
             input
@@ -50,7 +50,7 @@ impl Augmenter for ConditionalAugmenter {
         let mut rng = rand::rng();
         if rng.random::<f64>() < self.p {
             self.inner.augment_one(x)
-        } else { 
+        } else {
             x.to_vec()
         }
     }

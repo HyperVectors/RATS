@@ -1,5 +1,5 @@
-use rand::rng;
 use super::base::Augmenter;
+use rand::rng;
 use rand::seq::SliceRandom;
 
 /// Permutate time series
@@ -18,9 +18,9 @@ impl Permutate {
 impl Augmenter for Permutate {
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
         let mut segments = x.chunks(self.size).collect::<Vec<_>>();
-        
+
         segments.shuffle(&mut rng());
-        
+
         segments.iter().map(|arr| arr.to_vec()).flatten().collect()
     }
 }
@@ -35,8 +35,7 @@ mod tests {
 
         let aug = Permutate::new(2);
         let series = aug.augment_one(&series);
-        
+
         assert!(series == vec![3.0, 4.0, 1.0, 2.0] || series == vec![1.0, 2.0, 3.0, 4.0]);
     }
-
 }

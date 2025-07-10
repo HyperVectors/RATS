@@ -22,13 +22,15 @@ impl Drop {
 
 impl Augmenter for Drop {
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
-        x.iter().map(|val| {
-            if rand::random::<f64>() < self.percentage {
-                self.default
-            } else { 
-                *val
-            }
-        }).collect()
+        x.iter()
+            .map(|val| {
+                if rand::random::<f64>() < self.percentage {
+                    self.default
+                } else {
+                    *val
+                }
+            })
+            .collect()
     }
 }
 

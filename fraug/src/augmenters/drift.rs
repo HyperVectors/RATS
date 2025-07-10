@@ -3,14 +3,12 @@ use super::base::Augmenter;
 /// Drifts the value of a time series
 ///
 ///
-pub struct Drift {
-
-}
+pub struct Drift {}
 
 impl Drift {
     /// Creates new drift augmenter
     pub fn new() -> Self {
-        Drift { }
+        Drift {}
     }
 }
 

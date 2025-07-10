@@ -1,6 +1,6 @@
 use crate::Dataset;
 use fraug::augmenters::Augmenter;
-use numpy::{ PyArray1, PyArrayMethods, ToPyArray };
+use numpy::{PyArray1, PyArrayMethods, ToPyArray};
 use pyo3::prelude::*;
 
 macro_rules! wrap_augmentation_functions {
@@ -11,7 +11,11 @@ macro_rules! wrap_augmentation_functions {
                 self.inner.augment_batch(&mut dataset.inner, parallel);
             }
 
-            fn augment_one<'py>(&self, py: Python<'py>, x: &Bound<'py, PyArray1<f64>>) -> Bound<'py, PyArray1<f64>> {
+            fn augment_one<'py>(
+                &self,
+                py: Python<'py>,
+                x: &Bound<'py, PyArray1<f64>>,
+            ) -> Bound<'py, PyArray1<f64>> {
                 let x = x.to_owned_array();
                 let x_vec = x.as_slice().unwrap().to_vec();
 
@@ -179,7 +183,7 @@ impl AmplitudePhasePerturbation {
                 magnitude_std,
                 phase_std,
                 is_time_domain,
-            )
+            ),
         }
     }
 }
@@ -244,7 +248,7 @@ wrap_augmentation_functions!(RandomWindowWarpAugmenter);
 pub enum PoolingMethod {
     Max,
     Min,
-    Average
+    Average,
 }
 
 #[pyclass]
@@ -263,10 +267,7 @@ impl Pool {
         };
 
         Pool {
-            inner: fraug::augmenters::Pool::new(
-                int_kind,
-                size
-            ),
+            inner: fraug::augmenters::Pool::new(int_kind, size),
         }
     }
 }
@@ -283,9 +284,7 @@ impl Quantize {
     #[new]
     fn new(levels: usize) -> Self {
         Quantize {
-            inner: fraug::augmenters::Quantize::new(
-                levels
-            ),
+            inner: fraug::augmenters::Quantize::new(levels),
         }
     }
 }
@@ -302,9 +301,7 @@ impl Resize {
     #[new]
     fn new(size: usize) -> Self {
         Resize {
-            inner: fraug::augmenters::Resize::new(
-                size
-            ),
+            inner: fraug::augmenters::Resize::new(size),
         }
     }
 }
@@ -338,9 +335,7 @@ impl Permutate {
     #[new]
     fn new(size: usize) -> Self {
         Permutate {
-            inner: fraug::augmenters::Permutate::new(
-                size
-            ),
+            inner: fraug::augmenters::Permutate::new(size),
         }
     }
 }

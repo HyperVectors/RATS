@@ -2,15 +2,13 @@ use super::base::Augmenter;
 
 /// Augmenter that convolves series with a kernel window
 ///
-/// 
-pub struct Convolve {
-    
-}
+///
+pub struct Convolve {}
 
 impl Convolve {
     /// Creates new convolve augmenter
     pub fn new() -> Self {
-        Convolve { }
+        Convolve {}
     }
 }
 

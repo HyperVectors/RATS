@@ -37,3 +37,23 @@
   pf_kwargs: {mask_width: 10}
   tsaug_class: null
   tsaug_kwargs: null
+
+- name: Quantize
+  pf_kwargs: {levels: 50}
+  tsaug_class: Quantize
+  tsaug_kwargs: {n_levels: 50}
+
+- name: Resize
+  pf_kwargs: {size: 200}
+  tsaug_class: Resize
+  tsaug_kwargs: {size: 200}
+
+- name: Reverse
+  pf_kwargs: {}
+  tsaug_class: Reverse
+  tsaug_kwargs: {}
+
+- name: Permutate
+  pf_kwargs: {size: 50}
+  tsaug_class: null
+  tsaug_kwargs: null

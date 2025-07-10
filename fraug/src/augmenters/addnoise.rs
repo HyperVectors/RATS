@@ -70,7 +70,7 @@ impl Augmenter for AddNoise {
                 // Add spike in random location with random magnitude
                 let idx: usize = random_range(0..n as usize);
                 let magnitude: f64 = random_range(bounds.0..bounds.1);
-                
+
                 let mut res = x.to_vec();
                 res[idx] = magnitude * std_dev;
                 res
