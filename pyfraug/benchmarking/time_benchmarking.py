@@ -29,7 +29,7 @@ for aug in AUGMENTERS:
     pf_pipeline = pf.AugmentationPipeline() + pf_aug
     ds_copy = pf.Dataset(x.copy(), y.copy())
     start = time.time()
-    pf_pipeline.augment_dataset(ds_copy, parallel=True)
+    pf_pipeline.augment_batch(ds_copy, parallel=True)
     pf_time = time.time() - start
 
     if tsaug_class_name:

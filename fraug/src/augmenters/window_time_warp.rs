@@ -67,7 +67,7 @@ impl Augmenter for RandomWindowWarpAugmenter {
     /// Augment the dataset in-place by appending one warped series per original.
     /// For each series, a random contiguous window of length `window_size` is chosen,
     /// then a single random speed ratio is applied within that window.
-    fn augment_dataset(&self, data: &mut Dataset, _parallel: bool) {
+    fn augment_batch(&self, data: &mut Dataset, _parallel: bool) {
         let originals = data.features.clone();
         let orig_labels = data.labels.clone();
         let mut rng = rng();
@@ -114,7 +114,7 @@ mod tests {
             labels: vec!["L".into()],
         };
         let aug = RandomWindowWarpAugmenter::new(5, (0.5, 2.0));
-        aug.augment_dataset(&mut data, false);
+        aug.augment_batch(&mut data, false);
         assert_eq!(data.features.len(), 2);
         assert_eq!(data.features[1].len(), 4);
     }
@@ -127,7 +127,7 @@ mod tests {
             labels: vec!["L".into()],
         };
         let aug = RandomWindowWarpAugmenter::new(2, (0.5, 1.5));
-        aug.augment_dataset(&mut data, false);
+        aug.augment_batch(&mut data, false);
         assert_eq!(data.features.len(), 2);
         let warped = &data.features[1];
         assert_eq!(warped[0], orig[0]);

@@ -52,7 +52,7 @@ mod tests {
             labels: vec!["a".to_string(), "b".to_string()],
         };
         let mask = FrequencyMask::new(4);
-        mask.augment_dataset(&mut data, true);
+        mask.augment_batch(&mut data, true);
         for sample in data.features {
             let mut zeroed_bins = 0;
             for bin in 0..(sample.len() / 2) {

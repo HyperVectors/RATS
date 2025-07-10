@@ -57,7 +57,7 @@ impl DynamicTimeWarpAugmenter {
 impl Augmenter for DynamicTimeWarpAugmenter {
     /// Augment all samples in the dataset in-place by appending DTW-warped series.
     // This will help us for graph plotting and checking if the warping worked later so just appending aug to original
-    fn augment_dataset(&self, data: &mut Dataset, _parallel: bool) {
+    fn augment_batch(&self, data: &mut Dataset, _parallel: bool) {
         let originals = data.features.clone();
         let orig_labels = data.labels.clone();
         if self.window_size == 0 || self.window_size > originals.len() {}
@@ -113,7 +113,7 @@ mod dtw_augment_tests {
             labels: vec!["A".to_string(), "B".to_string()],
         };
         let augmenter = DynamicTimeWarpAugmenter::new(10);
-        augmenter.augment_dataset(&mut data, false);
+        augmenter.augment_batch(&mut data, false);
         // original 2 + 2 warps = 4
         assert_eq!(data.features.len(), 4);
         assert_eq!(data.labels.len(), 4);

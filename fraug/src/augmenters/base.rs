@@ -6,7 +6,7 @@ use crate::Dataset;
 
 /// Trait for all augmenters, allows for augmentation of one time series or a batch
 pub trait Augmenter {
-    fn augment_dataset(&self, input: &mut Dataset, parallel: bool)
+    fn augment_batch(&self, input: &mut Dataset, parallel: bool)
     where
         Self: Sync
     {
@@ -74,10 +74,10 @@ impl AugmentationPipeline {
 }
 
 impl Augmenter for AugmentationPipeline {
-    fn augment_dataset(&self, input: &mut Dataset, parallel: bool) {
+    fn augment_batch(&self, input: &mut Dataset, parallel: bool) {
         self.augmenters
             .iter()
-            .for_each(|augmenter| augmenter.augment_dataset(input, parallel));
+            .for_each(|augmenter| augmenter.augment_batch(input, parallel));
     }
 
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {

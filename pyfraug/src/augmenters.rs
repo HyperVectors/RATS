@@ -7,8 +7,8 @@ macro_rules! wrap_augmentation_functions {
     ($struct_name:ident) => {
         #[pymethods]
         impl $struct_name {
-            fn augment_dataset(&self, dataset: &mut Dataset, parallel: bool) {
-                self.inner.augment_dataset(&mut dataset.inner, parallel);
+            fn augment_batch(&self, dataset: &mut Dataset, parallel: bool) {
+                self.inner.augment_batch(&mut dataset.inner, parallel);
             }
 
             fn augment_one<'py>(&self, py: Python<'py>, x: &Bound<'py, PyArray1<f64>>) -> Bound<'py, PyArray1<f64>> {

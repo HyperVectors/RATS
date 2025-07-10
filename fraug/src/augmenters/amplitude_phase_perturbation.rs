@@ -24,7 +24,7 @@ impl AmplitudePhasePerturbation {
 }
 
 impl Augmenter for AmplitudePhasePerturbation {
-    fn augment_dataset(&self, data: &mut Dataset, _parallel: bool) {
+    fn augment_batch(&self, data: &mut Dataset, _parallel: bool) {
         if self.is_time_domain {
             let mut transformed_dataset = dataset_fft(data);
             
@@ -85,7 +85,7 @@ mod tests {
         };
         let app = AmplitudePhasePerturbation::new(0.1, 0.1, false);
         let orig = data.features[0].clone();
-        app.augment_dataset(&mut data, false);
+        app.augment_batch(&mut data, false);
         assert_ne!(orig, data.features[0]);
     }
 
@@ -99,7 +99,7 @@ mod tests {
 
         let app = AmplitudePhasePerturbation::new(0.1, 0.1, true);
 
-        app.augment_dataset(&mut data, false);
+        app.augment_batch(&mut data, false);
 
         assert_ne!(orig, data.features[0]);
     }

@@ -7,7 +7,7 @@ class ConditionalAugmenter:
         self.augmenter = augmenter
         self.probability = probability
 
-    def augment_dataset(self, dataset: Dataset, *, parallel):
+    def augment_batch(self, dataset: Dataset, *, parallel):
         features = np.array([])
         for row in dataset.features:
             features.append(self.augment_one(row))
@@ -27,9 +27,9 @@ class AugmentationPipeline:
 
         return self
 
-    def augment_dataset(self, dataset: Dataset, *, parallel):
+    def augment_batch(self, dataset: Dataset, *, parallel):
         for augmenter in self.augmenters:
-            augmenter.augment_dataset(dataset, parallel=parallel)
+            augmenter.augment_batch(dataset, parallel=parallel)
 
     def augment_one(self, x):
         res = x

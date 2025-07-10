@@ -56,11 +56,11 @@ fn main() {
     //     + Drop::new(0.05, None)
     //     + AmplitudePhasePerturbation::new(-10.0, 1.7, true);
 
-    // pipeline.augment_dataset(&mut data);
+    // pipeline.augment_batch(&mut data);
 
     let dtw_augmenter = DynamicTimeWarpAugmenter::new(10);
 
-    dtw_augmenter.augment_dataset(&mut data, false);
+    dtw_augmenter.augment_batch(&mut data, false);
 
     println!(
         "After {:?}\nLength: {}",
@@ -87,7 +87,7 @@ fn main() {
 
     // Apply Amplitude & Phase Perturbation
     // let app = AmplitudePhasePerturbation::new(-10.0, 1.7); // Adjust stddevs as needed
-    // app.augment_dataset(&mut data, true);
+    // app.augment_batch(&mut data, true);
 
     // reconstructed time domain dataset to CSV
     // let time_out_filename = format!("{}app.csv", dataset_name);

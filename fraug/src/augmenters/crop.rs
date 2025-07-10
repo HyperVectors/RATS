@@ -45,7 +45,7 @@ mod tests {
         };
 
         let augmenter = Crop::new(200);
-        augmenter.augment_dataset(&mut set, true);
+        augmenter.augment_batch(&mut set, true);
 
         assert_eq!(set.features[0], vec![1.0; 100]);
     }
@@ -59,7 +59,7 @@ mod tests {
         };
 
         let augmenter = Crop::new(50);
-        augmenter.augment_dataset(&mut set, true);
+        augmenter.augment_batch(&mut set, true);
 
         assert_eq!(set.features[0], vec![1.0; 50]);
     }
