@@ -22,14 +22,14 @@ impl FrequencyMask {
 impl Augmenter for FrequencyMask {
     fn augment_batch(&self, data: &mut Dataset, _parallel: bool) {
         if self.is_time_domain {
-            let mut transformed_dataset = dataset_fft(data);
+            let mut transformed_dataset = dataset_fft(data, true);
 
             transformed_dataset
                 .features
                 .iter_mut()
                 .for_each(|sample| *sample = self.augment_one(sample));
 
-            let inverse_dataset = dataset_ifft(&transformed_dataset);
+            let inverse_dataset = dataset_ifft(&transformed_dataset, true);
             *data = inverse_dataset;
         } else {
             data.features
