@@ -220,9 +220,9 @@ pub struct FrequencyMask {
 #[pymethods]
 impl FrequencyMask {
     #[new]
-    fn new(mask_width: usize) -> Self {
+    fn new(mask_width: usize, is_time_domain: bool) -> Self {
         FrequencyMask {
-            inner: fraug::augmenters::FrequencyMask::new(mask_width),
+            inner: fraug::augmenters::FrequencyMask::new(mask_width, is_time_domain),
         }
     }
 }
