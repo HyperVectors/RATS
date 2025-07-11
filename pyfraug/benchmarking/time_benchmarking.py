@@ -73,6 +73,37 @@ results.append({
 })
 print(f"Pipeline: PyFraug {pf_time:.4f}s, tsaug {tsaug_time if tsaug_time is not None else 'N/A'}")
 
+# FFT benchmarking
+start = time.time()
+ds_freq = pf.Transforms.fft(dataset, parallel=True)
+fft_time = time.time() - start
+
+results.append({
+    "Augmenter": "fft",
+    "PyFraug_time_sec": fft_time,
+    "tsaug_time_sec": None
+})
+print(f"fft: PyFraug {fft_time:.4f}s, tsaug N/A")
+
+# IFFT benchmarking
+start = time.time()
+ds_time = pf.Transforms.ifft(ds_freq, parallel=True)
+ifft_time = time.time() - start
+
+results.append({
+    "Augmenter": "ifft",
+    "PyFraug_time_sec": ifft_time,
+    "tsaug_time_sec": None
+})
+print(f"ifft: PyFraug {ifft_time:.4f}s, tsaug N/A")
+
+# Validating FFT and IFFT
+start = time.time()
+max_diff, all_within = pf.Transforms.compare_within_tolerance(dataset, ds_time, 1e-6)
+diff_time = time.time() - start
+
+print(f"compare_within_tolerance: PyFraug {diff_time:.4f}s, max_diff={max_diff}, all_within={all_within}")
+
 # Saving results
 df = pd.DataFrame(results)
 df.to_csv("./results/time_benchmark.csv", index=False)

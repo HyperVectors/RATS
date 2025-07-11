@@ -6,7 +6,7 @@
 - name: Scaling
   pf_kwargs: {min: 0.8, max: 1.2}
   tsaug_class: null
-  tsaug_kwargs: null
+  tsaug_kwargs: {min: 0.8, max: 1.2}
 
 - name: Rotation
   pf_kwargs: {anchor: 1.0}
@@ -20,8 +20,8 @@
 
 - name: Drop
   pf_kwargs: {percentage: 0.1, default: 0.0}
-  tsaug_class: null
-  tsaug_kwargs: null
+  tsaug_class: Dropout
+  tsaug_kwargs: {p: 0.1, fill: 0.0}
 
 - name: Crop
   pf_kwargs: {size: 64}
@@ -56,4 +56,4 @@
 - name: Permutate
   pf_kwargs: {size: 50}
   tsaug_class: null
-  tsaug_kwargs: null
+  tsaug_kwargs: {n_segments: 50}
