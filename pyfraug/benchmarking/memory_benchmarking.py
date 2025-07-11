@@ -50,6 +50,40 @@ if __name__ == "__main__":
         })
         print(f"{aug_name}: PyFraug {pf_mem:.2f} MB, tsaug {tsaug_mem if tsaug_mem is not None else 'N/A'} MB")
 
+     # FFT memory benchmarking
+    def fft_mem():
+        ds = pf.Dataset(x.copy(), y.copy())
+        pf.Transforms.fft(ds, parallel=True)
+    fft_peak_mem = memory_usage(fft_mem, max_usage=True)
+    results.append({
+        "Augmenter": "fft",
+        "PyFraug_peak_mem_MB": fft_peak_mem,
+        "tsaug_peak_mem_MB": None
+    })
+    print(f"fft: PyFraug {fft_peak_mem:.2f} MB, tsaug N/A")
+
+    # IFFT memory benchmarking
+    def ifft_mem():
+        ds = pf.Dataset(x.copy(), y.copy())
+        ds_freq = pf.Transforms.fft(ds, parallel=True)
+        pf.Transforms.ifft(ds_freq, parallel=True)
+    ifft_peak_mem = memory_usage(ifft_mem, max_usage=True)
+    results.append({
+        "Augmenter": "ifft",
+        "PyFraug_peak_mem_MB": ifft_peak_mem,
+        "tsaug_peak_mem_MB": None
+    })
+    print(f"ifft: PyFraug {ifft_peak_mem:.2f} MB, tsaug N/A")
+
+    def compare_mem():
+        ds = pf.Dataset(x.copy(), y.copy())
+        ds_freq = pf.Transforms.fft(ds, parallel=True)
+        ds_time = pf.Transforms.ifft(ds_freq, parallel=True)
+        pf.Transforms.compare_within_tolerance(ds, ds_time, 1e-6)
+    compare_peak_mem = memory_usage(compare_mem, max_usage=True)
+    print(f"compare_within_tolerance: PyFraug {compare_peak_mem:.2f} MB, tsaug N/A")
+
+    
     # Save results
     df = pd.DataFrame(results)
     df.to_csv("./results/memory_benchmark.csv", index=False)
