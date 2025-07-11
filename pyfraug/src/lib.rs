@@ -1,12 +1,13 @@
 mod augmenters;
+mod transforms;
 
 use ndarray::Array2;
 use numpy::{IntoPyArray, PyArray2, PyReadonlyArray2};
 use pyo3::prelude::*;
 
 #[pyclass]
-struct Dataset {
-    inner: fraug::Dataset,
+pub struct Dataset {
+    pub(crate) inner: fraug::Dataset
 }
 
 #[pymethods]
@@ -74,5 +75,6 @@ fn pyfraug(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<augmenters::Resize>()?;
     m.add_class::<augmenters::Reverse>()?;
     m.add_class::<augmenters::Permutate>()?;
+    m.add_class::<transforms::Transforms>()?;
     Ok(())
 }
