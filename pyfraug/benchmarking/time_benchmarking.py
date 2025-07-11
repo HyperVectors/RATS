@@ -5,6 +5,7 @@ import pandas as pd
 import yaml
 import importlib
 import pyfraug as pf
+import tsaug as ts
 
 data = pd.read_csv("../../data/Car/Car.csv").to_numpy()
 x = data[:, :-1].astype(np.float64)
@@ -26,10 +27,9 @@ for aug in AUGMENTERS:
     tsaug_kwargs = aug["tsaug_kwargs"] or {}
 
     pf_aug = getattr(pf, aug_name)(**pf_kwargs)
-    pf_pipeline = pf.AugmentationPipeline() + pf_aug
     ds_copy = pf.Dataset(x.copy(), y.copy())
     start = time.time()
-    pf_pipeline.augment_batch(ds_copy, parallel=True)
+    pf_aug.augment_batch(ds_copy, parallel=True)
     pf_time = time.time() - start
 
     if tsaug_class_name:
@@ -47,6 +47,31 @@ for aug in AUGMENTERS:
         "tsaug_time_sec": tsaug_time
     })
     print(f"{aug_name}: PyFraug {pf_time:.4f}s, tsaug {tsaug_time if tsaug_time is not None else 'N/A'}")
+
+pf_pipeline = (pf.AugmentationPipeline()
+                + pf.Repeat(5)
+                + pf.Crop(400)
+                + pf.Jittering(0.1)
+                + pf.Quantize(50))
+ds_copy = pf.Dataset(x.copy(), y.copy())
+start = time.time()
+pf_pipeline.augment_batch(ds_copy, parallel=True)
+pf_time = time.time() - start
+
+tsaug_pipeline = (ts.Crop(size=400) * 5
+                + ts.AddNoise(scale=0.1)
+                + ts.Quantize(n_levels=50))
+x_copy = x.copy()
+start = time.time()
+tsaug_pipeline.augment(x_copy)
+tsaug_time = time.time() - start
+
+results.append({
+    "Augmenter": "Pipeline",
+    "PyFraug_time_sec": pf_time,
+    "tsaug_time_sec": tsaug_time
+})
+print(f"Pipeline: PyFraug {pf_time:.4f}s, tsaug {tsaug_time if tsaug_time is not None else 'N/A'}")
 
 # Saving results
 df = pd.DataFrame(results)

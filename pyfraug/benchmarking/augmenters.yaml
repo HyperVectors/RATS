@@ -1,5 +1,5 @@
 - name: Repeat
-  pf_kwargs: {times: 3}
+  pf_kwargs: {times: 10}
   tsaug_class: null
   tsaug_kwargs: null
 
