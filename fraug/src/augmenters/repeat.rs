@@ -4,13 +4,17 @@ use super::base::Augmenter;
 
 /// Augmenter that repeats all data rows n times
 pub struct Repeat {
+    pub name: String,
     n: usize,
 }
 
 impl Repeat {
     pub fn new(times: usize) -> Self {
         assert!(times > 0);
-        Repeat { n: times }
+        Repeat {
+            name: "Repeat".to_string(),
+            n: times,
+        }
     }
 }
 

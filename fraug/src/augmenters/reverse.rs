@@ -1,12 +1,16 @@
 use super::base::Augmenter;
 
 /// Reverses time series
-pub struct Reverse {}
+pub struct Reverse {
+    pub name: String,
+}
 
 impl Reverse {
     /// Creates new reverse augmenter
     pub fn new() -> Self {
-        Reverse {}
+        Reverse {
+            name: "Reverse".to_string(),
+        }
     }
 }
 

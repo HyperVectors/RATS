@@ -4,6 +4,7 @@ use super::base::Augmenter;
 ///
 /// Drops `percentage` % of data points and replaces them with `default`
 pub struct Drop {
+    pub name: String,
     percentage: f64,
     default: f64,
 }
@@ -14,6 +15,7 @@ impl Drop {
     /// When `default` is `None`, it is set to `0.0`
     pub fn new(percentage: f64, default: Option<f64>) -> Self {
         Drop {
+            name: "Drop".to_string(),
             percentage,
             default: default.unwrap_or(0.0),
         }

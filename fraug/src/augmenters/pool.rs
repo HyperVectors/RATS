@@ -2,6 +2,7 @@ use super::base::Augmenter;
 
 /// Reduces the temporal resolution without changing the length
 pub struct Pool {
+    pub name: String,
     /// Pooling function to be used
     kind: PoolingMethod,
     /// Size of one pool
@@ -17,7 +18,11 @@ pub enum PoolingMethod {
 impl Pool {
     /// Creates new pool augmenter
     pub fn new(kind: PoolingMethod, size: usize) -> Self {
-        Pool { kind, size }
+        Pool {
+            name: "Pool".to_string(),
+            kind,
+            size,
+        }
     }
 }
 

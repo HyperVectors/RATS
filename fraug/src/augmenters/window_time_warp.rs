@@ -4,6 +4,7 @@ use rand::rngs::ThreadRng;
 use rand::{Rng, rng};
 
 pub struct RandomWindowWarpAugmenter {
+    pub name: String,
     /// Length of the window to warp - a window of this size will be selected randomly for every time series in the dataset
     pub window_size: usize,
     /// Range for random speed ratio: [min, max]
@@ -15,6 +16,7 @@ impl RandomWindowWarpAugmenter {
     /// `speed_ratio_range` defines the min and max speed change (e.g. (0.5, 2.0)).
     pub fn new(window_size: usize, speed_ratio_range: (f64, f64)) -> Self {
         RandomWindowWarpAugmenter {
+            name: "RandomWindowWarpAugmenter".to_string(),
             window_size,
             speed_ratio_range,
         }

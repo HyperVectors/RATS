@@ -4,6 +4,7 @@ use rand::seq::SliceRandom;
 
 /// Permutate time series
 pub struct Permutate {
+    pub name: String,
     /// Size of series segments
     size: usize,
 }
@@ -11,7 +12,10 @@ pub struct Permutate {
 impl Permutate {
     /// Creates new permutate augmenter
     pub fn new(size: usize) -> Self {
-        Permutate { size }
+        Permutate {
+            name: "Permutate".to_string(),
+            size,
+        }
     }
 }
 

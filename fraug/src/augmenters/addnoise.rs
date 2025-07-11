@@ -10,6 +10,7 @@ use rand_distr::Normal;
 ///     - Spike: Adds a spike in the series with a random magnitude (in the range specified by `bounds` of the standard deviation of the original time series
 ///     - Slope: Adds a linear slope trend to the series with a random slope in the range specified by `bounds`
 pub struct AddNoise {
+    pub name: String,
     noise_type: NoiseType,
     bounds: Option<(f64, f64)>,
     mean: Option<f64>,
@@ -31,6 +32,7 @@ impl AddNoise {
         std_dev: Option<f64>,
     ) -> Self {
         AddNoise {
+            name: "AddNoise".to_string(),
             noise_type: noise_type,
             bounds: bounds,
             mean: mean,

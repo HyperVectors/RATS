@@ -30,6 +30,7 @@ pub trait Augmenter {
 ///
 /// Only works for augmenters that can operate on a single time series (that implement augment_one)
 pub struct ConditionalAugmenter {
+    pub name: String,
     inner: Box<dyn Augmenter>,
     p: f64,
 }
@@ -37,6 +38,7 @@ pub struct ConditionalAugmenter {
 impl ConditionalAugmenter {
     pub fn new<T: Augmenter + 'static>(augmenter: T, probability: f64) -> Self {
         ConditionalAugmenter {
+            name: "ConditionalAugmenter".to_string(),
             inner: Box::new(augmenter),
             p: probability,
         }
@@ -58,12 +60,14 @@ impl Augmenter for ConditionalAugmenter {
 
 /// Augmenter that includes multiple other augmenters to build a pipeline
 pub struct AugmentationPipeline {
+    pub name: String,
     augmenters: Vec<Box<dyn Augmenter + Sync>>,
 }
 
 impl AugmentationPipeline {
     pub fn new() -> Self {
         AugmentationPipeline {
+            name: "AugmentationPipeline".to_string(),
             augmenters: Vec::new(),
         }
     }
@@ -96,6 +100,9 @@ impl<T: Augmenter + 'static + Sync> Add<T> for AugmentationPipeline {
         let mut augmenters = self.augmenters;
         augmenters.push(Box::new(rhs));
 
-        AugmentationPipeline { augmenters }
+        AugmentationPipeline {
+            name: "ConditionalAugmenter".to_string(),
+            augmenters,
+        }
     }
 }

@@ -4,12 +4,16 @@ use rayon::prelude::*;
 /// Augmenter that crops each row into a random continuous slice of specified size
 /// Also known as window slicing
 pub struct Crop {
+    pub name: String,
     size: usize,
 }
 
 impl Crop {
     pub fn new(size: usize) -> Self {
-        Crop { size }
+        Crop {
+            name: "Crop".to_string(),
+            size,
+        }
     }
 
     fn get_slice(&self, x: &[f64]) -> Vec<f64> {

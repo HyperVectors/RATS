@@ -3,12 +3,16 @@ use crate::Dataset;
 use rand::Rng;
 
 pub struct FrequencyMask {
+    pub name: String,
     pub mask_width: usize,
 }
 
 impl FrequencyMask {
     pub fn new(mask_width: usize) -> Self {
-        FrequencyMask { mask_width }
+        FrequencyMask {
+            name: "FrequencyMask".to_string(),
+            mask_width,
+        }
     }
 }
 

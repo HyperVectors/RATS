@@ -3,6 +3,7 @@ use crate::Dataset;
 use rand::{Rng, rng};
 
 pub struct DynamicTimeWarpAugmenter {
+    pub name: String,
     window_size: usize,
 }
 
@@ -49,6 +50,7 @@ pub fn dtw(a: &[f64], b: &[f64]) -> (f64, Vec<(usize, usize)>) {
 impl DynamicTimeWarpAugmenter {
     pub fn new(window_size: usize) -> Self {
         DynamicTimeWarpAugmenter {
+            name: "DynamicTimeWarpAugmenter".to_string(),
             window_size: window_size,
         }
     }

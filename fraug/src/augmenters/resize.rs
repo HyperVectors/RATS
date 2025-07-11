@@ -4,6 +4,7 @@ use super::base::Augmenter;
 ///
 /// Does not interpolate values!
 pub struct Resize {
+    pub name: String,
     /// size after the augmentation
     size: usize,
 }
@@ -11,7 +12,10 @@ pub struct Resize {
 impl Resize {
     /// Creates new resize augmenter
     pub fn new(size: usize) -> Self {
-        Resize { size }
+        Resize {
+            name: "Resize".to_string(),
+            size,
+        }
     }
 }
 

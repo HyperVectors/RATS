@@ -8,6 +8,7 @@ use std::f64::consts::PI;
 /// Amplitude & Phase Perturbation (APP) augmenter.
 /// Adds small Gaussian noise to each bin’s magnitude and phase.
 pub struct AmplitudePhasePerturbation {
+    pub name: String,
     pub magnitude_std: f64,
     pub phase_std: f64,
     pub is_time_domain: bool,
@@ -16,6 +17,7 @@ pub struct AmplitudePhasePerturbation {
 impl AmplitudePhasePerturbation {
     pub fn new(magnitude_std: f64, phase_std: f64, is_time_domain: bool) -> Self {
         Self {
+            name: "AmplitudePhasePerturbation".to_string(),
             magnitude_std,
             phase_std,
             is_time_domain,

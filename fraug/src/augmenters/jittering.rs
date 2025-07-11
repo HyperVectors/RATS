@@ -4,12 +4,14 @@ use rand_distr::Normal;
 
 /// Augmenter that adds white gaussian noise of the specified standard deviation and a mean of 0
 pub struct Jittering {
+    pub name: String,
     deviation: f64,
 }
 
 impl Jittering {
     pub fn new(standard_deviation: f64) -> Self {
         Jittering {
+            name: "Jittering".to_string(),
             deviation: standard_deviation,
         }
     }

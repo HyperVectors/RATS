@@ -2,12 +2,16 @@ use super::base::Augmenter;
 
 /// Augmenter that rotates the data 180 degrees around specified anchor
 pub struct Rotation {
+    pub name: String,
     anchor: f64,
 }
 
 impl Rotation {
     pub fn new(anchor: f64) -> Self {
-        Rotation { anchor: anchor }
+        Rotation {
+            name: "Rotation".to_string(),
+            anchor,
+        }
     }
 }
 

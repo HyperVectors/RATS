@@ -24,6 +24,11 @@ macro_rules! wrap_augmentation_functions {
                 let x = ndarray::Array::from_vec(x_vec);
                 x.to_pyarray(py)
             }
+
+            #[getter]
+            fn name(&self) -> PyResult<String> {
+                Ok(self.inner.name.clone())
+            }
         }
     };
 }

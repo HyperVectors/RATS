@@ -4,6 +4,7 @@ use super::base::Augmenter;
 ///
 /// The level set is constructed by uniformly discretizing the range of all values in the series
 pub struct Quantize {
+    pub name: String,
     /// Number of levels in the level set
     levels: usize,
 }
@@ -11,7 +12,10 @@ pub struct Quantize {
 impl Quantize {
     /// Creates new quantize augmenter
     pub fn new(levels: usize) -> Self {
-        Quantize { levels }
+        Quantize {
+            name: "Quantize".to_string(),
+            levels,
+        }
     }
 }
 

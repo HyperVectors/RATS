@@ -2,6 +2,7 @@ use super::base::Augmenter;
 
 /// Augmenter that scales a time series with a random scalar within the specified range
 pub struct Scaling {
+    pub name: String,
     min_factor: f64,
     max_factor: f64,
 }
@@ -9,6 +10,7 @@ pub struct Scaling {
 impl Scaling {
     pub fn new(min: f64, max: f64) -> Self {
         Scaling {
+            name: "Scaling".to_string(),
             min_factor: min,
             max_factor: max,
         }
