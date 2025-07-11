@@ -11,7 +11,7 @@ use fraug::Dataset;
 use transforms::fastfourier::{compare_datasets_within_tolerance, dataset_fft, dataset_ifft};
 
 fn main() {
-    // Get dataset name from CLI argument | USAGE : cargo run -- <dataset_name>
+    // dataset name from CLI argument | USAGE : cargo run -- <dataset_name>
     let args: Vec<String> = env::args().collect();
     let dataset_name = if args.len() > 1 { &args[1] } else { "Car" };
 
@@ -47,16 +47,16 @@ fn main() {
         data.features.len()
     );
 
-    // let pipeline = AugmentationPipeline::new() + AddNoise::new(NoiseType::Slope, Some((0.01, 0.02)), None, None);
-    // let pipeline = AugmentationPipeline::new()
-    //     + Crop::new(250)
-    //     + ConditionalAugmenter::new(Rotation::new(2.0), 0.5)
-    //     + Scaling::new(0.5, 2.0)
-    //     + AddNoise::new(NoiseType::Spike, Some((-2.0, 2.0)), None, None)
-    //     + Drop::new(0.05, None)
-    //     + AmplitudePhasePerturbation::new(-10.0, 1.7, true);
+    let pipeline = AugmentationPipeline::new()
+        // + Crop::new(250)
+        // + ConditionalAugmenter::new(Rotation::new(2.0), 0.5)
+        // + Scaling::new(0.5, 2.0)
+        // + AddNoise::new(NoiseType::Spike, Some((-2.0, 2.0)), None, None)
+        // + Drop::new(0.05, None)
+        + AmplitudePhasePerturbation::new(-10.0, 1.7, true)
+        + FrequencyMask::new(10, true);
 
-    // pipeline.augment_batch(&mut data);
+    pipeline.augment_batch(&mut data, true);
 
     let dtw_augmenter = DynamicTimeWarpAugmenter::new(10);
 
@@ -78,22 +78,50 @@ fn main() {
         println!("Augmented dataset written to {out_filename}");
     }
 
-    // FFT transform of the dataset
-    //let mut freq_data = dataset_fft(&data);
-    //println!(
+    // // FFT transform of the dataset
+    // let mut freq_data = dataset_fft(&data);
+    // println!(
     //    "First 10 FFT magnitudes of first sample: {:?}",
     //    freq_data.features[1].iter().take(10).collect::<Vec<&f64>>()
-    //);
+    // );
 
-    // Apply Amplitude & Phase Perturbation
-    // let app = AmplitudePhasePerturbation::new(-10.0, 1.7); // Adjust stddevs as needed
-    // app.augment_batch(&mut data, true);
+    // // Apply Amplitude & Phase Perturbation
+    // let app = AmplitudePhasePerturbation::new(-10.0, 1.7, false);
+    // app.augment_batch(&mut freq_data, true);
 
-    // reconstructed time domain dataset to CSV
+    // // Apply Frequency Mask
+    // let freq_mask = FrequencyMask::new(10, false);
+    // freq_mask.augment_batch(&mut freq_data, true);
+    // println!(
+    //     "First 10 FFT magnitudes after perturbation and masking: {:?}",
+    //     freq_data.features[1].iter().take(10).collect::<Vec<&f64>>()
+    // );
+
+    // // write the frequency domain dataset to CSV
+    // let freq_out_filename = format!("{}_freq_augmented.csv", dataset_name);
+    // if let Err(e) = readcsv::write_dataset_csv(
+    //     &freq_data.features,
+    //     &freq_data.labels,
+    //     dataset_name,
+    //     &freq_out_filename,
+    // ) {
+    //     eprintln!("Failed to write frequency domain CSV: {e}");
+    // } else {
+    //     println!("Frequency domain dataset written to {freq_out_filename}");
+    // }
+
+    // // Inverse FFT to get back to time domain
+    // let mut reconstructed_data = dataset_ifft(&freq_data);
+    // println!(
+    //     "First 10 time domain values after IFFT: {:?}",
+    //     reconstructed_data.features[1].iter().take(10).collect::<Vec<&f64>>()
+    // );
+
+    // // reconstructed time domain dataset to CSV
     // let time_out_filename = format!("{}app.csv", dataset_name);
     // if let Err(e) = readcsv::write_dataset_csv(
-    //     &data.features,
-    //     &data.labels,
+    //     &reconstructed_data.features,
+    //     &reconstructed_data.labels,
     //     dataset_name,
     //     &time_out_filename,
     // ) {
@@ -102,10 +130,10 @@ fn main() {
     //     println!("Time domain dataset written to {time_out_filename}");
     // }
 
-    // Compare original and reconstructed datasets
-    //let (max_diff, all_within) = compare_datasets_within_tolerance(&data, &original_data, 1e-10);
-    //println!(
+    // // Compare original and reconstructed datasets
+    // let (max_diff, all_within) = compare_datasets_within_tolerance(&data, &reconstructed_data, 1e-6);
+    // println!(
     //    "Max absolute difference after FFT->IFFT: {:.3e}, All within tolerance: {}",
     //    max_diff, all_within
-    //);
+    // );
 }

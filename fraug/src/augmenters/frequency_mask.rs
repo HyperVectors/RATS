@@ -1,21 +1,43 @@
 use super::base::Augmenter;
+use crate::Dataset;
+use crate::transforms::fastfourier::{dataset_fft, dataset_ifft};
 use rand::Rng;
 
 pub struct FrequencyMask {
     pub name: String,
     pub mask_width: usize,
+    pub is_time_domain: bool,
 }
 
 impl FrequencyMask {
-    pub fn new(mask_width: usize) -> Self {
+    pub fn new(mask_width: usize, is_time_domain: bool) -> Self {
         FrequencyMask {
             name: "FrequencyMask".to_string(),
             mask_width,
+            is_time_domain,
         }
     }
 }
 
 impl Augmenter for FrequencyMask {
+    fn augment_batch(&self, data: &mut Dataset, _parallel: bool) {
+        if self.is_time_domain {
+            let mut transformed_dataset = dataset_fft(data);
+
+            transformed_dataset
+                .features
+                .iter_mut()
+                .for_each(|sample| *sample = self.augment_one(sample));
+
+            let inverse_dataset = dataset_ifft(&transformed_dataset);
+            *data = inverse_dataset;
+        } else {
+            data.features
+                .iter_mut()
+                .for_each(|sample| *sample = self.augment_one(sample));
+        }
+    }
+
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
         let mut res = x.to_vec();
 
@@ -28,7 +50,6 @@ impl Augmenter for FrequencyMask {
         let center = rng.random_range(self.mask_width / 2..(num_bins - self.mask_width / 2));
         let start = center - self.mask_width / 2;
         let end = start + self.mask_width;
-        // println!("Masking bins {} to {}", start, end);
         for bin in start..end {
             let re_idx = 2 * bin;
             let im_idx = 2 * bin + 1;
