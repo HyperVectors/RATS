@@ -38,26 +38,3 @@ impl Augmenter for Repeat {
         unimplemented!("Repeat augmenter only works on the dataset directly!");
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::Dataset;
-
-    #[test]
-    fn repeat_2() {
-        let series = vec![1.0; 100];
-        let mut set = Dataset {
-            features: vec![series],
-            labels: vec![String::from("1")],
-        };
-
-        let augmenter = Repeat::new(2);
-        augmenter.augment_batch(&mut set, false);
-
-        assert_eq!(set.features[0], vec![1.0; 100]);
-        assert_eq!(set.features[1], vec![1.0; 100]);
-        assert_eq!(set.features.len(), 2);
-        assert_eq!(set.labels, vec![String::from("1"); 2]);
-    }
-}

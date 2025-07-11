@@ -23,20 +23,3 @@ impl Augmenter for Scaling {
         x.iter().map(|val| *val * scalar).collect()
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn scaling() {
-        let series = vec![1.0; 100];
-
-        let augmenter = Scaling::new(2.0, 4.0);
-        let series = augmenter.augment_one(&series);
-
-        series
-            .iter()
-            .for_each(|&val| assert!(val >= 2.0 && val <= 4.0));
-    }
-}

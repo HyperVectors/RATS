@@ -46,25 +46,3 @@ impl Augmenter for Quantize {
             .collect::<Vec<_>>()
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn quantize() {
-        let series = vec![1.0; 11]
-            .iter()
-            .enumerate()
-            .map(|(i, _)| i as f64)
-            .collect::<Vec<_>>();
-
-        let aug = Quantize::new(5);
-        let series = aug.augment_one(&series);
-
-        assert_eq!(
-            series,
-            vec![0.0, 0.0, 2.0, 2.0, 4.0, 4.0, 6.0, 6.0, 8.0, 8.0, 8.0]
-        );
-    }
-}

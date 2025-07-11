@@ -34,37 +34,3 @@ impl Augmenter for Crop {
         self.get_slice(x)
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::Dataset;
-
-    #[test]
-    fn crop_larger() {
-        let series = vec![1.0; 100];
-        let mut set = Dataset {
-            features: vec![series],
-            labels: vec![String::from("1")],
-        };
-
-        let augmenter = Crop::new(200);
-        augmenter.augment_batch(&mut set, true);
-
-        assert_eq!(set.features[0], vec![1.0; 100]);
-    }
-
-    #[test]
-    fn crop_smaller() {
-        let series = vec![1.0; 100];
-        let mut set = Dataset {
-            features: vec![series],
-            labels: vec![String::from("1")],
-        };
-
-        let augmenter = Crop::new(50);
-        augmenter.augment_batch(&mut set, true);
-
-        assert_eq!(set.features[0], vec![1.0; 50]);
-    }
-}

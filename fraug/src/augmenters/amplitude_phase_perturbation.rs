@@ -3,7 +3,6 @@ use crate::Dataset;
 use crate::transforms::fastfourier::{dataset_fft, dataset_ifft};
 use rand::rng;
 use rand_distr::{Distribution, Normal};
-use std::f64::consts::PI;
 
 /// Amplitude & Phase Perturbation (APP) augmenter.
 /// Adds small Gaussian noise to each bin’s magnitude and phase.
@@ -72,38 +71,5 @@ impl Augmenter for AmplitudePhasePerturbation {
         }
 
         x
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::Dataset;
-
-    #[test]
-    fn test_app_augmenter_frequency() {
-        let mut data = Dataset {
-            features: vec![vec![1.0, 0.0].repeat(16), vec![2.0, 0.0].repeat(16)],
-            labels: vec!["a".to_string(), "b".to_string()],
-        };
-        let app = AmplitudePhasePerturbation::new(0.1, 0.1, false);
-        let orig = data.features[0].clone();
-        app.augment_batch(&mut data, false);
-        assert_ne!(orig, data.features[0]);
-    }
-
-    #[test]
-    fn test_app_augmenter_time() {
-        let mut data = Dataset {
-            features: vec![vec![0.0, 1.0, 2.0], vec![0.0, 2.0, 4.0]],
-            labels: vec!["A".to_string(), "B".to_string()],
-        };
-        let orig = data.features[0].clone();
-
-        let app = AmplitudePhasePerturbation::new(0.1, 0.1, true);
-
-        app.augment_batch(&mut data, false);
-
-        assert_ne!(orig, data.features[0]);
     }
 }

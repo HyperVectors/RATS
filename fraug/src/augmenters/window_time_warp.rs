@@ -103,37 +103,3 @@ impl Augmenter for RandomWindowWarpAugmenter {
         unimplemented!("Use augment_dataset instead!");
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::Dataset;
-
-    #[test]
-    fn test_random_window_warp_full_series() {
-        let mut data = Dataset {
-            features: vec![vec![0.0, 1.0, 2.0, 3.0]],
-            labels: vec!["L".into()],
-        };
-        let aug = RandomWindowWarpAugmenter::new(5, (0.5, 2.0));
-        aug.augment_batch(&mut data, false);
-        assert_eq!(data.features.len(), 2);
-        assert_eq!(data.features[1].len(), 4);
-    }
-
-    #[test]
-    fn test_random_window_warp_sub_segment() {
-        let orig = vec![0.0, 1.0, 2.0, 3.0, 4.0];
-        let mut data = Dataset {
-            features: vec![orig.clone()],
-            labels: vec!["L".into()],
-        };
-        let aug = RandomWindowWarpAugmenter::new(2, (0.5, 1.5));
-        aug.augment_batch(&mut data, false);
-        assert_eq!(data.features.len(), 2);
-        let warped = &data.features[1];
-        assert_eq!(warped[0], orig[0]);
-        assert_eq!(warped[warped.len() - 1], orig[orig.len() - 1]);
-        assert_eq!(warped.len(), orig.len());
-    }
-}

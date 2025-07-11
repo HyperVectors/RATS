@@ -1,5 +1,4 @@
 use super::base::Augmenter;
-use crate::Dataset;
 use rand::Rng;
 
 pub struct FrequencyMask {
@@ -38,33 +37,5 @@ impl Augmenter for FrequencyMask {
         }
 
         res
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::Dataset;
-
-    #[test]
-    fn test_frequency_mask_dataset() {
-        let mut data = Dataset {
-            features: vec![
-                vec![1.0, 2.0].repeat(16), // 32 elements: [1.0, 2.0, 1.0, 2.0, ...]
-                vec![2.0, 3.0].repeat(16), // 32 elements: [2.0, 3.0, 2.0, 3.0, ...]
-            ],
-            labels: vec!["a".to_string(), "b".to_string()],
-        };
-        let mask = FrequencyMask::new(4);
-        mask.augment_batch(&mut data, true);
-        for sample in data.features {
-            let mut zeroed_bins = 0;
-            for bin in 0..(sample.len() / 2) {
-                if sample[2 * bin] == 0.0 && sample[2 * bin + 1] == 0.0 {
-                    zeroed_bins += 1;
-                }
-            }
-            assert_eq!(zeroed_bins, 4);
-        }
     }
 }

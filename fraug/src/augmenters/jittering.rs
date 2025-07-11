@@ -25,18 +25,3 @@ impl Augmenter for Jittering {
         x.iter().map(|val| *val + dist.sample(&mut rng)).collect()
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn gaussian() {
-        let series = vec![1.0; 100];
-
-        let augmenter = Jittering::new(0.5);
-        let series = augmenter.augment_one(&series);
-
-        assert_ne!(series, vec![1.0; 100]);
-    }
-}

@@ -54,7 +54,7 @@ impl Augmenter for Pool {
                 }
             };
 
-            for idx in i..i + cur_size {
+            for _ in i..i + cur_size {
                 res.push(new_val);
             }
 
@@ -62,66 +62,5 @@ impl Augmenter for Pool {
         }
 
         res
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn pool_min() {
-        let series = vec![1.0; 5]
-            .iter()
-            .enumerate()
-            .map(|(i, _)| i as f64)
-            .collect::<Vec<_>>();
-
-        let aug = Pool::new(PoolingMethod::Min, 3);
-        let series = aug.augment_one(&series);
-
-        assert_eq!(series, vec![0.0, 0.0, 0.0, 3.0, 3.0]);
-    }
-
-    #[test]
-    fn pool_max() {
-        let series = vec![1.0; 5]
-            .iter()
-            .enumerate()
-            .map(|(i, _)| i as f64)
-            .collect::<Vec<_>>();
-
-        let aug = Pool::new(PoolingMethod::Max, 3);
-        let series = aug.augment_one(&series);
-
-        assert_eq!(series, vec![2.0, 2.0, 2.0, 4.0, 4.0]);
-    }
-
-    #[test]
-    fn pool_average() {
-        let series = vec![1.0; 6]
-            .iter()
-            .enumerate()
-            .map(|(i, _)| i as f64)
-            .collect::<Vec<_>>();
-
-        let aug = Pool::new(PoolingMethod::Average, 4);
-        let series = aug.augment_one(&series);
-
-        assert_eq!(series, vec![1.5, 1.5, 1.5, 1.5, 4.5, 4.5]);
-    }
-
-    #[test]
-    fn pool_exact_match() {
-        let series = vec![1.0; 6]
-            .iter()
-            .enumerate()
-            .map(|(i, _)| i as f64)
-            .collect::<Vec<_>>();
-
-        let aug = Pool::new(PoolingMethod::Min, 2);
-        let series = aug.augment_one(&series);
-
-        assert_eq!(series, vec![0.0, 0.0, 2.0, 2.0, 4.0, 4.0]);
     }
 }

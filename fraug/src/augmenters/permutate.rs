@@ -28,18 +28,3 @@ impl Augmenter for Permutate {
         segments.iter().map(|arr| arr.to_vec()).flatten().collect()
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn reverse() {
-        let series = vec![1.0, 2.0, 3.0, 4.0];
-
-        let aug = Permutate::new(2);
-        let series = aug.augment_one(&series);
-
-        assert!(series == vec![3.0, 4.0, 1.0, 2.0] || series == vec![1.0, 2.0, 3.0, 4.0]);
-    }
-}

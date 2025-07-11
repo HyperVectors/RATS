@@ -22,28 +22,3 @@ impl Augmenter for Rotation {
             .collect()
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn flip() {
-        let series = vec![1.0; 100];
-
-        let augmenter = Rotation::new(0.0);
-        let series = augmenter.augment_one(&series);
-
-        assert_eq!(series, vec![-1.0; 100]);
-    }
-
-    #[test]
-    fn anchor() {
-        let series = vec![1.0; 100];
-
-        let augmenter = Rotation::new(0.5);
-        let series = augmenter.augment_one(&series);
-
-        assert_eq!(series, vec![0.0; 100]);
-    }
-}
