@@ -77,5 +77,8 @@ fn pyfraug(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<augmenters::Reverse>()?;
     m.add_class::<augmenters::Permutate>()?;
     m.add_class::<transforms::Transforms>()?;
+    m.add_class::<augmenters::Drift>()?;
+    m.add_class::<augmenters::Convolve>()?;
+    m.add_class::<augmenters::ConvolveWindow>()?;
     Ok(())
 }

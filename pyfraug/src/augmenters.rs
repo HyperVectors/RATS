@@ -346,3 +346,47 @@ impl Permutate {
 }
 
 wrap_augmentation_functions!(Permutate);
+
+#[pyclass]
+pub struct Drift {
+    inner: fraug::augmenters::Drift,
+}
+
+#[pymethods]
+impl Drift {
+    #[new]
+    fn new(max_drift: f64, n_drift_points: usize) -> Self {
+        Drift {
+            inner: fraug::augmenters::Drift::new(max_drift, n_drift_points),
+        }
+    }
+}
+
+wrap_augmentation_functions!(Drift);
+
+#[pyclass]
+pub enum ConvolveWindow {
+    Flat,
+    Gaussian,
+}
+
+#[pyclass]
+pub struct Convolve {
+    inner: fraug::augmenters::Convolve,
+}
+
+#[pymethods]
+impl Convolve {
+    #[new]
+    fn new(window: &ConvolveWindow, size: usize) -> Self {
+        let int_window = match window {
+            ConvolveWindow::Flat => fraug::augmenters::ConvolveWindow::Flat,
+            ConvolveWindow::Gaussian => fraug::augmenters::ConvolveWindow::Gaussian,
+        };
+        Convolve {
+            inner: fraug::augmenters::Convolve::new(int_window, size),
+        }
+    }
+}
+
+wrap_augmentation_functions!(Convolve);
