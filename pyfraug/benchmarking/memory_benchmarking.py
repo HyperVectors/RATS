@@ -50,7 +50,9 @@ if __name__ == "__main__":
         })
         print(f"{aug_name}: PyFraug {pf_mem:.2f} MB, tsaug {tsaug_mem if tsaug_mem is not None else 'N/A'} MB")
 
-     # FFT memory benchmarking
+    
+    
+    # FFT memory benchmarking
     def fft_mem():
         ds = pf.Dataset(x.copy(), y.copy())
         pf.Transforms.fft(ds, parallel=True)
@@ -82,6 +84,67 @@ if __name__ == "__main__":
         pf.Transforms.compare_within_tolerance(ds, ds_time, 1e-6)
     compare_peak_mem = memory_usage(compare_mem, max_usage=True)
     print(f"compare_within_tolerance: PyFraug {compare_peak_mem:.2f} MB, tsaug N/A")
+
+    
+    
+    # Pipeline with only augmenters that have a tsaug equivalent
+    pf_pipeline_tsaug = pf.AugmentationPipeline()
+    tsaug_pipeline = None
+    for aug in AUGMENTERS:
+        aug_name = aug["name"]
+        pf_kwargs = aug["pf_kwargs"] or {}
+        tsaug_class_name = aug["tsaug_class"]
+        tsaug_kwargs = aug["tsaug_kwargs"] or {}
+
+        if tsaug_class_name:
+            pf_pipeline_tsaug = pf_pipeline_tsaug + getattr(pf, aug_name)(**pf_kwargs)
+            tsaug_class = getattr(importlib.import_module("tsaug"), tsaug_class_name)
+            if tsaug_pipeline is None:
+                tsaug_pipeline = tsaug_class(**tsaug_kwargs)
+            else:
+                tsaug_pipeline = tsaug_pipeline + tsaug_class(**tsaug_kwargs)
+
+    def pf_pipeline_tsaug_mem():
+        ds_copy = pf.Dataset(x.copy(), y.copy())
+        pf_pipeline_tsaug.augment_batch(ds_copy, parallel=True)
+    memory_pf_pipeline_tsaug = memory_usage(pf_pipeline_tsaug_mem, max_usage=True)
+
+    if tsaug_pipeline is not None:
+        def tsaug_pipeline_mem():
+            x_copy = x.copy()
+            tsaug_pipeline.augment(x_copy)
+        memory_tsaug_pipeline = memory_usage(tsaug_pipeline_mem, max_usage=True)
+    else:
+        memory_tsaug_pipeline = None
+
+    results.append({
+        "Augmenter": "Pipeline_with_tsaug",
+        "PyFraug_peak_mem_MB": memory_pf_pipeline_tsaug,
+        "tsaug_peak_mem_MB": memory_tsaug_pipeline
+    })
+    print(f"Pipeline_with_tsaug: PyFraug {memory_pf_pipeline_tsaug:.2f} MB, tsaug {memory_tsaug_pipeline if memory_tsaug_pipeline is not None else 'N/A'} MB")
+
+    
+    
+    # Full pipeline with all augmenters
+    pf_full_pipeline = pf.AugmentationPipeline()
+    for aug in AUGMENTERS:
+        aug_name = aug["name"]
+        pf_kwargs = aug["pf_kwargs"] or {}
+        pf_full_pipeline = pf_full_pipeline + getattr(pf, aug_name)(**pf_kwargs)
+
+    def pf_full_pipeline_mem():
+        ds_copy = pf.Dataset(x.copy(), y.copy())
+        pf_full_pipeline.augment_batch(ds_copy, parallel=True)
+    memory_pf_full_pipeline = memory_usage(pf_full_pipeline_mem, max_usage=True)
+
+    results.append({
+        "Augmenter": "Full_pipeline",
+        "PyFraug_peak_mem_MB": memory_pf_full_pipeline,
+        "tsaug_peak_mem_MB": None
+    })
+    print(f"Full_pipeline: PyFraug {memory_pf_full_pipeline:.2f} MB, tsaug N/A")
+
 
     
     # Save results
