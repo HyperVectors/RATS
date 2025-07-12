@@ -6,23 +6,39 @@ import yaml
 import importlib
 import pyfraug as pf
 import tsaug as ts
+from tqdm import tqdm
+import argparse
+from io import StringIO
 
-data = pd.read_csv("../../data/Car/Car.csv").to_numpy()
+parser = argparse.ArgumentParser(description="Benchmark PyFraug and tsaug augmenters and transforms.")
+parser.add_argument("--dataset", type=str, default="Car", help="Dataset name (default: Car)")
+args = parser.parse_args()
+dataset_name = args.dataset
+
+csv_path = f"../../data/{dataset_name}/{dataset_name}.csv"
+print(f"Loading data from {csv_path}")
+
+# loading data
+data = []
+with open(csv_path, "r") as f:
+    for line in tqdm(f, desc="Loading CSV"):
+        data.append(line)
+data = pd.read_csv(StringIO("".join(data))).to_numpy()
+
 x = data[:, :-1].astype(np.float64)
 y = list(map(str, data[:, -1]))
 dataset = pf.Dataset(x, y)
 
-# Augmenters to benchmark: (PyFraug class, args, tsaug equivalent, tsaug args)
 with open("augmenters.yaml", "r") as f:
     AUGMENTERS = yaml.safe_load(f)
 
 results = []
-
 os.makedirs("results", exist_ok=True)
 
 if __name__ == "__main__":
 
-    for aug in AUGMENTERS:
+    # Benchmark each augmenter
+    for aug in tqdm(AUGMENTERS, desc="Augmenters"):
         aug_name = aug["name"]
         pf_kwargs = aug["pf_kwargs"] or {}
         tsaug_class_name = aug["tsaug_class"]
@@ -30,16 +46,16 @@ if __name__ == "__main__":
 
         pf_aug = getattr(pf, aug_name)(**pf_kwargs)
         ds_copy = pf.Dataset(x.copy(), y.copy())
-        start = time.time()
+        start = time.perf_counter()
         pf_aug.augment_batch(ds_copy, parallel=True)
-        pf_time = time.time() - start
+        pf_time = time.perf_counter() - start
 
         if tsaug_class_name:
             tsaug_class = getattr(importlib.import_module("tsaug"), tsaug_class_name)
             x_copy = x.copy()
-            start = time.time()
+            start = time.perf_counter()
             tsaug_class(**tsaug_kwargs).augment(x_copy)
-            tsaug_time = time.time() - start
+            tsaug_time = time.perf_counter() - start
         else:
             tsaug_time = None
 
@@ -50,13 +66,11 @@ if __name__ == "__main__":
         })
         print(f"{aug_name}: PyFraug {pf_time:.4f}s, tsaug {tsaug_time if tsaug_time is not None else 'N/A'}")
 
-
-    
-    # FFT benchmarking
-    start = time.time()
+    # FFT benchmarking with tqdm
+    print("Running FFT...")
+    start = time.perf_counter()
     ds_freq = pf.Transforms.fft(dataset, parallel=True)
-    fft_time = time.time() - start
-
+    fft_time = time.perf_counter() - start
     results.append({
         "Augmenter": "fft",
         "PyFraug_time_sec": fft_time,
@@ -64,11 +78,10 @@ if __name__ == "__main__":
     })
     print(f"fft: PyFraug {fft_time:.4f}s, tsaug N/A")
 
-    # IFFT benchmarking
-    start = time.time()
+    print("Running IFFT...")
+    start = time.perf_counter()
     ds_time = pf.Transforms.ifft(ds_freq, parallel=True)
-    ifft_time = time.time() - start
-
+    ifft_time = time.perf_counter() - start
     results.append({
         "Augmenter": "ifft",
         "PyFraug_time_sec": ifft_time,
@@ -76,19 +89,17 @@ if __name__ == "__main__":
     })
     print(f"ifft: PyFraug {ifft_time:.4f}s, tsaug N/A")
 
-    # Validating FFT and IFFT
-    start = time.time()
+    print("Validating FFT and IFFT...")
+    start = time.perf_counter()
     max_diff, all_within = pf.Transforms.compare_within_tolerance(dataset, ds_time, 1e-6)
-    diff_time = time.time() - start
-
+    diff_time = time.perf_counter() - start
     print(f"compare_within_tolerance: PyFraug {diff_time:.4f}s, max_diff={max_diff}, all_within={all_within}")
-   
-   
-   
-   # Pipeline with only augmenters that have a tsaug equivalent
+
+    # Pipeline with only augmenters that have a tsaug equivalent
+    print("Running Pipeline_with_tsaug...")
     pf_pipeline_tsaug = pf.AugmentationPipeline()
     tsaug_pipeline = None
-    for aug in AUGMENTERS:
+    for aug in tqdm(AUGMENTERS, desc="Pipeline_with_tsaug"):
         aug_name = aug["name"]
         pf_kwargs = aug["pf_kwargs"] or {}
         tsaug_class_name = aug["tsaug_class"]
@@ -103,15 +114,15 @@ if __name__ == "__main__":
                 tsaug_pipeline = tsaug_pipeline + tsaug_class(**tsaug_kwargs)
 
     ds_copy = pf.Dataset(x.copy(), y.copy())
-    start = time.time()
+    start = time.perf_counter()
     pf_pipeline_tsaug.augment_batch(ds_copy, parallel=True)
-    pf_time = time.time() - start
+    pf_time = time.perf_counter() - start
 
     if tsaug_pipeline is not None:
         x_copy = x.copy()
-        start = time.time()
+        start = time.perf_counter()
         tsaug_pipeline.augment(x_copy)
-        tsaug_time = time.time() - start
+        tsaug_time = time.perf_counter() - start
     else:
         tsaug_time = None
 
@@ -122,30 +133,27 @@ if __name__ == "__main__":
     })
     print(f"Pipeline_with_tsaug: PyFraug {pf_time:.4f}s, tsaug {tsaug_time if tsaug_time is not None else 'N/A'}")
 
+    # # Full pipeline with all augmenters
+    # print("Running Full_pipeline...")
+    # pf_full_pipeline = pf.AugmentationPipeline()
+    # for aug in tqdm(AUGMENTERS, desc="Full_pipeline"):
+    #     aug_name = aug["name"]
+    #     pf_kwargs = aug["pf_kwargs"] or {}
+    #     pf_full_pipeline = pf_full_pipeline + getattr(pf, aug_name)(**pf_kwargs)
 
+    # ds_copy = pf.Dataset(x.copy(), y.copy())
+    # start = time.perf_counter()
+    # pf_full_pipeline.augment_batch(ds_copy, parallel=True)
+    # pf_time = time.perf_counter() - start
 
-    # Full pipeline with all augmenters
-    pf_full_pipeline = pf.AugmentationPipeline()
-    for aug in AUGMENTERS:
-        aug_name = aug["name"]
-        pf_kwargs = aug["pf_kwargs"] or {}
-        pf_full_pipeline = pf_full_pipeline + getattr(pf, aug_name)(**pf_kwargs)
-
-    ds_copy = pf.Dataset(x.copy(), y.copy())
-    start = time.time()
-    pf_full_pipeline.augment_batch(ds_copy, parallel=True)
-    pf_time = time.time() - start
-
-    results.append({
-        "Augmenter": "Full_pipeline",
-        "PyFraug_time_sec": pf_time,
-        "tsaug_time_sec": None
-    })
-    print(f"Full_pipeline: PyFraug {pf_time:.4f}s, tsaug N/A")
-
-
+    # results.append({
+    #     "Augmenter": "Full_pipeline",
+    #     "PyFraug_time_sec": pf_time,
+    #     "tsaug_time_sec": None
+    # })
+    # print(f"Full_pipeline: PyFraug {pf_time:.4f}s, tsaug N/A")
 
     # Saving results
     df = pd.DataFrame(results)
-    df.to_csv("./results/time_benchmark.csv", index=False)
-    print("Benchmark results saved to results/time_benchmark.csv")
+    df.to_csv(f"./results/{dataset_name}_time_benchmark.csv", index=False)
+    print(f"Benchmark results saved to results/{dataset_name}_time_benchmark.csv")

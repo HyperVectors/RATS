@@ -5,9 +5,25 @@ import yaml
 import importlib
 import pyfraug as pf
 import tsaug as ts
+from tqdm import tqdm
 from memory_profiler import memory_usage
+import argparse
+from io import StringIO
 
-data = pd.read_csv("../../data/Car/Car.csv").to_numpy()
+parser = argparse.ArgumentParser(description="Benchmark PyFraug and tsaug augmenters and transforms (memory).")
+parser.add_argument("--dataset", type=str, default="Car", help="Dataset name (default: Car)")
+args = parser.parse_args()
+dataset_name = args.dataset
+
+csv_path = f"../../data/{dataset_name}/{dataset_name}.csv"
+print(f"Loading data from {csv_path}")
+
+data = []
+with open(csv_path, "r") as f:
+    for line in tqdm(f, desc="Loading CSV"):
+        data.append(line)
+data = pd.read_csv(StringIO("".join(data))).to_numpy()
+
 x = data[:, :-1].astype(np.float64)
 y = list(map(str, data[:, -1]))
 
@@ -28,10 +44,10 @@ if __name__ == "__main__":
         AUGMENTERS = yaml.safe_load(f)
 
     results = []
-
     os.makedirs("results", exist_ok=True)
 
-    for aug in AUGMENTERS:
+    # Benchmark each augmenter
+    for aug in tqdm(AUGMENTERS, desc="Augmenters"):
         aug_name = aug["name"]
         pf_kwargs = aug["pf_kwargs"] or {}
         tsaug_class_name = aug["tsaug_class"]
@@ -50,9 +66,8 @@ if __name__ == "__main__":
         })
         print(f"{aug_name}: PyFraug {pf_mem:.2f} MB, tsaug {tsaug_mem if tsaug_mem is not None else 'N/A'} MB")
 
-    
-    
     # FFT memory benchmarking
+    print("Running FFT...")
     def fft_mem():
         ds = pf.Dataset(x.copy(), y.copy())
         pf.Transforms.fft(ds, parallel=True)
@@ -64,7 +79,7 @@ if __name__ == "__main__":
     })
     print(f"fft: PyFraug {fft_peak_mem:.2f} MB, tsaug N/A")
 
-    # IFFT memory benchmarking
+    print("Running IFFT...")
     def ifft_mem():
         ds = pf.Dataset(x.copy(), y.copy())
         ds_freq = pf.Transforms.fft(ds, parallel=True)
@@ -77,20 +92,25 @@ if __name__ == "__main__":
     })
     print(f"ifft: PyFraug {ifft_peak_mem:.2f} MB, tsaug N/A")
 
+    print("Running compare_within_tolerance...")
     def compare_mem():
         ds = pf.Dataset(x.copy(), y.copy())
         ds_freq = pf.Transforms.fft(ds, parallel=True)
         ds_time = pf.Transforms.ifft(ds_freq, parallel=True)
         pf.Transforms.compare_within_tolerance(ds, ds_time, 1e-6)
     compare_peak_mem = memory_usage(compare_mem, max_usage=True)
+    results.append({
+        "Augmenter": "compare_within_tolerance",
+        "PyFraug_peak_mem_MB": compare_peak_mem,
+        "tsaug_peak_mem_MB": None
+    })
     print(f"compare_within_tolerance: PyFraug {compare_peak_mem:.2f} MB, tsaug N/A")
 
-    
-    
     # Pipeline with only augmenters that have a tsaug equivalent
+    print("Running Pipeline_with_tsaug...")
     pf_pipeline_tsaug = pf.AugmentationPipeline()
     tsaug_pipeline = None
-    for aug in AUGMENTERS:
+    for aug in tqdm(AUGMENTERS, desc="Pipeline_with_tsaug"):
         aug_name = aug["name"]
         pf_kwargs = aug["pf_kwargs"] or {}
         tsaug_class_name = aug["tsaug_class"]
@@ -124,11 +144,10 @@ if __name__ == "__main__":
     })
     print(f"Pipeline_with_tsaug: PyFraug {memory_pf_pipeline_tsaug:.2f} MB, tsaug {memory_tsaug_pipeline if memory_tsaug_pipeline is not None else 'N/A'} MB")
 
-    
-    
     # Full pipeline with all augmenters
+    print("Running Full_pipeline...")
     pf_full_pipeline = pf.AugmentationPipeline()
-    for aug in AUGMENTERS:
+    for aug in tqdm(AUGMENTERS, desc="Full_pipeline"):
         aug_name = aug["name"]
         pf_kwargs = aug["pf_kwargs"] or {}
         pf_full_pipeline = pf_full_pipeline + getattr(pf, aug_name)(**pf_kwargs)
@@ -145,9 +164,7 @@ if __name__ == "__main__":
     })
     print(f"Full_pipeline: PyFraug {memory_pf_full_pipeline:.2f} MB, tsaug N/A")
 
-
-    
     # Save results
     df = pd.DataFrame(results)
-    df.to_csv("./results/memory_benchmark.csv", index=False)
-    print("Benchmark results saved to results/memory_benchmark.csv")
+    df.to_csv(f"./results/{dataset_name}_memory_benchmark.csv", index=False)
+    print(f"Benchmark results saved to results/{dataset_name}_memory_benchmark.csv")
