@@ -5,7 +5,7 @@ mod transforms;
 use crate::augmenters::NoiseType;
 use augmenters::{
     AddNoise, AmplitudePhasePerturbation, AugmentationPipeline, Augmenter, ConditionalAugmenter,
-    Crop, Drop, DynamicTimeWarpAugmenter, FrequencyMask, Jittering, Repeat, Rotation, Scaling, Convolve, ConvolveWindow,
+    Crop, Drop, DynamicTimeWarpAugmenter, FrequencyMask, Jittering, Repeat, Rotation, Scaling, Convolve, ConvolveWindow, Drift,
 };
 use fraug::Dataset;
 use transforms::fastfourier::{compare_datasets_within_tolerance, dataset_fft, dataset_ifft};
@@ -55,8 +55,9 @@ fn main() {
         // + Drop::new(0.05, None)
         // + AmplitudePhasePerturbation::new(-10.0, 1.7, true)
         // + FrequencyMask::new(10, true);
-        + Convolve::new(ConvolveWindow::Flat, 7)
-        + Convolve::new(ConvolveWindow::Gaussian, 31);
+        // + Convolve::new(ConvolveWindow::Flat, 7)
+        // + Convolve::new(ConvolveWindow::Gaussian, 31);
+        + Drift::new(1.0, 5);
 
     pipeline.augment_batch(&mut data, true);
 

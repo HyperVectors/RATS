@@ -36,3 +36,4 @@ pub use rotation::Rotation;
 pub use scaling::Scaling;
 pub use window_time_warp::RandomWindowWarpAugmenter;
 pub use convolve::{Convolve, ConvolveWindow};
+pub use drift::Drift;
