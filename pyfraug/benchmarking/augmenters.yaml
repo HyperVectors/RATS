@@ -57,3 +57,18 @@
   pf_kwargs: {size: 50}
   tsaug_class: null
   tsaug_kwargs: {n_segments: 50}
+
+- name: AddNoise
+  pf_kwargs: {noise_type: Gaussian, mean: 0.0, std_dev: 0.1}
+  tsaug_class: AddNoise
+  tsaug_kwargs: {scale: 0.1}
+
+- name: RandomWindowWarpAugmenter
+  pf_kwargs: {window_size: 10, speed_ratio_range: [0.5, 2.0]}
+  tsaug_class: TimeWarp
+  tsaug_kwargs: {n_speed_change: 1, max_speed_ratio: 2.0}
+
+- name: Pool
+  pf_kwargs: {kind: Average, size: 2}
+  tsaug_class: Pool
+  tsaug_kwargs: {kind: ave, size: 2}

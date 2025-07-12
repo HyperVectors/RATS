@@ -5,7 +5,7 @@ mod transforms;
 use crate::augmenters::NoiseType;
 use augmenters::{
     AddNoise, AmplitudePhasePerturbation, AugmentationPipeline, Augmenter, ConditionalAugmenter,
-    Crop, Drop, DynamicTimeWarpAugmenter, FrequencyMask, Jittering, Repeat, Rotation, Scaling,
+    Crop, Drop, DynamicTimeWarpAugmenter, FrequencyMask, Jittering, Repeat, Rotation, Scaling, Convolve, ConvolveWindow,
 };
 use fraug::Dataset;
 use transforms::fastfourier::{compare_datasets_within_tolerance, dataset_fft, dataset_ifft};
@@ -53,14 +53,16 @@ fn main() {
         // + Scaling::new(0.5, 2.0)
         // + AddNoise::new(NoiseType::Spike, Some((-2.0, 2.0)), None, None)
         // + Drop::new(0.05, None)
-        + AmplitudePhasePerturbation::new(-10.0, 1.7, true)
-        + FrequencyMask::new(10, true);
+        // + AmplitudePhasePerturbation::new(-10.0, 1.7, true)
+        // + FrequencyMask::new(10, true);
+        + Convolve::new(ConvolveWindow::Flat, 7)
+        + Convolve::new(ConvolveWindow::Gaussian, 31);
 
     pipeline.augment_batch(&mut data, true);
 
-    let dtw_augmenter = DynamicTimeWarpAugmenter::new(10);
+    // let dtw_augmenter = DynamicTimeWarpAugmenter::new(10);
 
-    dtw_augmenter.augment_batch(&mut data, false);
+    // dtw_augmenter.augment_batch(&mut data, false);
 
     println!(
         "After {:?}\nLength: {}",

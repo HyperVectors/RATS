@@ -44,7 +44,17 @@ if __name__ == "__main__":
         tsaug_class_name = aug["tsaug_class"]
         tsaug_kwargs = aug["tsaug_kwargs"] or {}
 
-        pf_aug = getattr(pf, aug_name)(**pf_kwargs)
+        # Manual enum fixes
+        if aug_name == "AddNoise" and isinstance(pf_kwargs.get("noise_type", None), str):
+            pf_kwargs["noise_type"] = getattr(pf.NoiseType, pf_kwargs["noise_type"])
+        if aug_name == "Pool" and isinstance(pf_kwargs.get("kind", None), str):
+            pf_kwargs["kind"] = getattr(pf.PoolingMethod, pf_kwargs["kind"])
+        if aug_name == "RandomWindowWarpAugmenter" and isinstance(pf_kwargs.get("speed_ratio_range", None), list):
+            pf_kwargs["speed_ratio_range"] = tuple(pf_kwargs["speed_ratio_range"])
+
+        pf_aug_class = getattr(pf, aug_name)
+        pf_aug = pf_aug_class(**pf_kwargs)
+
         ds_copy = pf.Dataset(x.copy(), y.copy())
         start = time.perf_counter()
         pf_aug.augment_batch(ds_copy, parallel=True)
@@ -105,8 +115,17 @@ if __name__ == "__main__":
         tsaug_class_name = aug["tsaug_class"]
         tsaug_kwargs = aug["tsaug_kwargs"] or {}
 
+        # Manual enum fixes
+        if aug_name == "AddNoise" and isinstance(pf_kwargs.get("noise_type", None), str):
+            pf_kwargs["noise_type"] = getattr(pf.NoiseType, pf_kwargs["noise_type"])
+        if aug_name == "Pool" and isinstance(pf_kwargs.get("kind", None), str):
+            pf_kwargs["kind"] = getattr(pf.PoolingMethod, pf_kwargs["kind"])
+        if aug_name == "RandomWindowWarpAugmenter" and isinstance(pf_kwargs.get("speed_ratio_range", None), list):
+            pf_kwargs["speed_ratio_range"] = tuple(pf_kwargs["speed_ratio_range"])
+
+        pf_aug_class = getattr(pf, aug_name)
         if tsaug_class_name:
-            pf_pipeline_tsaug = pf_pipeline_tsaug + getattr(pf, aug_name)(**pf_kwargs)
+            pf_pipeline_tsaug = pf_pipeline_tsaug + pf_aug_class(**pf_kwargs)
             tsaug_class = getattr(importlib.import_module("tsaug"), tsaug_class_name)
             if tsaug_pipeline is None:
                 tsaug_pipeline = tsaug_class(**tsaug_kwargs)
@@ -132,26 +151,6 @@ if __name__ == "__main__":
         "tsaug_time_sec": tsaug_time
     })
     print(f"Pipeline_with_tsaug: PyFraug {pf_time:.4f}s, tsaug {tsaug_time if tsaug_time is not None else 'N/A'}")
-
-    # # Full pipeline with all augmenters
-    # print("Running Full_pipeline...")
-    # pf_full_pipeline = pf.AugmentationPipeline()
-    # for aug in tqdm(AUGMENTERS, desc="Full_pipeline"):
-    #     aug_name = aug["name"]
-    #     pf_kwargs = aug["pf_kwargs"] or {}
-    #     pf_full_pipeline = pf_full_pipeline + getattr(pf, aug_name)(**pf_kwargs)
-
-    # ds_copy = pf.Dataset(x.copy(), y.copy())
-    # start = time.perf_counter()
-    # pf_full_pipeline.augment_batch(ds_copy, parallel=True)
-    # pf_time = time.perf_counter() - start
-
-    # results.append({
-    #     "Augmenter": "Full_pipeline",
-    #     "PyFraug_time_sec": pf_time,
-    #     "tsaug_time_sec": None
-    # })
-    # print(f"Full_pipeline: PyFraug {pf_time:.4f}s, tsaug N/A")
 
     # Saving results
     df = pd.DataFrame(results)

@@ -70,6 +70,7 @@ fn pyfraug(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<augmenters::DynamicTimeWarpAugmenter>()?;
     m.add_class::<augmenters::FrequencyMask>()?;
     m.add_class::<augmenters::RandomWindowWarpAugmenter>()?;
+    m.add_class::<augmenters::PoolingMethod>()?;
     m.add_class::<augmenters::Pool>()?;
     m.add_class::<augmenters::Quantize>()?;
     m.add_class::<augmenters::Resize>()?;

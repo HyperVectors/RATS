@@ -53,6 +53,14 @@ if __name__ == "__main__":
         tsaug_class_name = aug["tsaug_class"]
         tsaug_kwargs = aug["tsaug_kwargs"] or {}
 
+        # Manual enum and tuple fixes
+        if aug_name == "AddNoise" and isinstance(pf_kwargs.get("noise_type", None), str):
+            pf_kwargs["noise_type"] = getattr(pf.NoiseType, pf_kwargs["noise_type"])
+        if aug_name == "Pool" and isinstance(pf_kwargs.get("kind", None), str):
+            pf_kwargs["kind"] = getattr(pf.PoolingMethod, pf_kwargs["kind"])
+        if aug_name == "RandomWindowWarpAugmenter" and isinstance(pf_kwargs.get("speed_ratio_range", None), list):
+            pf_kwargs["speed_ratio_range"] = tuple(pf_kwargs["speed_ratio_range"])
+
         pf_mem = pf_aug_memory(aug_name, pf_kwargs)
         if tsaug_class_name:
             tsaug_mem = tsaug_memory(tsaug_class_name, tsaug_kwargs)
@@ -116,6 +124,14 @@ if __name__ == "__main__":
         tsaug_class_name = aug["tsaug_class"]
         tsaug_kwargs = aug["tsaug_kwargs"] or {}
 
+        # Manual enum and tuple fixes
+        if aug_name == "AddNoise" and isinstance(pf_kwargs.get("noise_type", None), str):
+            pf_kwargs["noise_type"] = getattr(pf.NoiseType, pf_kwargs["noise_type"])
+        if aug_name == "Pool" and isinstance(pf_kwargs.get("kind", None), str):
+            pf_kwargs["kind"] = getattr(pf.PoolingMethod, pf_kwargs["kind"])
+        if aug_name == "RandomWindowWarpAugmenter" and isinstance(pf_kwargs.get("speed_ratio_range", None), list):
+            pf_kwargs["speed_ratio_range"] = tuple(pf_kwargs["speed_ratio_range"])
+
         if tsaug_class_name:
             pf_pipeline_tsaug = pf_pipeline_tsaug + getattr(pf, aug_name)(**pf_kwargs)
             tsaug_class = getattr(importlib.import_module("tsaug"), tsaug_class_name)
@@ -150,6 +166,15 @@ if __name__ == "__main__":
     for aug in tqdm(AUGMENTERS, desc="Full_pipeline"):
         aug_name = aug["name"]
         pf_kwargs = aug["pf_kwargs"] or {}
+
+        # Manual enum and tuple fixes
+        if aug_name == "AddNoise" and isinstance(pf_kwargs.get("noise_type", None), str):
+            pf_kwargs["noise_type"] = getattr(pf.NoiseType, pf_kwargs["noise_type"])
+        if aug_name == "Pool" and isinstance(pf_kwargs.get("kind", None), str):
+            pf_kwargs["kind"] = getattr(pf.PoolingMethod, pf_kwargs["kind"])
+        if aug_name == "RandomWindowWarpAugmenter" and isinstance(pf_kwargs.get("speed_ratio_range", None), list):
+            pf_kwargs["speed_ratio_range"] = tuple(pf_kwargs["speed_ratio_range"])
+
         pf_full_pipeline = pf_full_pipeline + getattr(pf, aug_name)(**pf_kwargs)
 
     def pf_full_pipeline_mem():

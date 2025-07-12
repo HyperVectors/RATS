@@ -35,3 +35,4 @@ pub use reverse::Reverse;
 pub use rotation::Rotation;
 pub use scaling::Scaling;
 pub use window_time_warp::RandomWindowWarpAugmenter;
+pub use convolve::{Convolve, ConvolveWindow};
