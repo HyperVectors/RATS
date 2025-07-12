@@ -9,6 +9,7 @@ import tsaug as ts
 from tqdm import tqdm
 import argparse
 from io import StringIO
+from utils import fix_pf_kwargs
 
 parser = argparse.ArgumentParser(description="Benchmark PyFraug and tsaug augmenters and transforms.")
 parser.add_argument("--dataset", type=str, default="Car", help="Dataset name (default: Car)")
@@ -40,17 +41,13 @@ if __name__ == "__main__":
     # Benchmark each augmenter
     for aug in tqdm(AUGMENTERS, desc="Augmenters"):
         aug_name = aug["name"]
-        pf_kwargs = aug["pf_kwargs"] or {}
+        pf_kwargs = fix_pf_kwargs(aug_name, aug["pf_kwargs"] or {})
         tsaug_class_name = aug["tsaug_class"]
         tsaug_kwargs = aug["tsaug_kwargs"] or {}
 
-        # Manual enum fixes
-        if aug_name == "AddNoise" and isinstance(pf_kwargs.get("noise_type", None), str):
-            pf_kwargs["noise_type"] = getattr(pf.NoiseType, pf_kwargs["noise_type"])
-        if aug_name == "Pool" and isinstance(pf_kwargs.get("kind", None), str):
-            pf_kwargs["kind"] = getattr(pf.PoolingMethod, pf_kwargs["kind"])
-        if aug_name == "RandomWindowWarpAugmenter" and isinstance(pf_kwargs.get("speed_ratio_range", None), list):
-            pf_kwargs["speed_ratio_range"] = tuple(pf_kwargs["speed_ratio_range"])
+        # Edge Case tsaug Convolve Gaussian window
+        if tsaug_class_name == "Convolve" and isinstance(tsaug_kwargs.get("window", None), list):
+            tsaug_kwargs["window"] = tuple(tsaug_kwargs["window"])
 
         pf_aug_class = getattr(pf, aug_name)
         pf_aug = pf_aug_class(**pf_kwargs)
@@ -76,7 +73,7 @@ if __name__ == "__main__":
         })
         print(f"{aug_name}: PyFraug {pf_time:.4f}s, tsaug {tsaug_time if tsaug_time is not None else 'N/A'}")
 
-    # FFT benchmarking with tqdm
+    # FFT benchmarking
     print("Running FFT...")
     start = time.perf_counter()
     ds_freq = pf.Transforms.fft(dataset, parallel=True)
@@ -111,18 +108,14 @@ if __name__ == "__main__":
     tsaug_pipeline = None
     for aug in tqdm(AUGMENTERS, desc="Pipeline_with_tsaug"):
         aug_name = aug["name"]
-        pf_kwargs = aug["pf_kwargs"] or {}
+        pf_kwargs = fix_pf_kwargs(aug_name, aug["pf_kwargs"] or {})
         tsaug_class_name = aug["tsaug_class"]
         tsaug_kwargs = aug["tsaug_kwargs"] or {}
 
-        # Manual enum fixes
-        if aug_name == "AddNoise" and isinstance(pf_kwargs.get("noise_type", None), str):
-            pf_kwargs["noise_type"] = getattr(pf.NoiseType, pf_kwargs["noise_type"])
-        if aug_name == "Pool" and isinstance(pf_kwargs.get("kind", None), str):
-            pf_kwargs["kind"] = getattr(pf.PoolingMethod, pf_kwargs["kind"])
-        if aug_name == "RandomWindowWarpAugmenter" and isinstance(pf_kwargs.get("speed_ratio_range", None), list):
-            pf_kwargs["speed_ratio_range"] = tuple(pf_kwargs["speed_ratio_range"])
-
+        # Edge case tsaug Convolve Gaussian window
+        if tsaug_class_name == "Convolve" and isinstance(tsaug_kwargs.get("window", None), list):
+            tsaug_kwargs["window"] = tuple(tsaug_kwargs["window"])
+            
         pf_aug_class = getattr(pf, aug_name)
         if tsaug_class_name:
             pf_pipeline_tsaug = pf_pipeline_tsaug + pf_aug_class(**pf_kwargs)

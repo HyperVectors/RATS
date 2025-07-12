@@ -9,6 +9,7 @@ from tqdm import tqdm
 from memory_profiler import memory_usage
 import argparse
 from io import StringIO
+from utils import fix_pf_kwargs
 
 parser = argparse.ArgumentParser(description="Benchmark PyFraug and tsaug augmenters and transforms (memory).")
 parser.add_argument("--dataset", type=str, default="Car", help="Dataset name (default: Car)")
@@ -49,17 +50,14 @@ if __name__ == "__main__":
     # Benchmark each augmenter
     for aug in tqdm(AUGMENTERS, desc="Augmenters"):
         aug_name = aug["name"]
-        pf_kwargs = aug["pf_kwargs"] or {}
+        pf_kwargs = fix_pf_kwargs(aug_name, aug["pf_kwargs"] or {})
         tsaug_class_name = aug["tsaug_class"]
         tsaug_kwargs = aug["tsaug_kwargs"] or {}
 
-        # Manual enum and tuple fixes
-        if aug_name == "AddNoise" and isinstance(pf_kwargs.get("noise_type", None), str):
-            pf_kwargs["noise_type"] = getattr(pf.NoiseType, pf_kwargs["noise_type"])
-        if aug_name == "Pool" and isinstance(pf_kwargs.get("kind", None), str):
-            pf_kwargs["kind"] = getattr(pf.PoolingMethod, pf_kwargs["kind"])
-        if aug_name == "RandomWindowWarpAugmenter" and isinstance(pf_kwargs.get("speed_ratio_range", None), list):
-            pf_kwargs["speed_ratio_range"] = tuple(pf_kwargs["speed_ratio_range"])
+        # Edge case tsaug Convolve Gaussian window
+        if tsaug_class_name == "Convolve" and isinstance(tsaug_kwargs.get("window", None), list):
+            tsaug_kwargs["window"] = tuple(tsaug_kwargs["window"])
+
 
         pf_mem = pf_aug_memory(aug_name, pf_kwargs)
         if tsaug_class_name:
@@ -120,17 +118,13 @@ if __name__ == "__main__":
     tsaug_pipeline = None
     for aug in tqdm(AUGMENTERS, desc="Pipeline_with_tsaug"):
         aug_name = aug["name"]
-        pf_kwargs = aug["pf_kwargs"] or {}
+        pf_kwargs = fix_pf_kwargs(aug_name, aug["pf_kwargs"] or {})
         tsaug_class_name = aug["tsaug_class"]
         tsaug_kwargs = aug["tsaug_kwargs"] or {}
 
-        # Manual enum and tuple fixes
-        if aug_name == "AddNoise" and isinstance(pf_kwargs.get("noise_type", None), str):
-            pf_kwargs["noise_type"] = getattr(pf.NoiseType, pf_kwargs["noise_type"])
-        if aug_name == "Pool" and isinstance(pf_kwargs.get("kind", None), str):
-            pf_kwargs["kind"] = getattr(pf.PoolingMethod, pf_kwargs["kind"])
-        if aug_name == "RandomWindowWarpAugmenter" and isinstance(pf_kwargs.get("speed_ratio_range", None), list):
-            pf_kwargs["speed_ratio_range"] = tuple(pf_kwargs["speed_ratio_range"])
+        # Edge case tsaug Convolve Gaussian window
+        if tsaug_class_name == "Convolve" and isinstance(tsaug_kwargs.get("window", None), list):
+            tsaug_kwargs["window"] = tuple(tsaug_kwargs["window"])
 
         if tsaug_class_name:
             pf_pipeline_tsaug = pf_pipeline_tsaug + getattr(pf, aug_name)(**pf_kwargs)
@@ -159,35 +153,6 @@ if __name__ == "__main__":
         "tsaug_peak_mem_MB": memory_tsaug_pipeline
     })
     print(f"Pipeline_with_tsaug: PyFraug {memory_pf_pipeline_tsaug:.2f} MB, tsaug {memory_tsaug_pipeline if memory_tsaug_pipeline is not None else 'N/A'} MB")
-
-    # Full pipeline with all augmenters
-    print("Running Full_pipeline...")
-    pf_full_pipeline = pf.AugmentationPipeline()
-    for aug in tqdm(AUGMENTERS, desc="Full_pipeline"):
-        aug_name = aug["name"]
-        pf_kwargs = aug["pf_kwargs"] or {}
-
-        # Manual enum and tuple fixes
-        if aug_name == "AddNoise" and isinstance(pf_kwargs.get("noise_type", None), str):
-            pf_kwargs["noise_type"] = getattr(pf.NoiseType, pf_kwargs["noise_type"])
-        if aug_name == "Pool" and isinstance(pf_kwargs.get("kind", None), str):
-            pf_kwargs["kind"] = getattr(pf.PoolingMethod, pf_kwargs["kind"])
-        if aug_name == "RandomWindowWarpAugmenter" and isinstance(pf_kwargs.get("speed_ratio_range", None), list):
-            pf_kwargs["speed_ratio_range"] = tuple(pf_kwargs["speed_ratio_range"])
-
-        pf_full_pipeline = pf_full_pipeline + getattr(pf, aug_name)(**pf_kwargs)
-
-    def pf_full_pipeline_mem():
-        ds_copy = pf.Dataset(x.copy(), y.copy())
-        pf_full_pipeline.augment_batch(ds_copy, parallel=True)
-    memory_pf_full_pipeline = memory_usage(pf_full_pipeline_mem, max_usage=True)
-
-    results.append({
-        "Augmenter": "Full_pipeline",
-        "PyFraug_peak_mem_MB": memory_pf_full_pipeline,
-        "tsaug_peak_mem_MB": None
-    })
-    print(f"Full_pipeline: PyFraug {memory_pf_full_pipeline:.2f} MB, tsaug N/A")
 
     # Save results
     df = pd.DataFrame(results)

@@ -72,3 +72,15 @@
   pf_kwargs: {kind: Average, size: 2}
   tsaug_class: Pool
   tsaug_kwargs: {kind: ave, size: 2}
+
+- name: Drift
+  pf_kwargs: {max_drift: 1.0, n_drift_points: 5}
+  tsaug_class: Drift
+  tsaug_kwargs: {max_drift: 1.0, n_drift_points: 5}
+
+- name: Convolve
+  pf_kwargs: {window: Gaussian, size: 7}
+  tsaug_class: Convolve
+  tsaug_kwargs:
+    window: ['gaussian', 2.0]
+    size: 7
