@@ -6,6 +6,7 @@ use rayon::prelude::*;
 pub struct Crop {
     pub name: String,
     size: usize,
+    p: f64,
 }
 
 impl Crop {
@@ -13,6 +14,7 @@ impl Crop {
         Crop {
             name: "Crop".to_string(),
             size,
+            p: 1.0,
         }
     }
 
@@ -32,5 +34,13 @@ impl Crop {
 impl Augmenter for Crop {
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
         self.get_slice(x)
+    }
+
+    fn get_probability(&self) -> f64 {
+        self.p
+    }
+
+    fn set_probability(&mut self, probability: f64) {
+        self.p = probability;
     }
 }

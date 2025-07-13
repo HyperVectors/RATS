@@ -1,7 +1,7 @@
 use super::base::Augmenter;
 use crate::Dataset;
 use rand::rngs::ThreadRng;
-use rand::{rng, Rng};
+use rand::{Rng, rng};
 
 pub struct RandomTimeWarpAugmenter {
     pub name: String,
@@ -9,6 +9,7 @@ pub struct RandomTimeWarpAugmenter {
     pub window_size: usize,
     /// Range for random speed ratio: [min, max]
     pub speed_ratio_range: (f64, f64),
+    p: f64,
 }
 
 impl RandomTimeWarpAugmenter {
@@ -19,22 +20,18 @@ impl RandomTimeWarpAugmenter {
             name: "RandomTimeWarpAugmenter".to_string(),
             window_size,
             speed_ratio_range,
+            p: 1.0,
         }
     }
-   
 
-    fn warp_series(
-        series: &[f64],
-        speed_ratio_range: (f64, f64),
-        rng: &mut ThreadRng,
-    )-> Vec<f64>{
+    fn warp_series(series: &[f64], speed_ratio_range: (f64, f64), rng: &mut ThreadRng) -> Vec<f64> {
         let len = series.len();
         let warp_ratio = rng.random_range(speed_ratio_range.0..=speed_ratio_range.1);
 
         let mut time_series: Vec<f64> = (0..series.len()).map(|i| i as f64 / warp_ratio).collect();
 
         if let Some(&max_t) = time_series.last() {
-            // need to scale the times to handle the edge case of max of times != len-1. 
+            // need to scale the times to handle the edge case of max of times != len-1.
             // This breaks the warpng. Hence, iterating and scaling the times
             if max_t > 0.0 {
                 let scale = (len - 1) as f64 / max_t;
@@ -51,49 +48,49 @@ impl RandomTimeWarpAugmenter {
                 let ceil = t.ceil() as usize;
                 if ceil >= len {
                     series[floor.min(ceil - 1)]
-                }else if floor == ceil {
+                } else if floor == ceil {
                     series[floor]
-                } 
-                else {
+                } else {
                     let warping_factor = t - floor as f64;
                     series[floor] * (1.0 - warping_factor) + series[ceil] * warping_factor
                 }
             })
             .collect()
-
     }
 }
 
 impl Augmenter for RandomTimeWarpAugmenter {
-    /// Augment the dataset in-place
-    /// For each series, a random contiguous window of length `window_size` is chosen,
-    /// then a single pre-defined speed ratio is applied within that window to warp
-    fn augment_batch(&self, data:&mut Dataset,_parallel:bool){
-        data.features
-                .iter_mut()
-                .for_each(|sample| *sample = self.augment_one(sample));
-    }
-
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
         //Select a window for every time seri
         let mut rng = rng();
         let mut series = x.to_vec();
-        let len= series.len();
-        
-        
+        let len = series.len();
+
         // Choose a window from the time series to warp. If the length of the window is not given / greater than
         // length of the series, we warp the whole series.
-        let (window_start ,window_end) = if self.window_size==0 || self.window_size >= len{
+        let (window_start, window_end) = if self.window_size == 0 || self.window_size >= len {
             (0, len)
-        }else{
+        } else {
             let start_index = rng.random_range(0..=len - self.window_size);
-            (start_index , start_index + self.window_size)
+            (start_index, start_index + self.window_size)
         };
-    
-        let warped_series = Self::warp_series(&series[window_start..window_end], self.speed_ratio_range, &mut rng);
-    
+
+        let warped_series = Self::warp_series(
+            &series[window_start..window_end],
+            self.speed_ratio_range,
+            &mut rng,
+        );
+
         series[window_start..window_end].copy_from_slice(&warped_series);
-    
+
         series
+    }
+
+    fn get_probability(&self) -> f64 {
+        self.p
+    }
+
+    fn set_probability(&mut self, probability: f64) {
+        self.p = probability;
     }
 }

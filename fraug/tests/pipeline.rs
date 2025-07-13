@@ -1,7 +1,5 @@
 use fraug::Dataset;
-use fraug::augmenters::{
-    AugmentationPipeline, Augmenter, ConditionalAugmenter, Crop, Drop, Repeat,
-};
+use fraug::augmenters::{AugmentationPipeline, Augmenter, Crop, Drop, Repeat};
 
 #[test]
 fn combine_two_augmenters() {
@@ -26,7 +24,8 @@ fn conditional_augmenter() {
         labels: vec![String::from("1")],
     };
 
-    let augmenter = ConditionalAugmenter::new(Drop::new(1.0, None), 0.5);
+    let mut augmenter = Drop::new(1.0, None);
+    augmenter.set_probability(0.5);
     augmenter.augment_batch(&mut set, true);
 
     assert_eq!(set.features.len(), 100);

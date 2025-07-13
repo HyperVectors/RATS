@@ -29,6 +29,17 @@ macro_rules! wrap_augmentation_functions {
             fn name(&self) -> PyResult<String> {
                 Ok(self.inner.name.clone())
             }
+
+            #[getter]
+            fn get_probability(&self) -> PyResult<f64> {
+                Ok(self.inner.get_probability())
+            }
+
+            #[setter]
+            fn set_probability(&mut self, p: f64) -> PyResult<()> {
+                self.inner.set_probability(p);
+                Ok(())
+            }
         }
     };
 }
@@ -195,7 +206,6 @@ impl AmplitudePhasePerturbation {
 
 wrap_augmentation_functions!(AmplitudePhasePerturbation);
 
-
 #[pyclass]
 pub struct FrequencyMask {
     inner: fraug::augmenters::FrequencyMask,
@@ -223,10 +233,7 @@ impl RandomTimeWarpAugmenter {
     #[new]
     fn new(window_size: usize, speed_ratio_range: (f64, f64)) -> Self {
         RandomTimeWarpAugmenter {
-            inner: fraug::augmenters::RandomTimeWarpAugmenter::new(
-                window_size,
-                speed_ratio_range,
-            ),
+            inner: fraug::augmenters::RandomTimeWarpAugmenter::new(window_size, speed_ratio_range),
         }
     }
 }

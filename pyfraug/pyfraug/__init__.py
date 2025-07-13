@@ -1,22 +1,6 @@
 from random import random
 from .pyfraug import *
 
-class ConditionalAugmenter:
-
-    def __init__(self, augmenter, probability):
-        self.augmenter = augmenter
-        self.probability = probability
-
-    def augment_batch(self, dataset: Dataset, *, parallel):
-        features = np.array([])
-        for row in dataset.features:
-            features.append(self.augment_one(row))
-        dataset.features = features
-
-    def augment_one(self, x):
-        if random() < self.probability:
-            return self.augmenter.augment_one(x)
-
 class AugmentationPipeline:
 
     def __init__(self):

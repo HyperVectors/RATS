@@ -9,6 +9,7 @@ pub struct Drift {
     pub name: String,
     pub max_drift: f64,
     pub n_drift_points: usize,
+    p: f64,
 }
 
 impl Drift {
@@ -18,6 +19,7 @@ impl Drift {
             name: "Drift".to_string(),
             max_drift,
             n_drift_points: n_drift_points.max(2), // at least 2 points
+            p: 1.0,
         }
     }
 
@@ -48,5 +50,13 @@ impl Augmenter for Drift {
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
         let drift = self.make_drift(x.len());
         x.iter().zip(drift.iter()).map(|(xi, di)| xi + di).collect()
+    }
+
+    fn get_probability(&self) -> f64 {
+        self.p
+    }
+
+    fn set_probability(&mut self, probability: f64) {
+        self.p = probability;
     }
 }

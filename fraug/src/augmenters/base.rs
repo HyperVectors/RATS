@@ -1,8 +1,8 @@
+use crate::Dataset;
 use rand::prelude::*;
+use rand::rng;
 use rayon::prelude::*;
 use std::ops::Add;
-
-use crate::Dataset;
 
 /// Trait for all augmenters, allows for augmentation of one time series or a batch
 pub trait Augmenter {
@@ -11,57 +11,34 @@ pub trait Augmenter {
         Self: Sync,
     {
         if parallel {
-            input
-                .features
-                .par_iter_mut()
-                .for_each(|x| *x = self.augment_one(x));
+            input.features.par_iter_mut().for_each(|x| {
+                if self.get_probability() > rng().random() {
+                    *x = self.augment_one(x)
+                }
+            });
         } else {
-            input
-                .features
-                .iter_mut()
-                .for_each(|x| *x = self.augment_one(x));
+            input.features.iter_mut().for_each(|x| {
+                if self.get_probability() > rng().random() {
+                    *x = self.augment_one(x)
+                }
+            });
         }
     }
 
     fn augment_one(&self, x: &[f64]) -> Vec<f64>;
-}
 
-/// Augmenter that executes another augmenter on a row with a given probability p
-///
-/// Only works for augmenters that can operate on a single time series (that implement augment_one)
-pub struct ConditionalAugmenter {
-    pub name: String,
-    inner: Box<dyn Augmenter>,
-    p: f64,
-}
+    fn get_probability(&self) -> f64;
 
-impl ConditionalAugmenter {
-    pub fn new<T: Augmenter + 'static>(augmenter: T, probability: f64) -> Self {
-        ConditionalAugmenter {
-            name: "ConditionalAugmenter".to_string(),
-            inner: Box::new(augmenter),
-            p: probability,
-        }
-    }
-}
-
-unsafe impl Sync for ConditionalAugmenter {}
-
-impl Augmenter for ConditionalAugmenter {
-    fn augment_one(&self, x: &[f64]) -> Vec<f64> {
-        let mut rng = rand::rng();
-        if rng.random::<f64>() < self.p {
-            self.inner.augment_one(x)
-        } else {
-            x.to_vec()
-        }
-    }
+    /// By setting a probability with this function the augmenter will only augment a series in a
+    /// batch with the specified probability
+    fn set_probability(&mut self, probability: f64);
 }
 
 /// Augmenter that includes multiple other augmenters to build a pipeline
 pub struct AugmentationPipeline {
     pub name: String,
     augmenters: Vec<Box<dyn Augmenter + Sync>>,
+    p: f64,
 }
 
 impl AugmentationPipeline {
@@ -69,6 +46,7 @@ impl AugmentationPipeline {
         AugmentationPipeline {
             name: "AugmentationPipeline".to_string(),
             augmenters: Vec::new(),
+            p: 1.0,
         }
     }
 
@@ -91,6 +69,14 @@ impl Augmenter for AugmentationPipeline {
         }
         res
     }
+
+    fn get_probability(&self) -> f64 {
+        self.p
+    }
+
+    fn set_probability(&mut self, probability: f64) {
+        self.p = probability;
+    }
 }
 
 impl<T: Augmenter + 'static + Sync> Add<T> for AugmentationPipeline {
@@ -101,8 +87,9 @@ impl<T: Augmenter + 'static + Sync> Add<T> for AugmentationPipeline {
         augmenters.push(Box::new(rhs));
 
         AugmentationPipeline {
-            name: "ConditionalAugmenter".to_string(),
+            name: "AugmentationPipeline".to_string(),
             augmenters,
+            p: self.p,
         }
     }
 }

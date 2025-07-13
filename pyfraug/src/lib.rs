@@ -7,7 +7,7 @@ use pyo3::prelude::*;
 
 #[pyclass]
 pub struct Dataset {
-    pub(crate) inner: fraug::Dataset
+    pub(crate) inner: fraug::Dataset,
 }
 
 #[pymethods]
@@ -67,9 +67,8 @@ fn pyfraug(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<augmenters::NoiseType>()?;
     m.add_class::<augmenters::AddNoise>()?;
     m.add_class::<augmenters::AmplitudePhasePerturbation>()?;
-    m.add_class::<augmenters::DynamicTimeWarpAugmenter>()?;
     m.add_class::<augmenters::FrequencyMask>()?;
-    m.add_class::<augmenters::RandomWindowWarpAugmenter>()?;
+    m.add_class::<augmenters::RandomTimeWarpAugmenter>()?;
     m.add_class::<augmenters::PoolingMethod>()?;
     m.add_class::<augmenters::Pool>()?;
     m.add_class::<augmenters::Quantize>()?;

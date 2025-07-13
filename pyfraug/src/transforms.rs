@@ -1,5 +1,5 @@
-use pyo3::prelude::*;
 use crate::Dataset;
+use pyo3::prelude::*;
 
 #[pyclass]
 pub struct Transforms;

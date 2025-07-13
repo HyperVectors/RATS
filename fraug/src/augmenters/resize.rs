@@ -7,6 +7,7 @@ pub struct Resize {
     pub name: String,
     /// size after the augmentation
     size: usize,
+    p: f64,
 }
 
 impl Resize {
@@ -15,6 +16,7 @@ impl Resize {
         Resize {
             name: "Resize".to_string(),
             size,
+            p: 1.0,
         }
     }
 }
@@ -25,5 +27,13 @@ impl Augmenter for Resize {
         (0..self.size)
             .map(|i| x[(i as f64 * ratio) as usize])
             .collect()
+    }
+
+    fn get_probability(&self) -> f64 {
+        self.p
+    }
+
+    fn set_probability(&mut self, probability: f64) {
+        self.p = probability;
     }
 }

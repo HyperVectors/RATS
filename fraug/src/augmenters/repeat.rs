@@ -6,6 +6,7 @@ use super::base::Augmenter;
 pub struct Repeat {
     pub name: String,
     n: usize,
+    p: f64,
 }
 
 impl Repeat {
@@ -14,6 +15,7 @@ impl Repeat {
         Repeat {
             name: "Repeat".to_string(),
             n: times,
+            p: 1.0,
         }
     }
 }
@@ -23,7 +25,7 @@ impl Augmenter for Repeat {
         let features: Vec<Vec<f64>> = input.features.clone();
         let labels: Vec<String> = input.labels.clone();
 
-        for _ in 0..self.n-1 {
+        for _ in 0..self.n - 1 {
             input.features.append(&mut features.clone());
             input.labels.append(&mut labels.clone());
         }
@@ -31,5 +33,16 @@ impl Augmenter for Repeat {
 
     fn augment_one(&self, _x: &[f64]) -> Vec<f64> {
         unimplemented!("Repeat augmenter only works on a dataset directly!");
+    }
+
+    fn get_probability(&self) -> f64 {
+        self.p
+    }
+
+    fn set_probability(&mut self, probability: f64) {
+        print!(
+            "It is not possible to change the probability of {}: ",
+            self.name
+        );
     }
 }

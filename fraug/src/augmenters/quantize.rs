@@ -7,6 +7,7 @@ pub struct Quantize {
     pub name: String,
     /// Number of levels in the level set
     levels: usize,
+    p: f64,
 }
 
 impl Quantize {
@@ -15,6 +16,7 @@ impl Quantize {
         Quantize {
             name: "Quantize".to_string(),
             levels,
+            p: 1.0,
         }
     }
 }
@@ -44,5 +46,13 @@ impl Augmenter for Quantize {
                 level_set[i]
             })
             .collect::<Vec<_>>()
+    }
+
+    fn get_probability(&self) -> f64 {
+        self.p
+    }
+
+    fn set_probability(&mut self, probability: f64) {
+        self.p = probability;
     }
 }

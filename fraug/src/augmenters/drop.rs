@@ -7,6 +7,7 @@ pub struct Drop {
     pub name: String,
     percentage: f64,
     default: f64,
+    p: f64,
 }
 
 impl Drop {
@@ -18,6 +19,7 @@ impl Drop {
             name: "Drop".to_string(),
             percentage,
             default: default.unwrap_or(0.0),
+            p: 1.0,
         }
     }
 }
@@ -33,5 +35,13 @@ impl Augmenter for Drop {
                 }
             })
             .collect()
+    }
+
+    fn get_probability(&self) -> f64 {
+        self.p
+    }
+
+    fn set_probability(&mut self, probability: f64) {
+        self.p = probability;
     }
 }

@@ -7,6 +7,7 @@ pub struct Permutate {
     pub name: String,
     /// Size of series segments
     size: usize,
+    p: f64,
 }
 
 impl Permutate {
@@ -15,6 +16,7 @@ impl Permutate {
         Permutate {
             name: "Permutate".to_string(),
             size,
+            p: 1.0,
         }
     }
 }
@@ -26,5 +28,13 @@ impl Augmenter for Permutate {
         segments.shuffle(&mut rng());
 
         segments.iter().map(|arr| arr.to_vec()).flatten().collect()
+    }
+
+    fn get_probability(&self) -> f64 {
+        self.p
+    }
+
+    fn set_probability(&mut self, probability: f64) {
+        self.p = probability;
     }
 }

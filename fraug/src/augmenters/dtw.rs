@@ -101,6 +101,14 @@ impl Augmenter for DynamicTimeWarpAugmenter {
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
         unimplemented!("Use augment_dataset instead!");
     }
+
+    fn get_probability(&self) -> f64 {
+        todo!()
+    }
+
+    fn set_probability(&mut self, probability: f64) {
+        todo!()
+    }
 }
 
 #[cfg(test)]

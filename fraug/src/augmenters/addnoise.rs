@@ -1,5 +1,5 @@
 use super::base::Augmenter;
-use rand::{distr::Uniform, prelude::*, random_range};
+use rand::{distr::Uniform, prelude::*, random_range, rng};
 use rand_distr::Normal;
 
 /// Augmenter that allows different types of noise injection
@@ -15,6 +15,7 @@ pub struct AddNoise {
     bounds: Option<(f64, f64)>,
     mean: Option<f64>,
     std_dev: Option<f64>,
+    p: f64,
 }
 
 pub enum NoiseType {
@@ -37,6 +38,7 @@ impl AddNoise {
             bounds: bounds,
             mean: mean,
             std_dev: std_dev,
+            p: 1.0,
         }
     }
 }
@@ -87,5 +89,13 @@ impl Augmenter for AddNoise {
                     .collect()
             }
         }
+    }
+
+    fn get_probability(&self) -> f64 {
+        self.p
+    }
+
+    fn set_probability(&mut self, probability: f64) {
+        self.p = probability;
     }
 }

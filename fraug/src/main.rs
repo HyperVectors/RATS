@@ -4,8 +4,9 @@ mod readcsv;
 mod transforms;
 use crate::augmenters::NoiseType;
 use augmenters::{
-    AddNoise, AmplitudePhasePerturbation, AugmentationPipeline, Augmenter, ConditionalAugmenter,
-    Crop, Drop, DynamicTimeWarpAugmenter, FrequencyMask, Jittering, Repeat, Rotation, Scaling, Convolve, ConvolveWindow, Drift,
+    AddNoise, AmplitudePhasePerturbation, AugmentationPipeline, Augmenter, Convolve,
+    ConvolveWindow, Crop, Drift, Drop, DynamicTimeWarpAugmenter, FrequencyMask, Jittering, Repeat,
+    Rotation, Scaling,
 };
 use fraug::Dataset;
 use transforms::fastfourier::{compare_datasets_within_tolerance, dataset_fft, dataset_ifft};
@@ -57,7 +58,7 @@ fn main() {
         // + FrequencyMask::new(10, true);
         // + Convolve::new(ConvolveWindow::Flat, 7)
         // + Convolve::new(ConvolveWindow::Gaussian, 31);
-        + Drift::new(1.0, 5);
+        + { let mut a = Drift::new(1.0, 5); a.set_probability(0.5); a };
 
     pipeline.augment_batch(&mut data, true);
 

@@ -20,8 +20,10 @@ mod time_warp;
 
 pub use addnoise::{AddNoise, NoiseType};
 pub use amplitude_phase_perturbation::AmplitudePhasePerturbation;
-pub use base::{AugmentationPipeline, Augmenter, ConditionalAugmenter};
+pub use base::{AugmentationPipeline, Augmenter};
+pub use convolve::{Convolve, ConvolveWindow};
 pub use crop::Crop;
+pub use drift::Drift;
 pub use drop::Drop;
 pub use dtw::DynamicTimeWarpAugmenter;
 pub use frequency_mask::FrequencyMask;
@@ -35,5 +37,3 @@ pub use reverse::Reverse;
 pub use rotation::Rotation;
 pub use scaling::Scaling;
 pub use time_warp::RandomTimeWarpAugmenter;
-pub use convolve::{Convolve, ConvolveWindow};
-pub use drift::Drift;

@@ -1,7 +1,7 @@
 use super::base::Augmenter;
 use crate::Dataset;
 use crate::transforms::fastfourier::{dataset_fft, dataset_ifft};
-use rand::rng;
+use rand::{Rng, rng};
 use rand_distr::{Distribution, Normal};
 
 /// Amplitude & Phase Perturbation (APP) augmenter.
@@ -11,6 +11,7 @@ pub struct AmplitudePhasePerturbation {
     pub magnitude_std: f64,
     pub phase_std: f64,
     pub is_time_domain: bool,
+    p: f64,
 }
 
 impl AmplitudePhasePerturbation {
@@ -20,6 +21,7 @@ impl AmplitudePhasePerturbation {
             magnitude_std,
             phase_std,
             is_time_domain,
+            p: 1.0,
         }
     }
 }
@@ -29,17 +31,20 @@ impl Augmenter for AmplitudePhasePerturbation {
         if self.is_time_domain {
             let mut transformed_dataset = dataset_fft(data, true);
 
-            transformed_dataset
-                .features
-                .iter_mut()
-                .for_each(|sample| *sample = self.augment_one(sample));
+            transformed_dataset.features.iter_mut().for_each(|sample| {
+                if self.get_probability() > rng().random() {
+                    *sample = self.augment_one(sample)
+                }
+            });
 
             let inverse_dataset = dataset_ifft(&transformed_dataset, true);
             *data = inverse_dataset;
         } else {
-            data.features
-                .iter_mut()
-                .for_each(|sample| *sample = self.augment_one(sample));
+            data.features.iter_mut().for_each(|sample| {
+                if self.get_probability() > rng().random() {
+                    *sample = self.augment_one(sample)
+                }
+            });
         }
     }
 
@@ -71,5 +76,13 @@ impl Augmenter for AmplitudePhasePerturbation {
         }
 
         x
+    }
+
+    fn get_probability(&self) -> f64 {
+        self.p
+    }
+
+    fn set_probability(&mut self, probability: f64) {
+        self.p = probability;
     }
 }

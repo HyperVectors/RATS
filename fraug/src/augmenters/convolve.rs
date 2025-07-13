@@ -1,11 +1,11 @@
 use super::base::Augmenter;
+use rand::{Rng, rng};
 use rayon::prelude::*;
 
 // Usage of this module is to convolve time series data with a kernel
 // The kernel can be flat or Gaussian, and the size of the kernel are the parameters
 // The convolve operation is applied to each time series in the dataset, and smoothening is achieved
 // by averaging the values in the kernel window over the time series data.
-
 
 pub enum ConvolveWindow {
     Flat,
@@ -16,6 +16,7 @@ pub struct Convolve {
     pub name: String,
     window: ConvolveWindow,
     size: usize,
+    p: f64,
 }
 
 impl Convolve {
@@ -25,6 +26,7 @@ impl Convolve {
             name: "Convolve".to_string(),
             window,
             size,
+            p: 1.0,
         }
     }
 
@@ -78,7 +80,7 @@ impl Augmenter for Convolve {
         let kernel = self.make_kernel();
         self.convolve(x, &kernel)
     }
-    
+
     // reimplementing augment_batch to make sure kernel is created only once for each batch
     fn augment_batch(&self, input: &mut crate::Dataset, parallel: bool)
     where
@@ -86,15 +88,25 @@ impl Augmenter for Convolve {
     {
         let kernel = self.make_kernel();
         if parallel {
-            input
-                .features
-                .par_iter_mut()
-                .for_each(|x| *x = self.convolve(x, &kernel));
+            input.features.par_iter_mut().for_each(|x| {
+                if self.get_probability() > rng().random() {
+                    *x = self.convolve(x, &kernel)
+                }
+            });
         } else {
-            input
-                .features
-                .iter_mut()
-                .for_each(|x| *x = self.convolve(x, &kernel));
+            input.features.iter_mut().for_each(|x| {
+                if self.get_probability() > rng().random() {
+                    *x = self.convolve(x, &kernel)
+                }
+            });
         }
+    }
+
+    fn get_probability(&self) -> f64 {
+        self.p
+    }
+
+    fn set_probability(&mut self, probability: f64) {
+        self.p = probability;
     }
 }

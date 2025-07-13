@@ -1,5 +1,9 @@
-use fraug::augmenters::{Augmenter, AddNoise, NoiseType, AmplitudePhasePerturbation, Crop, FrequencyMask, Jittering, Permutate, Pool, PoolingMethod, Quantize, Repeat, Resize, Reverse, Rotation, Scaling, RandomTimeWarpAugmenter};
 use fraug::Dataset;
+use fraug::augmenters::{
+    AddNoise, AmplitudePhasePerturbation, Augmenter, Crop, FrequencyMask, Jittering, NoiseType,
+    Permutate, Pool, PoolingMethod, Quantize, RandomTimeWarpAugmenter, Repeat, Resize, Reverse,
+    Rotation, Scaling,
+};
 
 #[test]
 fn addnoise_uniform() {
@@ -144,7 +148,11 @@ fn test_frequency_mask_dataset() {
                 zeroed_bins += 1;
             }
         }
-        assert!(zeroed_bins >= 4, "Expected at least 4 zeroed bins, got {}", zeroed_bins);
+        assert!(
+            zeroed_bins >= 4,
+            "Expected at least 4 zeroed bins, got {}",
+            zeroed_bins
+        );
     }
 }
 
@@ -302,7 +310,6 @@ fn reverse() {
     assert_eq!(series, vec![4.0, 3.0, 2.0, 1.0]);
 }
 
-
 #[test]
 fn rotation_flip() {
     let series = vec![1.0; 100];
@@ -345,21 +352,21 @@ fn random_time_warp_full_series() {
     aug.augment_batch(&mut data, true);
     assert_eq!(data.features.len(), 2);
     for ele in data.features {
-        assert_eq!(ele.len(),4)
-    };
+        assert_eq!(ele.len(), 4)
+    }
 }
 
 fn random_time_warp_window() {
     let mut data = Dataset {
         features: vec![vec![0.0, 1.0, 2.0, 3.0], vec![4.0, 5.0, 6.0, 7.0]],
-        labels: vec!["L".into(),"L".into()],
+        labels: vec!["L".into(), "L".into()],
     };
     let aug = RandomTimeWarpAugmenter::new(3, (0.5, 2.0));
     aug.augment_batch(&mut data, true);
     assert_eq!(data.features.len(), 2);
     for ele in data.features {
-        assert_eq!(ele.len(),4)
-    };
+        assert_eq!(ele.len(), 4)
+    }
 }
 
 #[test]
@@ -372,6 +379,6 @@ fn random_time_warp_full_series_full_window() {
     aug.augment_batch(&mut data, true);
     assert_eq!(data.features.len(), 2);
     for ele in data.features {
-        assert_eq!(ele.len(),4)
-    };
+        assert_eq!(ele.len(), 4)
+    }
 }

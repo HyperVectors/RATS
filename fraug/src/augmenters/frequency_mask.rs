@@ -1,12 +1,13 @@
 use super::base::Augmenter;
 use crate::Dataset;
 use crate::transforms::fastfourier::{dataset_fft, dataset_ifft};
-use rand::Rng;
+use rand::{Rng, rng};
 
 pub struct FrequencyMask {
     pub name: String,
     pub mask_width: usize,
     pub is_time_domain: bool,
+    p: f64,
 }
 
 impl FrequencyMask {
@@ -15,6 +16,7 @@ impl FrequencyMask {
             name: "FrequencyMask".to_string(),
             mask_width,
             is_time_domain,
+            p: 1.0,
         }
     }
 }
@@ -24,17 +26,20 @@ impl Augmenter for FrequencyMask {
         if self.is_time_domain {
             let mut transformed_dataset = dataset_fft(data, true);
 
-            transformed_dataset
-                .features
-                .iter_mut()
-                .for_each(|sample| *sample = self.augment_one(sample));
+            transformed_dataset.features.iter_mut().for_each(|sample| {
+                if self.get_probability() > rng().random() {
+                    *sample = self.augment_one(sample)
+                }
+            });
 
             let inverse_dataset = dataset_ifft(&transformed_dataset, true);
             *data = inverse_dataset;
         } else {
-            data.features
-                .iter_mut()
-                .for_each(|sample| *sample = self.augment_one(sample));
+            data.features.iter_mut().for_each(|sample| {
+                if self.get_probability() > rng().random() {
+                    *sample = self.augment_one(sample)
+                }
+            });
         }
     }
 
@@ -58,5 +63,13 @@ impl Augmenter for FrequencyMask {
         }
 
         res
+    }
+
+    fn get_probability(&self) -> f64 {
+        self.p
+    }
+
+    fn set_probability(&mut self, probability: f64) {
+        self.p = probability;
     }
 }

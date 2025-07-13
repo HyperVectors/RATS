@@ -7,6 +7,7 @@ pub struct Pool {
     kind: PoolingMethod,
     /// Size of one pool
     size: usize,
+    p: f64,
 }
 
 pub enum PoolingMethod {
@@ -22,6 +23,7 @@ impl Pool {
             name: "Pool".to_string(),
             kind,
             size,
+            p: 1.0,
         }
     }
 }
@@ -62,5 +64,13 @@ impl Augmenter for Pool {
         }
 
         res
+    }
+
+    fn get_probability(&self) -> f64 {
+        self.p
+    }
+
+    fn set_probability(&mut self, probability: f64) {
+        self.p = probability;
     }
 }
