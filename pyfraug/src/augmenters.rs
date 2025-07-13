@@ -195,22 +195,6 @@ impl AmplitudePhasePerturbation {
 
 wrap_augmentation_functions!(AmplitudePhasePerturbation);
 
-#[pyclass]
-pub struct DynamicTimeWarpAugmenter {
-    inner: fraug::augmenters::DynamicTimeWarpAugmenter,
-}
-
-#[pymethods]
-impl DynamicTimeWarpAugmenter {
-    #[new]
-    fn new(window_size: usize) -> Self {
-        DynamicTimeWarpAugmenter {
-            inner: fraug::augmenters::DynamicTimeWarpAugmenter::new(window_size),
-        }
-    }
-}
-
-wrap_augmentation_functions!(DynamicTimeWarpAugmenter);
 
 #[pyclass]
 pub struct FrequencyMask {
@@ -230,16 +214,16 @@ impl FrequencyMask {
 wrap_augmentation_functions!(FrequencyMask);
 
 #[pyclass]
-pub struct RandomWindowWarpAugmenter {
-    inner: fraug::augmenters::RandomWindowWarpAugmenter,
+pub struct RandomTimeWarpAugmenter {
+    inner: fraug::augmenters::RandomTimeWarpAugmenter,
 }
 
 #[pymethods]
-impl RandomWindowWarpAugmenter {
+impl RandomTimeWarpAugmenter {
     #[new]
     fn new(window_size: usize, speed_ratio_range: (f64, f64)) -> Self {
-        RandomWindowWarpAugmenter {
-            inner: fraug::augmenters::RandomWindowWarpAugmenter::new(
+        RandomTimeWarpAugmenter {
+            inner: fraug::augmenters::RandomTimeWarpAugmenter::new(
                 window_size,
                 speed_ratio_range,
             ),
@@ -247,7 +231,7 @@ impl RandomWindowWarpAugmenter {
     }
 }
 
-wrap_augmentation_functions!(RandomWindowWarpAugmenter);
+wrap_augmentation_functions!(RandomTimeWarpAugmenter);
 
 #[pyclass]
 pub enum PoolingMethod {
