@@ -58,6 +58,7 @@ impl RandomTimeWarpAugmenter {
             .collect()
 
     }
+}
 
 impl Augmenter for RandomTimeWarpAugmenter {
     /// Augment the dataset in-place
@@ -84,14 +85,10 @@ impl Augmenter for RandomTimeWarpAugmenter {
             (start_index , start_index + self.window_size)
         };
     
-        let warped_series = Self::warp_series(series[window_start..window_end], self.speed_ratio_range, &mut rng);
+        let warped_series = Self::warp_series(&series[window_start..window_end], self.speed_ratio_range, &mut rng);
     
         series[window_start..window_end].copy_from_slice(&warped_series);
     
-        series.to_vec();
+        series.to_vec()
     }
-}
-
-
-    
 }
