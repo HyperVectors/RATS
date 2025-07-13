@@ -1,7 +1,7 @@
 use super::base::Augmenter;
 use crate::Dataset;
 use rand::rngs::ThreadRng;
-use rand::{random_range, rng, Rng};
+use rand::{rng, Rng};
 
 pub struct RandomTimeWarpAugmenter {
     pub name: String,
