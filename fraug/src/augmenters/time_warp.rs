@@ -16,11 +16,12 @@ impl RandomTimeWarpAugmenter {
     /// `speed_ratio_range` defines the min and max speed change (e.g. (0.5, 2.0)).
     pub fn new(window_size: usize, speed_ratio_range: (f64, f64)) -> Self {
         RandomTimeWarpAugmenter {
-            name: "RandomWindowWarpAugmenter".to_string(),
+            name: "RandomTimeWarpAugmenter".to_string(),
             window_size,
             speed_ratio_range,
         }
     }
+   
 
     fn warp_series(
         series: &[f64],
@@ -71,14 +72,15 @@ impl Augmenter for RandomTimeWarpAugmenter {
     }
 
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
-        //Select a window for every time series and warp it based on the windows
-        let mut series = x.clone();
+        //Select a window for every time seri
         let mut rng = rng();
+        let mut series = x.to_vec();
         let len= series.len();
+        
         
         // Choose a window from the time series to warp. If the length of the window is not given / greater than
         // length of the series, we warp the whole series.
-        let (window_start ,window_end) = if self.window_size >= len{
+        let (window_start ,window_end) = if self.window_size==0 || self.window_size >= len{
             (0, len)
         }else{
             let start_index = rng.random_range(0..=len - self.window_size);
@@ -89,6 +91,6 @@ impl Augmenter for RandomTimeWarpAugmenter {
     
         series[window_start..window_end].copy_from_slice(&warped_series);
     
-        series.to_vec()
+        series
     }
 }
