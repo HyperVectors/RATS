@@ -109,4 +109,8 @@ impl Augmenter for Convolve {
     fn set_probability(&mut self, probability: f64) {
         self.p = probability;
     }
+
+    fn get_name(&self) ->String {
+        self.name.clone()
+    }
 }

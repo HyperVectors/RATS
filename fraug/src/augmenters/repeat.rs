@@ -45,4 +45,8 @@ impl Augmenter for Repeat {
             self.name
         );
     }
+
+    fn get_name(&self) ->String {
+        self.name.clone()
+    }
 }

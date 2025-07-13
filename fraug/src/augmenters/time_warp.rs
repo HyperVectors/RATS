@@ -2,7 +2,7 @@ use super::base::Augmenter;
 use crate::Dataset;
 use rand::rngs::ThreadRng;
 use rand::{Rng, rng};
-
+use tracing:: {info, info_span};
 pub struct RandomTimeWarpAugmenter {
     pub name: String,
     /// Length of the window to warp - a window of this size will be selected randomly for every time series in the dataset
@@ -61,6 +61,7 @@ impl RandomTimeWarpAugmenter {
 
 impl Augmenter for RandomTimeWarpAugmenter {
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
+
         //Select a window for every time seri
         let mut rng = rng();
         let mut series = x.to_vec();
@@ -74,7 +75,7 @@ impl Augmenter for RandomTimeWarpAugmenter {
             let start_index = rng.random_range(0..=len - self.window_size);
             (start_index, start_index + self.window_size)
         };
-
+        info!("window selected from : {:?} to {:?} ", window_start, window_end);
         let warped_series = Self::warp_series(
             &series[window_start..window_end],
             self.speed_ratio_range,
@@ -92,5 +93,9 @@ impl Augmenter for RandomTimeWarpAugmenter {
 
     fn set_probability(&mut self, probability: f64) {
         self.p = probability;
+    }
+
+    fn get_name(&self) -> String{
+        self.name.clone()
     }
 }
