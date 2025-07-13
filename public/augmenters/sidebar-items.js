@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ConvolveWindow","NoiseType","PoolingMethod"],"struct":["AddNoise","AmplitudePhasePerturbation","AugmentationPipeline","Convolve","Crop","Drift","Drop","DynamicTimeWarpAugmenter","FrequencyMask","Jittering","Permutate","Pool","Quantize","RandomTimeWarpAugmenter","Repeat","Resize","Reverse","Rotation","Scaling"],"trait":["Augmenter"]};
