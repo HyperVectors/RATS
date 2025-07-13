@@ -352,7 +352,7 @@ fn random_time_warp_full_series() {
 fn random_time_warp_window() {
     let mut data = Dataset {
         features: vec![vec![0.0, 1.0, 2.0, 3.0], vec![4.0, 5.0, 6.0, 7.0]],
-        labels: vec!["L".into()],
+        labels: vec!["L".into(),"L".into()],
     };
     let aug = RandomTimeWarpAugmenter::new(3, (0.5, 2.0));
     aug.augment_batch(&mut data, true);
@@ -366,7 +366,7 @@ fn random_time_warp_window() {
 fn random_time_warp_full_series_full_window() {
     let mut data = Dataset {
         features: vec![vec![0.0, 1.0, 2.0, 3.0], vec![4.0, 5.0, 6.0, 7.0]],
-        labels: vec!["L".into()],
+        labels: vec!["L".into(), "L".into()],
     };
     let aug = RandomTimeWarpAugmenter::new(4, (0.5, 2.0));
     aug.augment_batch(&mut data, true);
