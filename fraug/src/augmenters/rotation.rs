@@ -1,9 +1,9 @@
 use super::base::Augmenter;
 
-/// Augmenter that rotates the data 180 degrees around specified anchor
+/// Augmenter that rotates the data 180 degrees around `anchor`
 pub struct Rotation {
     pub name: String,
-    anchor: f64,
+    pub anchor: f64,
     p: f64,
 }
 

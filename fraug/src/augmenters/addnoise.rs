@@ -1,23 +1,24 @@
 use super::base::Augmenter;
-use rand::{distr::Uniform, prelude::*, random_range, rng};
+use rand::{distr::Uniform, prelude::*, random_range};
 use rand_distr::Normal;
 
 /// Augmenter that allows different types of noise injection
 ///
-/// Different noise types:
-///     - Uniform: Adds uniform noise within the given bounds given through the parameter `bounds`
-///     - Gaussian: Adds gaussian noise with the specified mean and standard deviation according to the corresponding parameters
-///     - Spike: Adds a spike in the series with a random magnitude (in the range specified by `bounds` of the standard deviation of the original time series
-///     - Slope: Adds a linear slope trend to the series with a random slope in the range specified by `bounds`
+/// Noise types:
+/// - Uniform: Adds uniform noise within the given bounds given through the parameter `bounds`
+/// - Gaussian: Adds gaussian noise with the specified mean and standard deviation according to the corresponding parameters
+/// - Spike: Adds a spike in the series with a random magnitude (in the range specified by `bounds` of the standard deviation of the original time series
+/// - Slope: Adds a linear slope trend to the series with a random slope in the range specified by `bounds`
 pub struct AddNoise {
     pub name: String,
-    noise_type: NoiseType,
-    bounds: Option<(f64, f64)>,
-    mean: Option<f64>,
-    std_dev: Option<f64>,
-    p: f64,
+    pub noise_type: NoiseType,
+    pub bounds: Option<(f64, f64)>,
+    pub mean: Option<f64>,
+    pub std_dev: Option<f64>,
+    pub p: f64,
 }
 
+/// Enum to specify the noise type for the AddNoise augmenter
 pub enum NoiseType {
     Uniform,
     Gaussian,

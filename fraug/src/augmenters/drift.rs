@@ -2,9 +2,10 @@ use super::base::Augmenter;
 use rand::Rng;
 
 /// Drifts the value of a time series by a random value at each point in the series.
+/// 
 /// The drift is linear between the points, bounded by `max_drift`.
+/// 
 /// The number of drift points is specified by `n_drift_points`.
-
 pub struct Drift {
     pub name: String,
     pub max_drift: f64,

@@ -2,10 +2,14 @@ use crate::Dataset;
 
 use super::base::Augmenter;
 
-/// Augmenter that repeats all data rows n times
+/// Augmenter that repeats all data rows `n` times
+/// 
+/// Resource intensive because the data needs to be copied `n` times
+/// 
+/// Only works with `augment_batch` because the data needs to be cloned
 pub struct Repeat {
     pub name: String,
-    n: usize,
+    pub n: usize,
     p: f64,
 }
 
@@ -30,7 +34,8 @@ impl Augmenter for Repeat {
             input.labels.append(&mut labels.clone());
         }
     }
-
+    
+    /// Not implemented!
     fn augment_one(&self, _x: &[f64]) -> Vec<f64> {
         unimplemented!("Repeat augmenter only works on a dataset directly!");
     }
@@ -38,10 +43,11 @@ impl Augmenter for Repeat {
     fn get_probability(&self) -> f64 {
         self.p
     }
-
-    fn set_probability(&mut self, probability: f64) {
-        print!(
-            "It is not possible to change the probability of {}: ",
+    
+    /// Not implemented!
+    fn set_probability(&mut self, _probability: f64) {
+        unimplemented!(
+            "It is not possible to change the probability of {}",
             self.name
         );
     }

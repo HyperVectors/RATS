@@ -6,7 +6,7 @@ use super::base::Augmenter;
 pub struct Resize {
     pub name: String,
     /// size after the augmentation
-    size: usize,
+    pub size: usize,
     p: f64,
 }
 

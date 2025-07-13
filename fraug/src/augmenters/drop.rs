@@ -5,8 +5,8 @@ use super::base::Augmenter;
 /// Drops `percentage` % of data points and replaces them with `default`
 pub struct Drop {
     pub name: String,
-    percentage: f64,
-    default: f64,
+    pub percentage: f64,
+    pub default: f64,
     p: f64,
 }
 

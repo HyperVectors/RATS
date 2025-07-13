@@ -2,16 +2,18 @@ use super::base::Augmenter;
 use rand::{Rng, rng};
 use rayon::prelude::*;
 
-// Usage of this module is to convolve time series data with a kernel
-// The kernel can be flat or Gaussian, and the size of the kernel are the parameters
-// The convolve operation is applied to each time series in the dataset, and smoothening is achieved
-// by averaging the values in the kernel window over the time series data.
-
+/// Enum to specify the kernel window for the `Convolve` augmenter
 pub enum ConvolveWindow {
     Flat,
     Gaussian,
 }
 
+/// Usage of this augmenter is to convolve time series data with a kernel
+/// 
+/// The kernel can be flat or Gaussian, and the size of the kernel are the parameters
+/// 
+/// The convolve operation is applied to each time series in the dataset, and smoothening is achieved
+/// by averaging the values in the kernel window over the time series data.
 pub struct Convolve {
     pub name: String,
     window: ConvolveWindow,

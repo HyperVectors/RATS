@@ -3,10 +3,12 @@ use rand::rng;
 use rand::seq::SliceRandom;
 
 /// Permutate time series
+/// 
+/// First, slices each series into segments and then rearranges them randomly
 pub struct Permutate {
     pub name: String,
     /// Size of series segments
-    size: usize,
+    pub size: usize,
     p: f64,
 }
 

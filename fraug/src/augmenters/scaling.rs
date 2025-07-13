@@ -1,10 +1,11 @@
 use super::base::Augmenter;
 
-/// Augmenter that scales a time series with a random scalar within the specified range
+/// Augmenter that scales a time series with a random scalar within the range specified 
+/// by `min_factor` (inclusive) and `max_factor` (inclusive)
 pub struct Scaling {
     pub name: String,
-    min_factor: f64,
-    max_factor: f64,
+    pub min_factor: f64,
+    pub max_factor: f64,
     p: f64,
 }
 
@@ -21,7 +22,7 @@ impl Scaling {
 
 impl Augmenter for Scaling {
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
-        let scalar = rand::random_range(self.min_factor..self.max_factor);
+        let scalar = rand::random_range(self.min_factor..=self.max_factor);
         x.iter().map(|val| *val * scalar).collect()
     }
 

@@ -3,6 +3,7 @@ use crate::Dataset;
 use crate::transforms::fastfourier::{dataset_fft, dataset_ifft};
 use rand::{Rng, rng};
 
+/// todo!
 pub struct FrequencyMask {
     pub name: String,
     pub mask_width: usize,

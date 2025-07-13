@@ -3,9 +3,11 @@ use rand::prelude::*;
 use rand_distr::Normal;
 
 /// Augmenter that adds white gaussian noise of the specified standard deviation and a mean of 0
+/// 
+/// A special case of the `AddNoise` augmenter
 pub struct Jittering {
     pub name: String,
-    deviation: f64,
+    pub deviation: f64,
     p: f64,
 }
 

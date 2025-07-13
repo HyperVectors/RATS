@@ -1,15 +1,16 @@
 use super::base::Augmenter;
 
-/// Reduces the temporal resolution without changing the length
+/// Reduces the temporal resolution without changing the length by pooling multiple samples together
 pub struct Pool {
     pub name: String,
     /// Pooling function to be used
-    kind: PoolingMethod,
+    pub kind: PoolingMethod,
     /// Size of one pool
-    size: usize,
+    pub size: usize,
     p: f64,
 }
 
+/// Enum to specify the pooling function for the `Pool` augmenter
 pub enum PoolingMethod {
     Max,
     Min,

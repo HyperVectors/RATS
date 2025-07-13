@@ -1,13 +1,14 @@
 use super::base::Augmenter;
 
 /// Reverses time series
+/// 
+/// The augmenter turns `[1, 2, 3]` to `[3, 2, 1]`
 pub struct Reverse {
     pub name: String,
     p: f64,
 }
 
 impl Reverse {
-    /// Creates new reverse augmenter
     pub fn new() -> Self {
         Reverse {
             name: "Reverse".to_string(),

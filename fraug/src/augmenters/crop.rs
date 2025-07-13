@@ -1,11 +1,12 @@
 use super::base::Augmenter;
 use rayon::prelude::*;
 
-/// Augmenter that crops each row into a random continuous slice of specified size
+/// Augmenter that crops each series into a random continuous slice of specified `size`
+/// 
 /// Also known as window slicing
 pub struct Crop {
     pub name: String,
-    size: usize,
+    pub size: usize,
     p: f64,
 }
 
@@ -40,8 +41,15 @@ impl Augmenter for Crop {
         self.p
     }
 
-    fn set_probability(&mut self, probability: f64) {
-        self.p = probability;
+    /// Not implemented!
+    /// 
+    /// The `Crop` augmenter always augments all rows so that all 
+    /// series in a batch have the same length
+    fn set_probability(&mut self, _probability: f64) {
+        unimplemented!(
+            "It is not possible to change the probability of {}: ",
+            self.name
+        );
     }
 
     fn get_name(&self) ->String {
