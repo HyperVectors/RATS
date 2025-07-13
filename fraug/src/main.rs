@@ -5,7 +5,7 @@ mod transforms;
 use crate::augmenters::NoiseType;
 use augmenters::{
     AddNoise, AmplitudePhasePerturbation, AugmentationPipeline, Augmenter, Convolve,
-    ConvolveWindow, Crop, Drift, Drop, DynamicTimeWarpAugmenter, FrequencyMask, Jittering, Repeat,
+    ConvolveWindow, Crop, Drift, Drop, FrequencyMask, Jittering, Repeat,
     Rotation, Scaling,RandomTimeWarpAugmenter,
 };
 use fraug::{Dataset};
