@@ -16,7 +16,7 @@ mod resize;
 mod reverse;
 mod rotation;
 mod scaling;
-mod window_time_warp;
+mod time_warp;
 
 pub use addnoise::{AddNoise, NoiseType};
 pub use amplitude_phase_perturbation::AmplitudePhasePerturbation;
@@ -34,6 +34,6 @@ pub use resize::Resize;
 pub use reverse::Reverse;
 pub use rotation::Rotation;
 pub use scaling::Scaling;
-pub use window_time_warp::RandomWindowWarpAugmenter;
+pub use time_warp::RandomTimeWarpAugmenter;
 pub use convolve::{Convolve, ConvolveWindow};
 pub use drift::Drift;
