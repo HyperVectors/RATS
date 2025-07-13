@@ -49,9 +49,12 @@ impl RandomTimeWarpAugmenter {
             .map(|t| {
                 let floor = t.floor() as usize;
                 let ceil = t.ceil() as usize;
-                if floor == ceil || ceil >= len {
+                if ceil >= len {
                     series[floor.min(ceil - 1)]
-                } else {
+                }else if floor == ceil {
+                    series[floor]
+                } 
+                else {
                     let warping_factor = t - floor as f64;
                     series[floor] * (1.0 - warping_factor) + series[ceil] * warping_factor
                 }
