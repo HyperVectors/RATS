@@ -1,0 +1,15 @@
+workflow:
+  rules:
+    - if: $CI_COMMIT_MESSAGE =~ /doc/
+      when: always
+    - when: never
+
+
+pages:
+  stage: deploy
+  script:
+    - echo "Deploying Rust docs"
+  artifacts:
+    paths:
+      - public/
+
