@@ -1,5 +1,5 @@
 use super::base::Augmenter;
-
+use tracing::{info_span};
 /// Changes temporal resolution of time series by changing the length
 ///
 /// Does not interpolate values!
@@ -23,6 +23,9 @@ impl Resize {
 
 impl Augmenter for Resize {
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
+        let span = info_span!("", step = "augment_one");
+        let _enter = span.enter();
+
         let ratio = x.len() as f64 / self.size as f64;
         (0..self.size)
             .map(|i| x[(i as f64 * ratio) as usize])

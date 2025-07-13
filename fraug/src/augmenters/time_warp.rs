@@ -1,8 +1,8 @@
 use super::base::Augmenter;
-use crate::Dataset;
 use rand::rngs::ThreadRng;
 use rand::{Rng, rng};
 use tracing:: {info, info_span};
+
 pub struct RandomTimeWarpAugmenter {
     pub name: String,
     /// Length of the window to warp - a window of this size will be selected randomly for every time series in the dataset
@@ -61,8 +61,8 @@ impl RandomTimeWarpAugmenter {
 
 impl Augmenter for RandomTimeWarpAugmenter {
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
-
-        //Select a window for every time seri
+        let span = info_span!("", step = "augment_one");
+        let _enter = span.enter();
         let mut rng = rng();
         let mut series = x.to_vec();
         let len = series.len();

@@ -1,5 +1,6 @@
 use super::base::Augmenter;
 use rayon::prelude::*;
+use tracing::info_span;
 
 /// Augmenter that crops each series into a random continuous slice of specified `size`
 /// 
@@ -34,6 +35,8 @@ impl Crop {
 
 impl Augmenter for Crop {
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
+        let span = info_span!("", step = "augment_one");
+        let _enter = span.enter();
         self.get_slice(x)
     }
 

@@ -1,6 +1,7 @@
 use super::base::Augmenter;
 use rand::{Rng, rng};
 use rayon::prelude::*;
+use  tracing::{info_span};
 
 /// Enum to specify the kernel window for the `Convolve` augmenter
 pub enum ConvolveWindow {
@@ -79,6 +80,8 @@ impl Convolve {
 
 impl Augmenter for Convolve {
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
+        let span = info_span!("", step = "augment_one");
+        let _enter = span.enter();
         let kernel = self.make_kernel();
         self.convolve(x, &kernel)
     }

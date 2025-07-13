@@ -1,7 +1,7 @@
 use super::base::Augmenter;
 use rand::prelude::*;
 use rand_distr::Normal;
-
+use tracing::{info_span};
 /// Augmenter that adds white gaussian noise of the specified standard deviation and a mean of 0
 /// 
 /// A special case of the `AddNoise` augmenter
@@ -23,6 +23,9 @@ impl Jittering {
 
 impl Augmenter for Jittering {
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
+        let span = info_span!("", step = "augment_one");
+        let _enter = span.enter();
+        let _enter = span.enter();
         let mut rng = rand::rng();
         let dist = Normal::new(0.0, self.deviation)
             .expect("Couldn't create normal distribution from specified standard deviation");

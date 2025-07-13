@@ -3,6 +3,7 @@ use crate::Dataset;
 use crate::transforms::fastfourier::{dataset_fft, dataset_ifft};
 use rand::{Rng, rng};
 use rand_distr::{Distribution, Normal};
+use tracing::{info_span};
 
 /// Amplitude & Phase Perturbation (APP) augmenter.
 /// Adds small Gaussian noise to each bin’s magnitude and phase.
@@ -28,6 +29,8 @@ impl AmplitudePhasePerturbation {
 
 impl Augmenter for AmplitudePhasePerturbation {
     fn augment_batch(&self, data: &mut Dataset, _parallel: bool) {
+        let span = info_span!("", component = self.get_name());
+        let _enter = span.enter();
         if self.is_time_domain {
             let mut transformed_dataset = dataset_fft(data, true);
 
@@ -49,6 +52,8 @@ impl Augmenter for AmplitudePhasePerturbation {
     }
 
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
+        let span = info_span!("", step = "augment_one");
+        let _enter = span.enter();
         let num_bins = x.len() / 2;
         let mut rng = rng();
         let mag_noise = Normal::new(0.0, self.magnitude_std).unwrap();

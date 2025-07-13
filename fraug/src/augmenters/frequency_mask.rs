@@ -2,7 +2,7 @@ use super::base::Augmenter;
 use crate::Dataset;
 use crate::transforms::fastfourier::{dataset_fft, dataset_ifft};
 use rand::{Rng, rng};
-
+use tracing::{info_span};
 /// todo!
 pub struct FrequencyMask {
     pub name: String,
@@ -24,6 +24,8 @@ impl FrequencyMask {
 
 impl Augmenter for FrequencyMask {
     fn augment_batch(&self, data: &mut Dataset, _parallel: bool) {
+        let span = info_span!("", component = self.get_name());
+        let _enter = span.enter();
         if self.is_time_domain {
             let mut transformed_dataset = dataset_fft(data, true);
 
@@ -45,6 +47,8 @@ impl Augmenter for FrequencyMask {
     }
 
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
+        let span = info_span!("", step = "augment_one");
+        let _enter = span.enter();
         let mut res = x.to_vec();
 
         let num_bins = x.len() / 2;

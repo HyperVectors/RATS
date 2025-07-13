@@ -1,5 +1,5 @@
 use super::base::Augmenter;
-
+use tracing::{info_span};
 /// Augmenter that drops data points in series
 ///
 /// Drops `percentage` % of data points and replaces them with `default`
@@ -26,6 +26,8 @@ impl Drop {
 
 impl Augmenter for Drop {
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
+        let span = info_span!("", step = "augment_one");
+        let _enter = span.enter();
         x.iter()
             .map(|val| {
                 if rand::random::<f64>() < self.percentage {

@@ -1,7 +1,7 @@
 use super::base::Augmenter;
 use rand::rng;
 use rand::seq::SliceRandom;
-
+use tracing::{info_span};
 /// Permutate time series
 /// 
 /// First, slices each series into segments and then rearranges them randomly
@@ -25,6 +25,8 @@ impl Permutate {
 
 impl Augmenter for Permutate {
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
+        let span = info_span!("", step = "augment_one");
+        let _enter = span.enter();
         let mut segments = x.chunks(self.size).collect::<Vec<_>>();
 
         segments.shuffle(&mut rng());

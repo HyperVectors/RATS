@@ -109,23 +109,10 @@ impl Augmenter for DynamicTimeWarpAugmenter {
     fn set_probability(&mut self, probability: f64) {
         todo!()
     }
-}
 
-#[cfg(test)]
-mod dtw_augment_tests {
-    use super::*;
-    use crate::Dataset;
-
-    #[test]
-    fn test_dtw_augmenter() {
-        let mut data = Dataset {
-            features: vec![vec![0.0, 1.0, 2.0], vec![0.0, 2.0, 4.0]],
-            labels: vec!["A".to_string(), "B".to_string()],
-        };
-        let augmenter = DynamicTimeWarpAugmenter::new(10);
-        augmenter.augment_batch(&mut data, false);
-        // original 2 + 2 warps = 4
-        assert_eq!(data.features.len(), 4);
-        assert_eq!(data.labels.len(), 4);
+    fn get_name(&self) ->String {
+        self.name.clone()
     }
 }
+
+

@@ -1,5 +1,5 @@
 use super::base::Augmenter;
-
+use tracing::{info_span};
 /// Reduces the temporal resolution without changing the length by pooling multiple samples together
 pub struct Pool {
     pub name: String,
@@ -31,6 +31,8 @@ impl Pool {
 
 impl Augmenter for Pool {
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
+        let span = info_span!("", step = "augment_one");
+        let _enter = span.enter();
         let mut res = Vec::with_capacity(x.len());
 
         let mut i = 0;

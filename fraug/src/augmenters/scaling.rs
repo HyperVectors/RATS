@@ -1,5 +1,5 @@
 use super::base::Augmenter;
-
+use tracing::{info_span};
 /// Augmenter that scales a time series with a random scalar within the range specified 
 /// by `min_factor` (inclusive) and `max_factor` (inclusive)
 pub struct Scaling {
@@ -22,6 +22,9 @@ impl Scaling {
 
 impl Augmenter for Scaling {
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
+        let span = info_span!("", step = "augment_one");
+        let _enter = span.enter();
+
         let scalar = rand::random_range(self.min_factor..=self.max_factor);
         x.iter().map(|val| *val * scalar).collect()
     }

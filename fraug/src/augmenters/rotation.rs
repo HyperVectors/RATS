@@ -1,5 +1,5 @@
 use super::base::Augmenter;
-
+use tracing::{info_span};
 /// Augmenter that rotates the data 180 degrees around `anchor`
 pub struct Rotation {
     pub name: String,
@@ -19,6 +19,9 @@ impl Rotation {
 
 impl Augmenter for Rotation {
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
+        let span = info_span!("", step = "augment_one");
+        let _enter = span.enter();
+
         x.iter()
             .map(|val| (*val - self.anchor) * -1.0 + self.anchor)
             .collect()

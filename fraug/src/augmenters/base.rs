@@ -2,7 +2,7 @@ use crate::Dataset;
 use rand::prelude::*;
 use rand::rng;
 use rayon::prelude::*;
-use tracing::{info_span };
+use tracing::{info_span};
 use std::ops::Add;
 
 

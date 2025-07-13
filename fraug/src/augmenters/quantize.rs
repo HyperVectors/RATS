@@ -1,5 +1,5 @@
 use super::base::Augmenter;
-
+use tracing::{info_span};
 /// Quantize time series to a level set
 ///
 /// The level set is constructed by uniformly discretizing the range of all values in the series
@@ -23,6 +23,8 @@ impl Quantize {
 
 impl Augmenter for Quantize {
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
+        let span = info_span!("", step = "augment_one");
+        let _enter = span.enter();
         let max = x.iter().fold(f64::NEG_INFINITY, |a, &b| a.max(b));
         let min = x.iter().fold(f64::INFINITY, |a, &b| a.min(b));
         let range = max - min;

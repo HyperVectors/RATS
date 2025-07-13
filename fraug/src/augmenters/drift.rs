@@ -1,6 +1,6 @@
 use super::base::Augmenter;
 use rand::Rng;
-
+use tracing::{info_span};
 /// Drifts the value of a time series by a random value at each point in the series.
 /// 
 /// The drift is linear between the points, bounded by `max_drift`.
@@ -49,6 +49,8 @@ impl Drift {
 
 impl Augmenter for Drift {
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
+        let span = info_span!("", step = "augment_one");
+        let _enter = span.enter();
         let drift = self.make_drift(x.len());
         x.iter().zip(drift.iter()).map(|(xi, di)| xi + di).collect()
     }

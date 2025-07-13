@@ -1,7 +1,7 @@
 use crate::Dataset;
 
 use super::base::Augmenter;
-
+use tracing::{info_span};
 /// Augmenter that repeats all data rows `n` times
 /// 
 /// Resource intensive because the data needs to be copied `n` times
@@ -26,6 +26,10 @@ impl Repeat {
 
 impl Augmenter for Repeat {
     fn augment_batch(&self, input: &mut Dataset, _parallel: bool) {
+        
+        let span = info_span!("", component = self.get_name());
+        let _enter = span.enter();
+   
         let features: Vec<Vec<f64>> = input.features.clone();
         let labels: Vec<String> = input.labels.clone();
 
@@ -37,6 +41,8 @@ impl Augmenter for Repeat {
     
     /// Not implemented!
     fn augment_one(&self, _x: &[f64]) -> Vec<f64> {
+        let span = info_span!("", step = "augment_one");
+        let _enter = span.enter();
         unimplemented!("Repeat augmenter only works on a dataset directly!");
     }
 

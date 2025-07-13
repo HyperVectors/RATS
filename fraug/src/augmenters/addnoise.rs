@@ -1,6 +1,7 @@
 use super::base::Augmenter;
 use rand::{distr::Uniform, prelude::*, random_range};
 use rand_distr::Normal;
+use  tracing::{info_span};
 
 /// Augmenter that allows different types of noise injection
 ///
@@ -46,6 +47,8 @@ impl AddNoise {
 
 impl Augmenter for AddNoise {
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
+        let span = info_span!("", step = "augment_one");
+        let _enter = span.enter();
         match self.noise_type {
             NoiseType::Uniform => {
                 let bounds = self.bounds.expect("Bounds not specified");
