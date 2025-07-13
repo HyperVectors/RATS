@@ -2,7 +2,9 @@ use crate::Dataset;
 use rand::prelude::*;
 use rand::rng;
 use rayon::prelude::*;
+use tracing::{info_span };
 use std::ops::Add;
+
 
 /// Trait for all augmenters, allows for augmentation of one time series or a batch
 pub trait Augmenter {
@@ -13,6 +15,8 @@ pub trait Augmenter {
     where
         Self: Sync,
     {
+        let span = info_span!("", component = self.get_name());
+        let _enter = span.enter();
         if parallel {
             input.features.par_iter_mut().for_each(|x| {
                 if self.get_probability() > rng().random() {
@@ -39,6 +43,8 @@ pub trait Augmenter {
     /// By setting a probability with this function the augmenter will only augment a series in a
     /// batch with the specified probability
     fn set_probability(&mut self, probability: f64);
+
+    fn get_name(&self) ->String;
 }
 
 /// A pipeline of augmenters
@@ -112,6 +118,10 @@ impl Augmenter for AugmentationPipeline {
 
     fn set_probability(&mut self, probability: f64) {
         self.p = probability;
+    }
+
+    fn get_name(&self) ->String {
+        self.name.clone()
     }
 }
 
