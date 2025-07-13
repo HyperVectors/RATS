@@ -5,6 +5,18 @@ import json
 from aeon.datasets import load_classification
 import os
 
+from aeon.datasets import get_dataset_meta_data
+
+df = get_dataset_meta_data()
+print(f"Total datasets available: {len(df)}")
+
+print("Available large datasets datasets:")
+# Filter large datasets
+large = df[(df["Length"] * (df["TrainSize"] + df["TestSize"])) > 50000]
+print(large.sort_values(["TrainSize"], ascending=False))
+
+
+
 parser = argparse.ArgumentParser(
     description="Load a time series classification dataset.",
     usage="python dataLoader.py --dataset <DATASET_NAME>"
@@ -63,7 +75,7 @@ csv_filename = f"../../data/{args.dataset}/{args.dataset}.csv"
 df.to_csv(csv_filename, index=False)
 print(f"Saved dataset to {csv_filename}")
 
-# Save metadata as JSON
+# metadata as JSON
 meta_filename = f"../../data/{args.dataset}/{args.dataset}_meta.json"
 with open(meta_filename, "w") as f:
     json.dump(meta_data, f, indent=4)
