@@ -50,3 +50,26 @@ for aug in augmenters:
     plt.tight_layout()
     plt.savefig(f"{plot_dir}/{aug_name}_comparison.png")
     plt.close()
+
+    # Plotting mean and std deviation comparison
+    orig_mean = X.mean(axis=0)
+    orig_std = X.std(axis=0)
+    aug_mean = aug_X.mean(axis=0)
+    aug_std = aug_X.std(axis=0)
+
+    plt.figure(figsize=(12, 6))
+    plt.plot(orig_mean, label="Original Mean")
+    plt.fill_between(
+        range(len(orig_mean)), orig_mean - orig_std, orig_mean + orig_std, alpha=0.2
+    )
+    plt.plot(aug_mean, label="Augmented Mean")
+    plt.fill_between(
+        range(len(aug_mean)), aug_mean - aug_std, aug_mean + aug_std, alpha=0.2
+    )
+    plt.title(f"{aug_name} - Mean and Std Comparison")
+    plt.xlabel("Time Step")
+    plt.ylabel("Value")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(f"{plot_dir}/{aug_name}_mean_std_comparison.png")
+    plt.close()
