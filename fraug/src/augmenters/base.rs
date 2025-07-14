@@ -77,6 +77,7 @@ pub struct AugmentationPipeline {
     pub name: String,
     augmenters: Vec<Box<dyn Augmenter + Sync>>,
     p: f64,
+    per_sample: bool, // new flag to choose per-sample pipelining
 }
 
 impl AugmentationPipeline {
@@ -86,7 +87,14 @@ impl AugmentationPipeline {
             name: "AugmentationPipeline".to_string(),
             augmenters: Vec::new(),
             p: 1.0,
+            per_sample: false, // default to batch processing
         }
+    }
+
+    /// Enable or disable per-sample pipelining. When true, each time-series sample is processed by
+    /// chaining all augmentations sequentially.
+    pub fn set_per_sample(&mut self, per_sample: bool) {
+        self.per_sample = per_sample;
     }
 
     /// Add an augmenter to the pipeline
@@ -99,9 +107,36 @@ impl AugmentationPipeline {
 
 impl Augmenter for AugmentationPipeline {
     fn augment_batch(&self, input: &mut Dataset, parallel: bool) {
-        self.augmenters
-            .iter()
-            .for_each(|augmenter| augmenter.augment_batch(input, parallel));
+        if self.per_sample {
+            if parallel {
+                input.features.par_iter_mut().for_each(|sample| {
+                    // Starting with a copy of the original sample.
+                    let mut chain = sample.to_vec();
+                    // For each augmenter, checking its probability before applying.
+                    for augmenter in self.augmenters.iter() {
+                        if augmenter.get_probability() > rng().random() {
+                            chain = augmenter.augment_one(&chain);
+                        }
+                    }
+                    *sample = chain;
+                });
+            } else {
+                input.features.iter_mut().for_each(|sample| {
+                    let mut chain = sample.to_vec();
+                    for augmenter in self.augmenters.iter() {
+                        if augmenter.get_probability() > rng().random() {
+                            chain = augmenter.augment_one(&chain);
+                        }
+                    }
+                    *sample = chain;
+                });
+            }
+        } else {
+            // Existing batch approach: each augmenter processes the entire dataset in sequence
+            self.augmenters
+                .iter()
+                .for_each(|augmenter| augmenter.augment_batch(input, parallel));
+        }
     }
 
     fn augment_one(&self, x: &[f64]) -> Vec<f64> {
@@ -136,6 +171,7 @@ impl<T: Augmenter + 'static + Sync> Add<T> for AugmentationPipeline {
             name: "AugmentationPipeline".to_string(),
             augmenters,
             p: self.p,
+            per_sample: self.per_sample,
         }
     }
 }

@@ -50,39 +50,41 @@ fn main() {
         data.features.len()
     );
 
-    // let pipeline = AugmentationPipeline::new()
-    //     // + Crop::new(250)
-    //     // + ConditionalAugmenter::new(Rotation::new(2.0), 0.5)
-    //     // + Scaling::new(0.5, 2.0)
-    //     // + AddNoise::new(NoiseType::Spike, Some((-2.0, 2.0)), None, None)
-    //     // + Drop::new(0.05, None)
-    //     // + AmplitudePhasePerturbation::new(-10.0, 1.7, true)
-    //     // + FrequencyMask::new(10, true);
-    //     // + Convolve::new(ConvolveWindow::Flat, 7)
-    //     // + Convolve::new(ConvolveWindow::Gaussian, 31);
+    let mut pipeline = AugmentationPipeline::new()
+        // + Crop::new(250)
+        // + Scaling::new(0.5, 2.0)
+        // + AddNoise::new(NoiseType::Spike, Some((-2.0, 2.0)), None, None);
+        // + Drop::new(0.05, None);
+        // + RandomTimeWarpAugmenter::new(10, (0.5, 0.9));
+        // + AmplitudePhasePerturbation::new(-10.0, 1.7, true);
+        // + FrequencyMask::new(10, true)
+        //+ Convolve::new(ConvolveWindow::Flat, 7)
+        + Convolve::new(ConvolveWindow::Gaussian, 31)
+        + Drift::new(1.0, 5);
     //     + { let mut a = Drift::new(1.0, 5); a.set_probability(0.5); a };
 
-    // pipeline.augment_batch(&mut data, true);
+    pipeline.set_per_sample(true); // per-sample chaining
+    pipeline.augment_batch(&mut data, true);
 
     // // let dtw_augmenter = DynamicTimeWarpAugmenter::new(10);
 
     // // dtw_augmenter.augment_batch(&mut data, false);
 
-    // println!(
-    //     "After {:?}\nLength: {}",
-    //     data.features[0].iter().take(10).collect::<Vec<&f64>>(),
-    //     data.features.len()
-    // );
+    println!(
+        "After {:?}\nLength: {}",
+        data.features[0].iter().take(10).collect::<Vec<&f64>>(),
+        data.features.len()
+    );
 
-    // // Write augmented dataset to CSV
-    // let out_filename = format!("{}_augmented.csv", dataset_name);
-    // if let Err(e) =
-    //     readcsv::write_dataset_csv(&data.features, &data.labels, dataset_name, &out_filename)
-    // {
-    //     eprintln!("Failed to write augmented CSV: {e}");
-    // } else {
-    //     println!("Augmented dataset written to {out_filename}");
-    // }
+    // Write augmented dataset to CSV
+    let out_filename = format!("{}_augmented.csv", dataset_name);
+    if let Err(e) =
+        readcsv::write_dataset_csv(&data.features, &data.labels, dataset_name, &out_filename)
+    {
+        eprintln!("Failed to write augmented CSV: {e}");
+    } else {
+        println!("Augmented dataset written to {out_filename}");
+    }
 
     // // // FFT transform of the dataset
     // // let mut freq_data = dataset_fft(&data);
@@ -143,7 +145,7 @@ fn main() {
     // //    max_diff, all_within
     // // );
     
-    let time_warp_augmenter = RandomTimeWarpAugmenter::new(10, (0.5, 0.9));
-    time_warp_augmenter.augment_batch(&mut data, false);
+    // let time_warp_augmenter = RandomTimeWarpAugmenter::new(10, (0.5, 0.9));
+    // time_warp_augmenter.augment_batch(&mut data, false);
 
 }
