@@ -2,16 +2,15 @@ use crate::Dataset;
 use rand::prelude::*;
 use rand::rng;
 use rayon::prelude::*;
-use tracing::{info_span};
 use std::ops::Add;
-
+use tracing::info_span;
 
 /// Trait for all augmenters, allows for augmentation of one time series or a batch
 pub trait Augmenter {
     /// Augment a whole batch
-    /// 
+    ///
     /// Parallelized using rayon when `parallell` is set
-    fn augment_batch(&self, input: &mut Dataset, parallel: bool)
+    fn augment_batch(&self, input: &mut Dataset, parallel: bool, per_sample: bool)
     where
         Self: Sync,
     {
@@ -31,9 +30,9 @@ pub trait Augmenter {
             });
         }
     }
-    
+
     /// Augment one time series
-    /// 
+    ///
     /// When called, the augmenter will always augment the series no matter what the probability for this augmenter is
     fn augment_one(&self, x: &[f64]) -> Vec<f64>;
 
@@ -44,7 +43,7 @@ pub trait Augmenter {
     /// batch with the specified probability
     fn set_probability(&mut self, probability: f64);
 
-    fn get_name(&self) ->String;
+    fn get_name(&self) -> String;
 
     /// Indicate whether this augmenter supports per-sample chaining.
     /// By default, return true. Augmenters that need a batch level view
@@ -55,27 +54,27 @@ pub trait Augmenter {
 }
 
 /// A pipeline of augmenters
-/// 
+///
 /// Executes many augmenters at once
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 ///  use fraug::Dataset;
 ///  use fraug::augmenters::*;
-/// 
+///
 ///  let series = vec![1.0; 100];
 ///  let mut set = Dataset {
 ///     features: vec![series],
 ///     labels: vec![String::from("1")],
 ///  };
-/// 
-///  let pipeline = AugmentationPipeline::new() 
-///                 + Repeat::new(5) 
+///
+///  let pipeline = AugmentationPipeline::new()
+///                 + Repeat::new(5)
 ///                 + Crop::new(20)
 ///                 + Jittering::new(0.2);
-/// 
-///  pipeline.augment_batch(&mut set, true);
+///
+///  pipeline.augment_batch(&mut set, true, false);
 ///
 ///  assert_eq!(set.features.len(), 5);
 ///  assert_eq!(set.features[3].len(), 20);
@@ -84,7 +83,6 @@ pub struct AugmentationPipeline {
     pub name: String,
     augmenters: Vec<Box<dyn Augmenter + Sync>>,
     p: f64,
-    per_sample: bool, // new flag to choose per-sample pipelining
 }
 
 impl AugmentationPipeline {
@@ -94,28 +92,11 @@ impl AugmentationPipeline {
             name: "AugmentationPipeline".to_string(),
             augmenters: Vec::new(),
             p: 1.0,
-            per_sample: false, // default to batch processing
         }
     }
-
-    /// Enable or disable per-sample pipelining. When true, each time-series sample is processed by
-    /// chaining all augmentations sequentially. Also checks if all augmenters support per-sample chaining.
-    pub fn set_per_sample(&mut self, per_sample: bool) {
-    if per_sample {
-        for augmenter in &self.augmenters {
-            if !augmenter.supports_per_sample() {
-                panic!(
-                    "Existing augmenter '{}' is not compatible with per-sample pipelining!",
-                    augmenter.get_name()
-                );
-            }
-        }
-    }
-    self.per_sample = per_sample;
-}
 
     /// Add an augmenter to the pipeline
-    /// 
+    ///
     /// Has the same effect as using the `+` operator
     pub fn add<T: Augmenter + 'static + Sync>(&mut self, augmenter: T) {
         self.augmenters.push(Box::new(augmenter));
@@ -123,13 +104,20 @@ impl AugmentationPipeline {
 }
 
 impl Augmenter for AugmentationPipeline {
-    fn augment_batch(&self, input: &mut Dataset, parallel: bool) {
-        if self.per_sample {
+    fn augment_batch(&self, input: &mut Dataset, parallel: bool, per_sample: bool) {
+        if per_sample {
+            // Compatibility check : reject if any augmenter has per-sample chaining disabled in pipeline
+            for augmenter in &self.augmenters {
+                if !augmenter.supports_per_sample() {
+                    panic!(
+                        "Augmenter '{}' is not compatible with per-sample pipelining!",
+                        augmenter.get_name()
+                    );
+                }
+            }
             if parallel {
                 input.features.par_iter_mut().for_each(|sample| {
-                    // Starting with a copy of the original sample.
                     let mut chain = sample.to_vec();
-                    // For each augmenter, checking its probability before applying.
                     for augmenter in self.augmenters.iter() {
                         if augmenter.get_probability() > rng().random() {
                             chain = augmenter.augment_one(&chain);
@@ -152,7 +140,7 @@ impl Augmenter for AugmentationPipeline {
             // Existing batch approach: each augmenter processes the entire dataset in sequence
             self.augmenters
                 .iter()
-                .for_each(|augmenter| augmenter.augment_batch(input, parallel));
+                .for_each(|augmenter| augmenter.augment_batch(input, parallel, false));
         }
     }
 
@@ -172,7 +160,7 @@ impl Augmenter for AugmentationPipeline {
         self.p = probability;
     }
 
-    fn get_name(&self) ->String {
+    fn get_name(&self) -> String {
         self.name.clone()
     }
 }
@@ -181,13 +169,6 @@ impl<T: Augmenter + 'static + Sync> Add<T> for AugmentationPipeline {
     type Output = AugmentationPipeline;
 
     fn add(self, rhs: T) -> Self::Output {
-        // If per-sample chaining is enabled, checking for compatiblity:
-        if self.per_sample && !rhs.supports_per_sample() {
-            panic!(
-                "Augmenter '{}' is not compatible with per-sample pipelining!",
-                rhs.get_name()
-            );
-        }
         let mut augmenters = self.augmenters;
         augmenters.push(Box::new(rhs));
 
@@ -195,7 +176,6 @@ impl<T: Augmenter + 'static + Sync> Add<T> for AugmentationPipeline {
             name: "AugmentationPipeline".to_string(),
             augmenters,
             p: self.p,
-            per_sample: self.per_sample,
         }
     }
 }
