@@ -1,5 +1,5 @@
-# Fraug
+# Time Series Augmentation Libraries (fraug & pyFraug)
 
-Fraug is a fast rust-based augmentation library for time series. It is available as a rust crust under `fraug` and as a python package under `pyfraug`.
+This is the repository for team 02 of the Efficient AI Algorithms in Rust seminar in SoSe 2025. Our task is to create a fast time series augmentation library in Rust and provide Python bindings for it.
 
-Detailed documentation of this library can be found [here](https://effairust2025-031aba.pages.rwth-aachen.de/)
+Our Rust crate can be found in `fraug/` and the Python bindings in `pyfraug/`. All additional information is written in the corresponding READMEs.
