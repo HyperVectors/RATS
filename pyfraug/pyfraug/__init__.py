@@ -22,10 +22,18 @@ class AugmentationPipeline:
         return self
 
     def augment_batch(self, dataset: Dataset, *, parallel):
+        r"""Augment a whole batch
+
+        Parallelized when `parallell` is set
+        """
         for augmenter in self.augmenters:
             augmenter.augment_batch(dataset, parallel=parallel)
 
     def augment_one(self, x):
+        r"""Augment one time series
+
+        When called, the augmenter will always augment the series no matter what the probability for this augmenter is
+        """
         res = x
         for augmenter in self.augmenters:
             res = augmenter.augment_one(res)

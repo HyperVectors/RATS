@@ -29,7 +29,7 @@ dataset = pf.Dataset(x, y)
 
 addnoise = pf.AddNoise(pf.NoiseType.Slope, bounds=(0.01, 0.05))
 # Only execute the AddNoise augmenter for half of the series in the dataset
-addnoise.set_probability(0.5)
+addnoise.probability = 0.5
 
 pipeline = (pf.AugmentationPipeline()
             + pf.Repeat(10)
@@ -47,6 +47,12 @@ pipeline.augment_batch(dataset, parallel=True)
 To automatically generate a stub file (`pyfraug.pyi`) for the package, run `cargo run --bin stub_gen`.
 
 This will expose Rust documentation comments to the Python side as docstrings.
+
+### Sphinx Documentation
+To generate the Sphinx documentation, make sure that the package is installed through, e.g., maturin, and then run make html in the `docs` directory.
+The resulting HTML files will be in `docs/_build/html`.
+
+You also need to install the documentation dependencies from `docs/requirements.txt`.
 
 ### Benchmarking
 In `benchmarking/` are scripts that automatically benchmark this library against the Python-native library [`tsaug`](https://tsaug.readthedocs.io/en/stable/). 

@@ -12,9 +12,13 @@ class AddNoise:
     Augmenter that allows different types of noise injection
     
     Noise types:
+    
     - Uniform: Adds uniform noise within the given bounds given through the parameter `bounds`
+    
     - Gaussian: Adds gaussian noise with the specified mean and standard deviation according to the corresponding parameters
+    
     - Spike: Adds a spike in the series with a random magnitude (in the range specified by `bounds` of the standard deviation of the original time series
+    
     - Slope: Adds a linear slope trend to the series with a random slope in the range specified by `bounds`
     """
     name: builtins.str
