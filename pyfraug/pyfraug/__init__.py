@@ -2,6 +2,16 @@ from random import random
 from .pyfraug import *
 
 class AugmentationPipeline:
+    r"""A pipeline of augmenters
+
+    Executes many augmenters at once. Append augmenters to the pipeline by adding them to the pipeline:
+
+    ```
+    import pyfraug as pf
+
+    pipeline = pf.AugmentationPipeline() + pf.Repeat(5) + pf.Crop(20)
+    ```
+    """
 
     def __init__(self):
         self.augmenters = []

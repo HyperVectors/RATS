@@ -2,15 +2,23 @@ use crate::Dataset;
 use fraug::augmenters::Augmenter;
 use numpy::{PyArray1, PyArrayMethods, ToPyArray};
 use pyo3::prelude::*;
+use pyo3_stub_gen::derive::{gen_stub_pyclass, gen_stub_pyclass_enum, gen_stub_pymethods};
 
 macro_rules! wrap_augmentation_functions {
     ($struct_name:ident) => {
+        #[gen_stub_pymethods]
         #[pymethods]
         impl $struct_name {
+            /// Augment a whole batch
+            ///
+            /// Parallelized when `parallell` is set
             fn augment_batch(&self, dataset: &mut Dataset, parallel: bool) {
                 self.inner.augment_batch(&mut dataset.inner, parallel);
             }
 
+            /// Augment one time series
+            ///
+            /// When called, the augmenter will always augment the series no matter what the probability for this augmenter is
             fn augment_one<'py>(
                 &self,
                 py: Python<'py>,
@@ -35,6 +43,8 @@ macro_rules! wrap_augmentation_functions {
                 Ok(self.inner.get_probability())
             }
 
+            /// By setting a probability with this function the augmenter will only augment
+            /// a series in a batch with the specified probability
             #[setter]
             fn set_probability(&mut self, p: f64) -> PyResult<()> {
                 self.inner.set_probability(p);
@@ -44,6 +54,12 @@ macro_rules! wrap_augmentation_functions {
     };
 }
 
+/// Augmenter that repeats all data rows `n` times
+///
+/// Resource intensive because the data needs to be copied `n` times
+///
+/// Only works with `augment_batch` because the data needs to be cloned
+#[gen_stub_pyclass]
 #[pyclass]
 pub struct Repeat {
     inner: fraug::augmenters::Repeat,
@@ -61,6 +77,9 @@ impl Repeat {
 
 wrap_augmentation_functions!(Repeat);
 
+/// Augmenter that scales a time series with a random scalar within the range specified
+/// by `min_factor` (inclusive) and `max_factor` (inclusive)
+#[gen_stub_pyclass]
 #[pyclass]
 pub struct Scaling {
     inner: fraug::augmenters::Scaling,
@@ -78,6 +97,8 @@ impl Scaling {
 
 wrap_augmentation_functions!(Scaling);
 
+/// Augmenter that rotates the data 180 degrees around `anchor`
+#[gen_stub_pyclass]
 #[pyclass]
 pub struct Rotation {
     inner: fraug::augmenters::Rotation,
@@ -95,6 +116,10 @@ impl Rotation {
 
 wrap_augmentation_functions!(Rotation);
 
+/// Augmenter that adds white gaussian noise of the specified standard deviation and a mean of 0
+///
+/// A special case of the `AddNoise` augmenter
+#[gen_stub_pyclass]
 #[pyclass]
 pub struct Jittering {
     inner: fraug::augmenters::Jittering,
@@ -112,6 +137,12 @@ impl Jittering {
 
 wrap_augmentation_functions!(Jittering);
 
+/// Augmenter that drops data points in series
+///
+/// Drops `percentage` % of data points and replaces them with `default`
+///
+/// When omitted `default = 0`
+#[gen_stub_pyclass]
 #[pyclass]
 pub struct Drop {
     inner: fraug::augmenters::Drop,
@@ -130,6 +161,10 @@ impl Drop {
 
 wrap_augmentation_functions!(Drop);
 
+/// Augmenter that crops each series into a random continuous slice of specified `size`
+///
+/// Also known as window slicing
+#[gen_stub_pyclass]
 #[pyclass]
 pub struct Crop {
     inner: fraug::augmenters::Crop,
@@ -147,6 +182,8 @@ impl Crop {
 
 wrap_augmentation_functions!(Crop);
 
+/// Enum to specify the noise type for the AddNoise augmenter
+#[gen_stub_pyclass_enum]
 #[pyclass]
 pub enum NoiseType {
     Uniform,
@@ -155,6 +192,14 @@ pub enum NoiseType {
     Slope,
 }
 
+/// Augmenter that allows different types of noise injection
+///
+/// Noise types:
+/// - Uniform: Adds uniform noise within the given bounds given through the parameter `bounds`
+/// - Gaussian: Adds gaussian noise with the specified mean and standard deviation according to the corresponding parameters
+/// - Spike: Adds a spike in the series with a random magnitude (in the range specified by `bounds` of the standard deviation of the original time series
+/// - Slope: Adds a linear slope trend to the series with a random slope in the range specified by `bounds`
+#[gen_stub_pyclass]
 #[pyclass]
 pub struct AddNoise {
     inner: fraug::augmenters::AddNoise,
@@ -185,6 +230,9 @@ impl AddNoise {
 
 wrap_augmentation_functions!(AddNoise);
 
+/// Amplitude & Phase Perturbation (APP) augmenter.
+/// Adds small Gaussian noise to each bin’s magnitude and phase.
+#[gen_stub_pyclass]
 #[pyclass]
 pub struct AmplitudePhasePerturbation {
     inner: fraug::augmenters::AmplitudePhasePerturbation,
@@ -206,6 +254,8 @@ impl AmplitudePhasePerturbation {
 
 wrap_augmentation_functions!(AmplitudePhasePerturbation);
 
+/// todo!
+#[gen_stub_pyclass]
 #[pyclass]
 pub struct FrequencyMask {
     inner: fraug::augmenters::FrequencyMask,
@@ -223,6 +273,7 @@ impl FrequencyMask {
 
 wrap_augmentation_functions!(FrequencyMask);
 
+#[gen_stub_pyclass]
 #[pyclass]
 pub struct RandomTimeWarpAugmenter {
     inner: fraug::augmenters::RandomTimeWarpAugmenter,
@@ -240,6 +291,8 @@ impl RandomTimeWarpAugmenter {
 
 wrap_augmentation_functions!(RandomTimeWarpAugmenter);
 
+/// Enum to specify the pooling function for the `Pool` augmenter
+#[gen_stub_pyclass_enum]
 #[pyclass]
 pub enum PoolingMethod {
     Max,
@@ -247,6 +300,8 @@ pub enum PoolingMethod {
     Average,
 }
 
+/// Reduces the temporal resolution without changing the length by pooling multiple samples together
+#[gen_stub_pyclass]
 #[pyclass]
 pub struct Pool {
     inner: fraug::augmenters::Pool,
@@ -270,6 +325,10 @@ impl Pool {
 
 wrap_augmentation_functions!(Pool);
 
+/// Quantize time series to a level set
+///
+/// The level set is constructed by uniformly discretizing the range of all values in the series
+#[gen_stub_pyclass]
 #[pyclass]
 pub struct Quantize {
     inner: fraug::augmenters::Quantize,
@@ -287,6 +346,10 @@ impl Quantize {
 
 wrap_augmentation_functions!(Quantize);
 
+/// Changes temporal resolution of time series by changing the length
+///
+/// Does not interpolate values!
+#[gen_stub_pyclass]
 #[pyclass]
 pub struct Resize {
     inner: fraug::augmenters::Resize,
@@ -304,6 +367,10 @@ impl Resize {
 
 wrap_augmentation_functions!(Resize);
 
+/// Reverses time series
+///
+/// The augmenter turns `[1, 2, 3]` to `[3, 2, 1]`
+#[gen_stub_pyclass]
 #[pyclass]
 pub struct Reverse {
     inner: fraug::augmenters::Reverse,
@@ -321,6 +388,10 @@ impl Reverse {
 
 wrap_augmentation_functions!(Reverse);
 
+/// Permutate time series
+///
+/// First, slices each series into segments and then rearranges them randomly
+#[gen_stub_pyclass]
 #[pyclass]
 pub struct Permutate {
     inner: fraug::augmenters::Permutate,
@@ -338,6 +409,12 @@ impl Permutate {
 
 wrap_augmentation_functions!(Permutate);
 
+/// Drifts the value of a time series by a random value at each point in the series.
+///
+/// The drift is linear between the points, bounded by `max_drift`.
+///
+/// The number of drift points is specified by `n_drift_points`.
+#[gen_stub_pyclass]
 #[pyclass]
 pub struct Drift {
     inner: fraug::augmenters::Drift,
@@ -355,12 +432,21 @@ impl Drift {
 
 wrap_augmentation_functions!(Drift);
 
+/// Enum to specify the kernel window for the `Convolve` augmenter
+#[gen_stub_pyclass_enum]
 #[pyclass]
 pub enum ConvolveWindow {
     Flat,
     Gaussian,
 }
 
+/// Usage of this augmenter is to convolve time series data with a kernel
+///
+/// The kernel can be flat or Gaussian, and the size of the kernel are the parameters
+///
+/// The convolve operation is applied to each time series in the dataset, and smoothening is achieved
+/// by averaging the values in the kernel window over the time series data.
+#[gen_stub_pyclass]
 #[pyclass]
 pub struct Convolve {
     inner: fraug::augmenters::Convolve,

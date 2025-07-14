@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
 name = "pyfraug"
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 fraug = { path = "../fraug" }
@@ -15,6 +15,7 @@ numpy = "0.25.0"
 bytemuck = "1.23.1"
 rand = "0.9.1"
 tracing = "0.1"
+pyo3-stub-gen = "0.10.0"
 
 [dependencies.pyo3]
 version = "0.25.0"

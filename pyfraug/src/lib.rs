@@ -4,12 +4,25 @@ mod transforms;
 use ndarray::Array2;
 use numpy::{IntoPyArray, PyArray2, PyReadonlyArray2};
 use pyo3::prelude::*;
+use pyo3_stub_gen::{define_stub_info_gatherer, PyStubType, TypeInfo};
+use pyo3_stub_gen::derive::{gen_stub_pyclass, gen_stub_pymethods};
 
+/// Holds multiple univariate time series with their labels
+///
+/// Passed to the `augment_batch` function from augmenters
+#[gen_stub_pyclass]
 #[pyclass]
 pub struct Dataset {
     pub(crate) inner: fraug::Dataset,
 }
 
+impl PyStubType for &mut Dataset {
+    fn type_output() -> TypeInfo {
+        TypeInfo::with_module("pyfraug.Dataset", "pyfraug".into())
+    }
+}
+
+#[gen_stub_pymethods]
 #[pymethods]
 impl Dataset {
     #[new]
@@ -81,3 +94,5 @@ fn pyfraug(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<augmenters::ConvolveWindow>()?;
     Ok(())
 }
+
+define_stub_info_gatherer!(stub_info);

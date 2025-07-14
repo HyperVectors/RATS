@@ -1,5 +1,4 @@
 use super::base::Augmenter;
-use rayon::prelude::*;
 use tracing::info_span;
 
 /// Augmenter that crops each series into a random continuous slice of specified `size`
