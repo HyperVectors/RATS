@@ -94,4 +94,11 @@ impl Augmenter for AmplitudePhasePerturbation {
     fn get_name(&self) ->String {
         self.name.clone()
     }
+
+    fn supports_per_sample(&self) -> bool {
+        // if in time-domain mode, disable per-sample chaining because the FFT/IFFT used in the batch
+        // method is required.
+        !self.is_time_domain
+    }
+    
 }

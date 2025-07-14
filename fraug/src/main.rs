@@ -56,7 +56,7 @@ fn main() {
         // + AddNoise::new(NoiseType::Spike, Some((-2.0, 2.0)), None, None);
         // + Drop::new(0.05, None);
         // + RandomTimeWarpAugmenter::new(10, (0.5, 0.9));
-        // + AmplitudePhasePerturbation::new(-10.0, 1.7, true);
+        + AmplitudePhasePerturbation::new(-10.0, 1.7, true)
         // + FrequencyMask::new(10, true)
         //+ Convolve::new(ConvolveWindow::Flat, 7)
         + Convolve::new(ConvolveWindow::Gaussian, 31)

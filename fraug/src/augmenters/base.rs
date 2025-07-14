@@ -45,6 +45,13 @@ pub trait Augmenter {
     fn set_probability(&mut self, probability: f64);
 
     fn get_name(&self) ->String;
+
+    /// Indicate whether this augmenter supports per-sample chaining.
+    /// By default, return true. Augmenters that need a batch level view
+    /// should override this to return false.
+    fn supports_per_sample(&self) -> bool {
+        true
+    }
 }
 
 /// A pipeline of augmenters
@@ -92,10 +99,20 @@ impl AugmentationPipeline {
     }
 
     /// Enable or disable per-sample pipelining. When true, each time-series sample is processed by
-    /// chaining all augmentations sequentially.
+    /// chaining all augmentations sequentially. Also checks if all augmenters support per-sample chaining.
     pub fn set_per_sample(&mut self, per_sample: bool) {
-        self.per_sample = per_sample;
+    if per_sample {
+        for augmenter in &self.augmenters {
+            if !augmenter.supports_per_sample() {
+                panic!(
+                    "Existing augmenter '{}' is not compatible with per-sample pipelining!",
+                    augmenter.get_name()
+                );
+            }
+        }
     }
+    self.per_sample = per_sample;
+}
 
     /// Add an augmenter to the pipeline
     /// 
@@ -164,6 +181,13 @@ impl<T: Augmenter + 'static + Sync> Add<T> for AugmentationPipeline {
     type Output = AugmentationPipeline;
 
     fn add(self, rhs: T) -> Self::Output {
+        // If per-sample chaining is enabled, checking for compatiblity:
+        if self.per_sample && !rhs.supports_per_sample() {
+            panic!(
+                "Augmenter '{}' is not compatible with per-sample pipelining!",
+                rhs.get_name()
+            );
+        }
         let mut augmenters = self.augmenters;
         augmenters.push(Box::new(rhs));
 
