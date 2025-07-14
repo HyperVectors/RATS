@@ -9,6 +9,8 @@ import tsaug as ts
 from tqdm import tqdm
 import argparse
 from io import StringIO
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from utils import fix_pf_kwargs
 
 parser = argparse.ArgumentParser(description="Benchmark PyFraug and tsaug augmenters and transforms.")
@@ -16,7 +18,7 @@ parser.add_argument("--dataset", type=str, default="Car", help="Dataset name (de
 args = parser.parse_args()
 dataset_name = args.dataset
 
-csv_path = f"../../data/{dataset_name}/{dataset_name}.csv"
+csv_path = f"../../../data/{dataset_name}/{dataset_name}.csv"
 print(f"Loading data from {csv_path}")
 
 # loading data
@@ -30,7 +32,7 @@ x = data[:, :-1].astype(np.float64)
 y = list(map(str, data[:, -1]))
 dataset = pf.Dataset(x, y)
 
-with open("augmenters.yaml", "r") as f:
+with open("../augmenters.yaml", "r") as f:
     AUGMENTERS = yaml.safe_load(f)
 
 results = []

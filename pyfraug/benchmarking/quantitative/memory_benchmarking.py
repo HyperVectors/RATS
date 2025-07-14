@@ -9,6 +9,8 @@ from tqdm import tqdm
 from memory_profiler import memory_usage
 import argparse
 from io import StringIO
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from utils import fix_pf_kwargs
 
 parser = argparse.ArgumentParser(description="Benchmark PyFraug and tsaug augmenters and transforms (memory).")
@@ -16,7 +18,7 @@ parser.add_argument("--dataset", type=str, default="Car", help="Dataset name (de
 args = parser.parse_args()
 dataset_name = args.dataset
 
-csv_path = f"../../data/{dataset_name}/{dataset_name}.csv"
+csv_path = f"../../../data/{dataset_name}/{dataset_name}.csv"
 print(f"Loading data from {csv_path}")
 
 data = []
@@ -41,7 +43,7 @@ def tsaug_memory(tsaug_class_name, tsaug_kwargs):
     return mem
 
 if __name__ == "__main__":
-    with open("augmenters.yaml", "r") as f:
+    with open("../augmenters.yaml", "r") as f:
         AUGMENTERS = yaml.safe_load(f)
 
     results = []
