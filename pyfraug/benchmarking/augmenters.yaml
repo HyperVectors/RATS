@@ -63,7 +63,7 @@
   tsaug_class: AddNoise
   tsaug_kwargs: {scale: 0.1}
 
-- name: RandomWindowWarpAugmenter
+- name: RandomTimeWarpAugmenter
   pf_kwargs: {window_size: 10, speed_ratio_range: [0.5, 2.0]}
   tsaug_class: null
   tsaug_kwargs: null
