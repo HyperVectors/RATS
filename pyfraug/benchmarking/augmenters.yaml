@@ -79,8 +79,8 @@
   tsaug_kwargs: {max_drift: 1.0, n_drift_points: 5}
 
 - name: Convolve
-  pf_kwargs: {window: Gaussian, size: 7}
+  pf_kwargs: {window: Gaussian, size: 31}
   tsaug_class: Convolve
   tsaug_kwargs:
     window: ['gaussian', 2.0]
-    size: 7
+    size: 31
