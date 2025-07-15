@@ -1,3 +1,9 @@
+"""
+This script benchmarks PyFraug augmenters by applying them to a dataset
+and computes the Dynamic Time Warping (DTW) distance between the original
+and augmented samples. It visualizes the DTW alignment path for each augmenter.
+"""
+
 import sys
 import os
 
@@ -10,53 +16,73 @@ import argparse
 from utils import fix_pf_kwargs, load_data
 import yaml
 from tqdm import tqdm
-
-parser = argparse.ArgumentParser(
-    description="Benchmark PyFraug and tsaug augmenters and transforms."
-)
-parser.add_argument(
-    "--dataset", type=str, default="Car", help="Dataset name (default: Car)"
-)
-args = parser.parse_args()
-dataset_name = args.dataset
-
-csv_path = f"../../../examples/{dataset_name}/{dataset_name}.csv"
-print(f"Loading data from {csv_path}")
-
-with open("../augmenters.yaml", "r") as f:
-    AUGMENTERS = yaml.safe_load(f)
+import pathlib
 
 
-x, y = load_data(csv_path)
-
-for aug in tqdm(AUGMENTERS, desc="Augmenters"):
-    dataset = pf.Dataset(x, y)
-    original_dataset = pf.Dataset(
-        x.copy(), y.copy()
-    )  # Load original dataset for comparison as a reference
-
-    aug_name = aug["name"]
-    pf_kwargs = fix_pf_kwargs(aug_name, aug["pf_kwargs"] or {})
-
-    pf_aug_class = getattr(pf, aug_name)
-    pf_aug = pf_aug_class(**pf_kwargs)
-    pf_aug.augment_batch(dataset, parallel=True)
-    aug_X = dataset.features
-
-    # Computing dtw of the first sample with reference
-    orig_sample = x[0]
-    aug_sample = aug_X[0]
-    dtw_distance, optimum_path = pf.QualityBenchmarking.compute_dtw(
-        orig_sample, aug_sample
+def main():
+    parser = argparse.ArgumentParser(
+        description="Benchmark PyFraug and tsaug augmenters and transforms."
     )
-
-    # Plotting the DTW path
-    plt.figure(figsize=(12, 6))
-    plt.plot(orig_sample, label="Original", alpha=1.0, color="black")
-    plt.plot(aug_sample, label="Augmented", alpha=0.7, color="orange")
-    for i, j in optimum_path:
-        plt.plot([i, j], [orig_sample[i], aug_sample[j]], alpha=0.5)
-    plt.title(
-        f"{dataset_name} dataset : {aug_name} - DTW Alignment : Distance = {dtw_distance:.2f}"
+    parser.add_argument(
+        "--dataset",
+        type=pathlib.Path,
+        default="Car",
+        help="Dataset name (default: Car)",
     )
-    plt.show()
+    parser.add_argument(
+        "--save_dir",
+        type=pathlib.Path,
+        default="./dtw_plots",
+        help="Directory to save DTW plots",
+    )
+    args = parser.parse_args()
+    dataset_name = args.dataset
+
+    csv_path = pathlib.Path(f"../../../examples/{dataset_name}/{dataset_name}.csv")
+    print(f"Loading data from {csv_path}")
+
+    with open("../augmenters.yaml", "r") as f:
+        AUGMENTERS = yaml.safe_load(f)
+
+    x, y = load_data(csv_path)
+
+    for aug in tqdm(AUGMENTERS, desc="Augmenters"):
+        dataset = pf.Dataset(x, y)
+        original_dataset = pf.Dataset(
+            x.copy(), y.copy()
+        )  # Load original dataset for comparison as a reference
+
+        aug_name = aug["name"]
+        pf_kwargs = fix_pf_kwargs(aug_name, aug["pf_kwargs"] or {})
+
+        pf_aug_class = getattr(pf, aug_name)
+        pf_aug = pf_aug_class(**pf_kwargs)
+        pf_aug.augment_batch(dataset, parallel=True)
+        aug_X = dataset.features
+
+        # Computing dtw of the first sample with reference
+        orig_sample = x[0]
+        aug_sample = aug_X[0]
+        dtw_distance, optimum_path = pf.QualityBenchmarking.compute_dtw(
+            orig_sample, aug_sample
+        )
+
+        # Plotting the DTW path
+        save_dir = pathlib.Path(args.save_dir)
+        save_dir.mkdir(parents=True, exist_ok=True)
+        plt.figure(figsize=(12, 6))
+        plt.plot(orig_sample, label="Original", alpha=1.0, color="blue")
+        plt.plot(aug_sample, label="Augmented", alpha=0.7, color="red")
+        for i, j in optimum_path:
+            plt.plot([i, j], [orig_sample[i], aug_sample[j]], alpha=0.5)
+        plt.title(
+            f"{dataset_name} dataset : {aug_name} - DTW Alignment : Distance = {dtw_distance:.2f}"
+        )
+        plt.xlabel("Time")
+        plt.ylabel("Value")
+        plt.legend()
+        plt.savefig(save_dir / f"dtw_{dataset_name}_{aug_name}.png")
+
+
+if __name__ == "__main__":
+    sys.exit(main())
