@@ -48,7 +48,7 @@ for aug in augmenters:
 
     # Applying augmentation
     ds = pf.Dataset(X.copy(), y.copy())
-    pf_aug.augment_batch(ds, parallel=True)
+    pf_aug.augment_batch(ds, parallel=True, per_sample=False)
     aug_X = ds.features
 
     # Plotting first sample comparison
