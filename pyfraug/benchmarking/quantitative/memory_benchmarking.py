@@ -33,7 +33,7 @@ y = list(map(str, data[:, -1]))
 def pf_aug_memory(aug_name, pf_kwargs):
     pf_aug = getattr(pf, aug_name)(**pf_kwargs)
     ds_copy = pf.Dataset(x.copy(), y.copy())
-    mem = memory_usage((pf_aug.augment_batch, (ds_copy,), {'parallel': True, 'per_sample': False}), max_usage=True)
+    mem = memory_usage((pf_aug.augment_batch, (ds_copy,), {'parallel': True}), max_usage=True)
     return mem
 
 def tsaug_memory(tsaug_class_name, tsaug_kwargs):
@@ -141,7 +141,7 @@ if __name__ == "__main__":
 
     def pf_pipeline_tsaug_mem_false():
         ds_copy = pf.Dataset(x.copy(), y.copy())
-        pf_pipeline_tsaug.augment_batch(ds_copy, parallel=True, per_sample=False)
+        pf_pipeline_tsaug.augment_batch(ds_copy, parallel=True)
     memory_pf_pipeline_tsaug_false = memory_usage(pf_pipeline_tsaug_mem_false, max_usage=True)
 
     if tsaug_pipeline is not None:
@@ -153,24 +153,11 @@ if __name__ == "__main__":
         memory_tsaug_pipeline = None
 
     results.append({
-        "Augmenter": "Batch_Pipeline",
+        "Augmenter": "Pipeline",
         "PyFraug_peak_mem_MB": memory_pf_pipeline_tsaug_false,
         "tsaug_peak_mem_MB": memory_tsaug_pipeline
     })
-    print(f"Pipeline_with_tsaug (per_sample=False): PyFraug {memory_pf_pipeline_tsaug_false:.2f} MB, tsaug {memory_tsaug_pipeline if memory_tsaug_pipeline is not None else 'N/A'} MB")
-
-    print("Running Pipeline (per_sample=True)...")
-    def pf_pipeline_tsaug_mem_true():
-        ds_copy = pf.Dataset(x.copy(), y.copy())
-        pf_pipeline_tsaug.augment_batch(ds_copy, parallel=True, per_sample=True)
-    memory_pf_pipeline_tsaug_true = memory_usage(pf_pipeline_tsaug_mem_true, max_usage=True)
-
-    results.append({
-        "Augmenter": "Per_Sample_Pipeline",
-        "PyFraug_peak_mem_MB": memory_pf_pipeline_tsaug_true,
-        "tsaug_peak_mem_MB": memory_tsaug_pipeline
-    })
-    print(f"Pipeline_with_tsaug (per_sample=True): PyFraug {memory_pf_pipeline_tsaug_true:.2f} MB, tsaug {memory_tsaug_pipeline if memory_tsaug_pipeline is not None else 'N/A'} MB")
+    print(f"Pipeline_with_tsaug: PyFraug {memory_pf_pipeline_tsaug_false:.2f} MB, tsaug {memory_tsaug_pipeline if memory_tsaug_pipeline is not None else 'N/A'} MB")
 
     # Save results
     df = pd.DataFrame(results)

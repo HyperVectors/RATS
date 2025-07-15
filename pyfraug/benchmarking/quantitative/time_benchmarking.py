@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
         ds_copy = pf.Dataset(x.copy(), y.copy())
         start = time.perf_counter()
-        pf_aug.augment_batch(ds_copy, parallel=True, per_sample=False)
+        pf_aug.augment_batch(ds_copy, parallel=True)
         pf_time = time.perf_counter() - start
 
         if tsaug_class_name:
@@ -129,7 +129,7 @@ if __name__ == "__main__":
 
     ds_copy = pf.Dataset(x.copy(), y.copy())
     start = time.perf_counter()
-    pf_pipeline_tsaug.augment_batch(ds_copy, parallel=True, per_sample=False)
+    pf_pipeline_tsaug.augment_batch(ds_copy, parallel=True)
     pf_time = time.perf_counter() - start
 
     if tsaug_pipeline is not None:
@@ -141,25 +141,11 @@ if __name__ == "__main__":
         tsaug_time = None
 
     results.append({
-        "Augmenter": "Batch_Pipeline",
+        "Augmenter": "Pipeline",
         "PyFraug_time_sec": pf_time,
         "tsaug_time_sec": tsaug_time
     })
-    print(f"Batch Pipeline_with_tsaug: PyFraug {pf_time:.4f}s, tsaug {tsaug_time if tsaug_time is not None else 'N/A'}")
-
-    print("Running Per Sample Pipeline_with_tsaug")
-    ds_copy = pf.Dataset(x.copy(), y.copy())
-    start = time.perf_counter()
-    pf_pipeline_tsaug.augment_batch(ds_copy, parallel=True, per_sample=True)
-    pf_time = time.perf_counter() - start
-
-    # tsaug does not have a per_sample equivalent, so we can set tsaug_time = None
-    results.append({
-        "Augmenter": "Per_Sample_Pipeline",
-        "PyFraug_time_sec": pf_time,
-        "tsaug_time_sec": tsaug_time
-    })
-    print(f"Per Sample Pipeline_with_tsaug: PyFraug {pf_time:.4f}s, tsaug {tsaug_time if tsaug_time is not None else 'N/A'}")
+    print(f"Pipeline_with_tsaug: PyFraug {pf_time:.4f}s, tsaug {tsaug_time if tsaug_time is not None else 'N/A'}")
 
     # Saving results
     df = pd.DataFrame(results)

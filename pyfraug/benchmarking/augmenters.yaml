@@ -34,7 +34,7 @@
   tsaug_kwargs: null
 
 - name: FrequencyMask
-  pf_kwargs: {mask_width: 10, is_time_domain: false}
+  pf_kwargs: {mask_width: 10, is_time_domain: true}
   tsaug_class: null
   tsaug_kwargs: null
 
