@@ -63,7 +63,7 @@ fn app_augmenter_frequency() {
     };
     let app = AmplitudePhasePerturbation::new(0.1, 0.1, false);
     let orig = data.features[0].clone();
-    app.augment_batch(&mut data, false);
+    app.augment_batch(&mut data, false, false);
     assert_ne!(orig, data.features[0]);
 }
 
@@ -77,7 +77,7 @@ fn app_augmenter_time() {
 
     let app = AmplitudePhasePerturbation::new(0.1, 0.1, true);
 
-    app.augment_batch(&mut data, false);
+    app.augment_batch(&mut data, false, false);
 
     assert_ne!(orig, data.features[0]);
 }
@@ -91,7 +91,7 @@ fn crop_larger() {
     };
 
     let augmenter = Crop::new(200);
-    augmenter.augment_batch(&mut set, true);
+    augmenter.augment_batch(&mut set, true, false);
 
     assert_eq!(set.features[0], vec![1.0; 100]);
 }
@@ -105,7 +105,7 @@ fn crop_smaller() {
     };
 
     let augmenter = Crop::new(50);
-    augmenter.augment_batch(&mut set, true);
+    augmenter.augment_batch(&mut set, true, false);
 
     assert_eq!(set.features[0], vec![1.0; 50]);
 }
@@ -140,7 +140,7 @@ fn test_frequency_mask_dataset() {
         labels: vec!["a".to_string(), "b".to_string()],
     };
     let mask = FrequencyMask::new(4, false);
-    mask.augment_batch(&mut data, true);
+    mask.augment_batch(&mut data, true, false);
     for sample in data.features {
         let mut zeroed_bins = 0;
         for bin in 0..(sample.len() / 2) {
@@ -258,7 +258,7 @@ fn repeat_2() {
     };
 
     let augmenter = Repeat::new(2);
-    augmenter.augment_batch(&mut set, false);
+    augmenter.augment_batch(&mut set, false, false);
 
     assert_eq!(set.features[0], vec![1.0; 100]);
     assert_eq!(set.features[1], vec![1.0; 100]);
@@ -349,7 +349,7 @@ fn random_time_warp_full_series() {
         labels: vec!["L".into(), "L".into()],
     };
     let aug = RandomTimeWarpAugmenter::new(0, (0.5, 2.0));
-    aug.augment_batch(&mut data, true);
+    aug.augment_batch(&mut data, true, false);
     assert_eq!(data.features.len(), 2);
     for ele in data.features {
         assert_eq!(ele.len(), 4)
@@ -363,7 +363,7 @@ fn random_time_warp_window() {
         labels: vec!["L".into(), "L".into()],
     };
     let aug = RandomTimeWarpAugmenter::new(3, (0.5, 2.0));
-    aug.augment_batch(&mut data, true);
+    aug.augment_batch(&mut data, true, false);
     assert_eq!(data.features.len(), 2);
     for ele in data.features {
         assert_eq!(ele.len(), 4)
@@ -377,7 +377,7 @@ fn random_time_warp_full_series_full_window() {
         labels: vec!["L".into(), "L".into()],
     };
     let aug = RandomTimeWarpAugmenter::new(4, (0.5, 2.0));
-    aug.augment_batch(&mut data, true);
+    aug.augment_batch(&mut data, true, false);
     assert_eq!(data.features.len(), 2);
     for ele in data.features {
         assert_eq!(ele.len(), 4)
