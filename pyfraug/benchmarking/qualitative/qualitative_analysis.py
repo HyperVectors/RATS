@@ -8,11 +8,13 @@ import pyfraug as pf
 import importlib
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from utils import fix_pf_kwargs
+from utils import fix_pf_kwargs, load_data
 
 # dataset name
 parser = argparse.ArgumentParser()
-parser.add_argument("--dataset", type=str, default="Car", help="Dataset name (default: Car)")
+parser.add_argument(
+    "--dataset", type=str, default="Car", help="Dataset name (default: Car)"
+)
 args = parser.parse_args()
 dataset_name = args.dataset
 
@@ -26,9 +28,7 @@ os.makedirs(sample_plot_dir, exist_ok=True)
 os.makedirs(meanstd_plot_dir, exist_ok=True)
 
 # Loading data
-df = pd.read_csv(csv_path)
-X = df.iloc[:, :-1].to_numpy()
-y = df.iloc[:, -1].astype(str).tolist()
+X, y = load_data(csv_path)
 
 # Loading augmenters from YAML
 with open(yaml_path, "r") as f:
@@ -94,7 +94,9 @@ for aug in augmenters:
         try:
             tsaug_mod = importlib.import_module("tsaug")
             tsaug_class = getattr(tsaug_mod, tsaug_class_name)
-            if tsaug_class_name == "Convolve" and isinstance(tsaug_kwargs.get("window", None), list):
+            if tsaug_class_name == "Convolve" and isinstance(
+                tsaug_kwargs.get("window", None), list
+            ):
                 tsaug_kwargs["window"] = tuple(tsaug_kwargs["window"])
             orig_sample = X[0]
             tsaug_aug_sample = tsaug_class(**tsaug_kwargs).augment(orig_sample)
