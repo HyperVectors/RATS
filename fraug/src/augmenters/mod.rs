@@ -35,7 +35,7 @@
 //!                + Crop::new(20)
 //!                + jittering;
 //!
-//! pipeline.augment_batch(&mut set, true);
+//! pipeline.augment_batch(&mut set, true, false);
 //!
 //! assert_eq!(set.features.len(), 5);
 //! assert_eq!(set.features[3].len(), 20);
