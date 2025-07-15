@@ -148,6 +148,7 @@ dependencies = [
  "rand",
  "rand_distr",
  "rayon",
+ "rustdct",
  "rustfft",
  "tracing",
  "tracing-subscriber",
@@ -632,6 +633,15 @@ name = "rustc-hash"
 version = "2.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "357703d41365b4b27c590e3ed91eabb1b663f07c4c084095e60cbed4362dff0d"
+
+[[package]]
+name = "rustdct"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8b61555105d6a9bf98797c063c362a1d24ed8ab0431655e38f1cf51e52089551"
+dependencies = [
+ "rustfft",
+]
 
 [[package]]
 name = "rustfft"

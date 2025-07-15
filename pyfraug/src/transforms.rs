@@ -19,12 +19,24 @@ impl Transforms {
     }
 
     #[staticmethod]
+    pub fn dct(dataset: &Dataset, parallel: bool) -> Dataset {
+        let result = fraug::transforms::dct::dataset_dct(&dataset.inner, parallel);
+        Dataset { inner: result }
+    }
+
+    #[staticmethod]
+    pub fn idct(dataset: &Dataset, parallel: bool) -> Dataset {
+        let result = fraug::transforms::dct::dataset_idct(&dataset.inner, parallel);
+        Dataset { inner: result }
+    }
+
+    #[staticmethod]
     pub fn compare_within_tolerance(
         original: &Dataset,
         reconstructed: &Dataset,
         tolerance: f64,
     ) -> (f64, bool) {
-        fraug::transforms::fastfourier::compare_datasets_within_tolerance(
+        fraug::transforms::accuracy::compare_datasets_within_tolerance(
             &original.inner,
             &reconstructed.inner,
             tolerance,
