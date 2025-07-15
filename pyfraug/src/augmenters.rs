@@ -12,8 +12,8 @@ macro_rules! wrap_augmentation_functions {
             /// Augment a whole batch
             ///
             /// Parallelized when `parallell` is set
-            fn augment_batch(&self, dataset: &mut Dataset, parallel: bool) {
-                self.inner.augment_batch(&mut dataset.inner, parallel);
+            fn augment_batch(&self, dataset: &mut Dataset, parallel: bool, per_sample: bool) {
+                self.inner.augment_batch(&mut dataset.inner, parallel, per_sample);
             }
 
             /// Augment one time series
@@ -49,6 +49,10 @@ macro_rules! wrap_augmentation_functions {
             fn set_probability(&mut self, p: f64) -> PyResult<()> {
                 self.inner.set_probability(p);
                 Ok(())
+            }
+
+            pub fn supports_per_sample(&self) -> bool {
+                self.inner.supports_per_sample()
             }
         }
     };
