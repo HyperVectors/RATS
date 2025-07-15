@@ -58,7 +58,7 @@ impl Augmenter for RandomTimeWarpAugmenter {
         let (window_start, window_end) = if self.window_size == 0 || self.window_size >= len {
             (0, len-1)
         } else {
-            let start_index = rng.random_range(0..=len - self.window_size);
+            let start_index = rng.random_range(0..len - self.window_size);
             (start_index, start_index + self.window_size)
         };
         info!("window selected from : {:?} to {:?} ", window_start, window_end);
