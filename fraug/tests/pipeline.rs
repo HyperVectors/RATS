@@ -1,5 +1,5 @@
 use fraug::Dataset;
-use fraug::augmenters::{AugmentationPipeline, Augmenter, Crop, Drop, Repeat};
+use fraug::augmenters::{AugmentationPipeline, Augmenter, Crop, Drop, Repeat, Scaling};
 
 #[test]
 fn combine_two_augmenters() {
@@ -38,4 +38,31 @@ fn conditional_augmenter() {
         }
     });
     assert!(dropped > 0 && dropped < 100);
+}
+
+#[test]
+fn per_sample_pipelining() {
+    let mut set_per_sample = Dataset {
+        features: vec![
+            vec![1.0; 10],
+            vec![2.0; 10],
+            vec![3.0; 10],
+        ],
+        labels: vec!["a".into(), "b".into(), "c".into()],
+    };
+
+    // Pipeline: Scaling (multiply by 2.0) then Crop (length 5)
+    let pipeline = AugmentationPipeline::new()
+        + Scaling::new(2.0, 2.0)
+        + Crop::new(5);
+
+    pipeline.augment_batch(&mut set_per_sample, false, true);
+
+    // Each sample should be scaled and then cropped
+    assert_eq!(set_per_sample.features.len(), 3);
+    for (i, row) in set_per_sample.features.iter().enumerate() {
+        // Original values: 1.0, 2.0, 3.0, after scaling: 2.0, 4.0, 6.0
+        let expected = vec![(i as f64 + 1.0) * 2.0; 5];
+        assert_eq!(&row[..], &expected[..]);
+    }
 }
