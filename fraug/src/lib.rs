@@ -9,6 +9,7 @@
 
 pub mod augmenters;
 pub mod transforms;
+pub mod quality_benchmarking;
 
 /// Holds multiple univariate time series with their labels
 /// 
