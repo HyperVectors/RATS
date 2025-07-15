@@ -9,8 +9,10 @@ use augmenters::{
     Rotation, Scaling,RandomTimeWarpAugmenter,
 };
 use fraug::{Dataset};
-use transforms::fastfourier::{compare_datasets_within_tolerance, dataset_fft, dataset_ifft};
 use tracing_subscriber;
+use transforms::accuracy::compare_datasets_within_tolerance;
+use transforms::dct::{dataset_dct, dataset_idct};
+use transforms::fastfourier::{dataset_fft, dataset_ifft};
 
 fn main() {
     // dataset name from CLI argument | USAGE : cargo run -- <dataset_name>

@@ -5,6 +5,20 @@ use fraug::augmenters::{
     Rotation, Scaling,
 };
 
+use fraug::transforms::fastfourier::{dataset_fft, dataset_ifft};
+use fraug::transforms::dct::{dataset_dct, dataset_idct};
+use fraug::transforms::accuracy::compare_datasets_within_tolerance;
+
+fn make_test_dataset() -> Dataset {
+    Dataset {
+        features: vec![
+            vec![0.0, 1.0, 2.0, 3.0,  4.0,  5.0,  6.0,  7.0],
+            vec![1.0, 2.0, 3.0, 4.0,  5.0,  6.0,  7.0,  8.0],
+        ],
+        labels: vec!["A".into(), "B".into()],
+    }
+}
+
 #[test]
 fn addnoise_uniform() {
     let series = vec![1.0; 100];
@@ -53,6 +67,50 @@ fn addnoise_slope() {
 
     assert_ne!(series, vec![0.0; 100]);
     assert!(series[99] >= 100.0 && series[99] <= 200.0);
+}
+
+#[test]
+fn fft_ifft_roundtrip_serial() {
+    let orig = make_test_dataset();
+    let freq = dataset_fft(&orig, false);
+    let recon = dataset_ifft(&freq, false);
+
+    let (max_diff, all_within) =
+        compare_datasets_within_tolerance(&orig, &recon, 1e-6);
+    assert!(all_within, "FFT to IFFT serial failed, max diff = {}", max_diff);
+}
+
+#[test]
+fn fft_ifft_roundtrip_parallel() {
+    let orig = make_test_dataset();
+    let freq = dataset_fft(&orig, true);
+    let recon = dataset_ifft(&freq, true);
+
+    let (max_diff, all_within) =
+        compare_datasets_within_tolerance(&orig, &recon, 1e-6);
+    assert!(all_within, "FFT to IFFT parallel failed, max diff = {}", max_diff);
+}
+
+#[test]
+fn dct_idct_roundtrip_serial() {
+    let orig = make_test_dataset();
+    let coeffs = dataset_dct(&orig, false);
+    let recon = dataset_idct(&coeffs, false);
+
+    let (max_diff, all_within) =
+        compare_datasets_within_tolerance(&orig, &recon, 1e-6);
+    assert!(all_within, "DCT to IDCT serial failed, max diff = {}", max_diff);
+}
+
+#[test]
+fn dct_idct_roundtrip_parallel() {
+    let orig = make_test_dataset();
+    let coeffs = dataset_dct(&orig, true);
+    let recon = dataset_idct(&coeffs, true);
+
+    let (max_diff, all_within) =
+        compare_datasets_within_tolerance(&orig, &recon, 1e-6);
+    assert!(all_within, "DCT to IDCT parallel failed, max diff = {}", max_diff);
 }
 
 #[test]
