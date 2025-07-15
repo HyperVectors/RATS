@@ -14,8 +14,9 @@ ndarray = "0.16.1"
 numpy = "0.25.0"
 bytemuck = "1.23.1"
 rand = "0.9.1"
-tracing = "0.1"
 pyo3-stub-gen = "0.10.0"
+tracing = "0.1"
+tracing-subscriber = "0.3"
 
 [dependencies.pyo3]
 version = "0.25.0"

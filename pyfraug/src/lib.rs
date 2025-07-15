@@ -67,9 +67,19 @@ impl Dataset {
     }
 }
 
+
+// use tracing_subscriber;
+
 /// A Python module implemented in Rust.
 #[pymodule]
 fn pyfraug(m: &Bound<'_, PyModule>) -> PyResult<()> {
+
+    // // Only initialize once to avoid panics on reload
+    // static INIT: std::sync::Once = std::sync::Once::new();
+    // INIT.call_once(|| {
+    //     tracing_subscriber::fmt::init();
+    // });
+
     m.add_class::<Dataset>()?;
     m.add_class::<augmenters::Repeat>()?;
     m.add_class::<augmenters::Scaling>()?;

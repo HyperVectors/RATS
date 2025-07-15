@@ -447,6 +447,7 @@ dependencies = [
  "pyo3-stub-gen",
  "rand",
  "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
