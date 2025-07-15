@@ -1,11 +1,11 @@
 use crate::Dataset;
 
 use super::base::Augmenter;
-use tracing::{info_span};
+use tracing::info_span;
 /// Augmenter that repeats all data rows `n` times
-/// 
+///
 /// Resource intensive because the data needs to be copied `n` times
-/// 
+///
 /// Only works with `augment_batch` because the data needs to be cloned
 pub struct Repeat {
     pub name: String,
@@ -25,11 +25,10 @@ impl Repeat {
 }
 
 impl Augmenter for Repeat {
-    fn augment_batch(&self, input: &mut Dataset, _parallel: bool) {
-        
+    fn augment_batch(&self, input: &mut Dataset, _parallel: bool, per_sample: bool) {
         let span = info_span!("", component = self.get_name());
         let _enter = span.enter();
-   
+
         let features: Vec<Vec<f64>> = input.features.clone();
         let labels: Vec<String> = input.labels.clone();
 
@@ -38,7 +37,7 @@ impl Augmenter for Repeat {
             input.labels.append(&mut labels.clone());
         }
     }
-    
+
     /// Not implemented!
     fn augment_one(&self, _x: &[f64]) -> Vec<f64> {
         let span = info_span!("", step = "augment_one");
@@ -49,7 +48,7 @@ impl Augmenter for Repeat {
     fn get_probability(&self) -> f64 {
         self.p
     }
-    
+
     /// Not implemented!
     fn set_probability(&mut self, _probability: f64) {
         unimplemented!(
@@ -58,7 +57,11 @@ impl Augmenter for Repeat {
         );
     }
 
-    fn get_name(&self) ->String {
+    fn get_name(&self) -> String {
         self.name.clone()
+    }
+
+    fn supports_per_sample(&self) -> bool {
+        false
     }
 }

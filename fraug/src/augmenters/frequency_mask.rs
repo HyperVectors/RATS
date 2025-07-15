@@ -2,7 +2,7 @@ use super::base::Augmenter;
 use crate::Dataset;
 use crate::transforms::fastfourier::{dataset_fft, dataset_ifft};
 use rand::{Rng, rng};
-use tracing::{info_span};
+use tracing::info_span;
 /// todo!
 pub struct FrequencyMask {
     pub name: String,
@@ -23,7 +23,7 @@ impl FrequencyMask {
 }
 
 impl Augmenter for FrequencyMask {
-    fn augment_batch(&self, data: &mut Dataset, _parallel: bool) {
+    fn augment_batch(&self, data: &mut Dataset, _parallel: bool, per_sample: bool) {
         let span = info_span!("", component = self.get_name());
         let _enter = span.enter();
         if self.is_time_domain {
@@ -78,7 +78,11 @@ impl Augmenter for FrequencyMask {
         self.p = probability;
     }
 
-    fn get_name(&self) ->String {
+    fn get_name(&self) -> String {
         self.name.clone()
+    }
+    fn supports_per_sample(&self) -> bool {
+        // if in time-domain mode, disable per-sample chaining because of the FFT/IFFT used in the batch
+        !self.is_time_domain
     }
 }

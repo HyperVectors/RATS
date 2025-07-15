@@ -28,7 +28,8 @@ impl AmplitudePhasePerturbation {
 }
 
 impl Augmenter for AmplitudePhasePerturbation {
-    fn augment_batch(&self, data: &mut Dataset, _parallel: bool) {
+    fn augment_batch(&self, data: &mut Dataset, _parallel: bool, per_sample: bool) {
+        // tracing::info!("Rust: augment_batch called with per_sample = {}", per_sample);
         let span = info_span!("", component = self.get_name());
         let _enter = span.enter();
         if self.is_time_domain {
@@ -96,8 +97,7 @@ impl Augmenter for AmplitudePhasePerturbation {
     }
 
     fn supports_per_sample(&self) -> bool {
-        // if in time-domain mode, disable per-sample chaining because the FFT/IFFT used in the batch
-        // method is required.
+        // if in time-domain mode, disable per-sample chaining because of the FFT/IFFT used in the batch
         !self.is_time_domain
     }
     
