@@ -1,6 +1,7 @@
 import pyfraug as pf
 import numpy as np
 import pandas as pd
+import pathlib
 
 
 def fix_pf_kwargs(aug_name, pf_kwargs):
@@ -22,7 +23,7 @@ def fix_pf_kwargs(aug_name, pf_kwargs):
     return pf_kwargs
 
 
-def load_data(csv_path: str) -> (np.ndarray, list[str]):
+def load_data(csv_path: pathlib.Path) -> (np.ndarray, list[str]):
     """Load dataset from CSV file."""
 
     data = pd.read_csv(csv_path)

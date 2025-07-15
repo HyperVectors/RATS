@@ -1,3 +1,9 @@
+"""
+This script creates time benchmarks for individual fraug augmenters as well as pipeline and compares them with tsaug.
+It generates a CSV file with the results of the benchmarking.
+"""
+
+import pathlib
 import sys
 import os
 
@@ -15,31 +21,25 @@ import importlib
 import pyfraug as pf
 import tsaug as ts
 
-parser = argparse.ArgumentParser(
-    description="Benchmark PyFraug and tsaug augmenters and transforms."
-)
-parser.add_argument(
-    "--dataset", type=str, default="Car", help="Dataset name (default: Car)"
-)
-args = parser.parse_args()
-dataset_name = args.dataset
 
-csv_path = f"../../../examples/{dataset_name}/{dataset_name}.csv"
-print(f"Loading data from {csv_path}")
-
-# loading data
-x, y = load_data(csv_path)
-dataset = pf.Dataset(x, y)
-with open("../augmenters.yaml", "r") as f:
-    AUGMENTERS = yaml.safe_load(f)
-
-results = []
-os.makedirs("results", exist_ok=True)
-
-if __name__ == "__main__":
-
-    # Benchmark each augmenter
-    for aug in tqdm(AUGMENTERS, desc="Augmenters"):
+def run_individual_time_benchmarks(
+    augmenters: list[dict], x: np.ndarray, y: np.ndarray
+) -> list[dict]:
+    """
+    Run individual time benchmarks for PyFraug and tsaug augmenters.
+    Args:
+        augmenters (list): List of augmenter configurations.
+        x (np.ndarray): Input data features.
+        y (np.ndarray): Input data labels.
+    Returns:
+        list[dict]: List of dictionaries containing time benchmark results for each augmenter.
+    """
+    results = []
+    for aug in tqdm(
+        augmenters,
+        desc="Running individual augmenter benchmarks",
+        total=len(augmenters),
+    ):
         aug_name = aug["name"]
         pf_kwargs = fix_pf_kwargs(aug_name, aug["pf_kwargs"] or {})
         tsaug_class_name = aug["tsaug_class"]
@@ -79,6 +79,19 @@ if __name__ == "__main__":
             f"{aug_name}: PyFraug {pf_time:.4f}s, tsaug {tsaug_time if tsaug_time is not None else 'N/A'}"
         )
 
+    return results
+
+
+def run_freq_transformation_benchmarks(dataset: pf.Dataset) -> list[dict]:
+    """
+    Creates a benchmark for frequency transformations like FFT and IFFT.
+    Args:
+        dataset (pf.Dataset): The dataset to run the benchmarks on.
+    Returns:
+        list[dict]: List of dictionaries containing time benchmark results for frequency transformations.
+    """
+
+    results = []
     # FFT benchmarking
     print("Running FFT...")
     start = time.perf_counter()
@@ -108,10 +121,26 @@ if __name__ == "__main__":
         f"compare_within_tolerance: PyFraug {diff_time:.4f}s, max_diff={max_diff}, all_within={all_within}"
     )
 
+    return results
+
+
+def run_pipeline_benchmarks(
+    augmenters: list[dict], x: np.ndarray, y: np.ndarray
+) -> list[dict]:
+    """
+    Run a benchmark for the augmentation pipeline against tsaug pipeline.
+    Args:
+        augmenters (list): List of augmenter configurations.
+        x (np.ndarray): Input data features.
+        y (np.ndarray): Input data labels.
+    Returns:
+        list[dict]: List of dictionaries containing time benchmark results for the augmentation pipeline.
+    """
+    results = []
     print("Running Batch Pipeline_with_tsaug")
     pf_pipeline_tsaug = pf.AugmentationPipeline()
     tsaug_pipeline = None
-    for aug in tqdm(AUGMENTERS, desc="Pipeline_with_tsaug"):
+    for aug in tqdm(augmenters, desc="Pipeline_with_tsaug"):
         aug_name = aug["name"]
         pf_kwargs = fix_pf_kwargs(aug_name, aug["pf_kwargs"] or {})
         tsaug_class_name = aug["tsaug_class"]
@@ -154,8 +183,48 @@ if __name__ == "__main__":
     print(
         f"Pipeline_with_tsaug: PyFraug {pf_time:.4f}s, tsaug {tsaug_time if tsaug_time is not None else 'N/A'}"
     )
+    return results
 
-    # Saving results
-    df = pd.DataFrame(results)
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Benchmark PyFraug and tsaug augmenters and transforms."
+    )
+    parser.add_argument(
+        "--dataset", type=str, default="Car", help="Dataset name (default: Car)"
+    )
+    parser.add_argument(
+        "--augmenter_configs",
+        type=pathlib.Path,
+        default="../augmenters.yaml",
+        help="Path to the YAML file containing augmenter configurations (default: ../augmenter_configs.yaml)",
+    )
+    args = parser.parse_args()
+    dataset_name = args.dataset
+
+    csv_path = pathlib.Path(f"../../../examples/{dataset_name}/{dataset_name}.csv")
+    print(f"Loading data from {csv_path}")
+
+    # loading data
+    x, y = load_data(csv_path)
+    dataset = pf.Dataset(x, y)
+
+    with open(args.augmenter_configs, "r") as f:
+        AUGMENTERS = yaml.safe_load(f)
+
+    os.makedirs("results", exist_ok=True)
+
+    aug_results = run_individual_time_benchmarks(AUGMENTERS, x, y)
+
+    aug_results.extend(run_freq_transformation_benchmarks(dataset))
+
+    aug_results.extend(run_pipeline_benchmarks(AUGMENTERS, x, y))
+
+    df = pd.DataFrame(aug_results)
     df.to_csv(f"./results/{dataset_name}_time_benchmark.csv", index=False)
     print(f"Benchmark results saved to results/{dataset_name}_time_benchmark.csv")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
