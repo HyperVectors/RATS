@@ -19,7 +19,7 @@ args = parser.parse_args()
 dataset_name = args.dataset
 
 csv_path = f"../../../data/{dataset_name}/{dataset_name}.csv"
-yaml_path = "../augmenters.yaml"
+yaml_path = "../augmenter_configs.yaml"
 sample_plot_dir = "results/qualitative_plots/sample_comparison"
 meanstd_plot_dir = "results/qualitative_plots/mean_std_comparison"
 tsaug_plot_dir = "results/qualitative_plots/tsaug_pyfraug_sample_comparison"
