@@ -1,6 +1,6 @@
 mod augmenters;
 mod transforms;
-
+mod quality_benchmarking;
 use ndarray::Array2;
 use numpy::{IntoPyArray, PyArray2, PyReadonlyArray2};
 use pyo3::prelude::*;
@@ -102,6 +102,7 @@ fn pyfraug(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<augmenters::Drift>()?;
     m.add_class::<augmenters::Convolve>()?;
     m.add_class::<augmenters::ConvolveWindow>()?;
+    m.add_class::<quality_benchmarking::QualityBenchmarking>()?;
     Ok(())
 }
 
