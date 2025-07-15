@@ -17,6 +17,7 @@ pub trait Augmenter {
         let span = info_span!("", component = self.get_name());
         let _enter = span.enter();
         if parallel {
+            tracing::info!("Rust: parallel augment_batch called");
             input.features.par_iter_mut().for_each(|x| {
                 if self.get_probability() > rng().random() {
                     *x = self.augment_one(x)
@@ -115,6 +116,7 @@ impl Augmenter for AugmentationPipeline {
                     );
                 }
             }
+            tracing::info!("Rust: augment_batch called with per_sample = {}", per_sample);
             if parallel {
                 input.features.par_iter_mut().for_each(|sample| {
                     let mut chain = sample.to_vec();
