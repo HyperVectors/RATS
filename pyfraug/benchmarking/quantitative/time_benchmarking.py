@@ -6,6 +6,7 @@ It generates a CSV file with the results of the benchmarking.
 import pathlib
 import sys
 import os
+import matplotlib.pyplot as plt
 
 ## To mount utils on to the default interpreter path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -186,6 +187,83 @@ def run_pipeline_benchmarks(
     return results
 
 
+def benchmark_time_dataset_size(augmenters, x, y, dataset_name) -> str:
+    """
+    Benchmark the time taken by the augmentation pipeline with varying dataset sizes.
+    Args:
+        augmenters (list): List of augmenter configurations.
+        x (np.ndarray): Input data features.
+        y (np.ndarray): Input data labels.
+        dataset_name (str): Name of the dataset for saving results.
+    Returns:
+        str: Path to the CSV file containing time benchmarks for varying dataset sizes.
+    """
+    time_benchmarks = []
+    dataset = pf.Dataset(x, y)
+
+    for i in range(13):
+        repeat_augmenter = pf.Repeat(times=2)
+        result_list = run_pipeline_benchmarks(
+            augmenters, dataset.features, dataset.labels
+        )
+
+        print(
+            f"Results for dataset size {len(dataset.features)}: Pyfraug: {result_list[0]['PyFraug_time_sec']}, tsaug: {result_list[0]['tsaug_time_sec']}"
+        )
+        time_benchmarks.append(
+            {
+                "Dataset_size": len(dataset.features),
+                "PyFraug_time_sec": result_list[0]["PyFraug_time_sec"],
+                "tsaug_time_sec": result_list[0]["tsaug_time_sec"],
+            }
+        )
+
+        repeat_augmenter.augment_batch(
+            dataset,
+            parallel=True,
+        )
+
+    df = pd.DataFrame(time_benchmarks)
+    df.to_csv(f"./results/{dataset_name}_time_vs_size.csv", index=False)
+
+    return f"./results/{dataset_name}_time_vs_size.csv"
+
+
+def plot_time_vs_size(df: pd.DataFrame, dataset_name: str):
+    """
+    Plot the time taken by PyFraug and tsaug for varying dataset sizes.
+    Args:
+        df (pd.DataFrame): DataFrame containing time benchmarks.
+        dataset_name (str): Name of the dataset for saving the plot.
+    """
+    df = pd.read_csv(f"./results/{dataset_name}_time_vs_size.csv")
+
+    plt.figure(figsize=(12, 6))
+    plt.plot(
+        df["Dataset_size"],
+        df["PyFraug_time_sec"],
+        label="PyFraug Time",
+        color="black",
+        marker="o",
+    )
+
+    plt.plot(
+        df["Dataset_size"],
+        df["tsaug_time_sec"],
+        label="tsaug Time",
+        color="orange",
+        marker="x",
+    )
+    plt.xlabel("Dataset Size")
+    plt.ylabel("Time (seconds)")
+    plt.title(f"Time Benchmark for Varying Dataset Sizes")
+    plt.legend()
+    plt.grid()
+    plt.savefig(f"results/{dataset_name}_time_vs_size.png")
+
+    print(f"Time vs Size plot saved to results/{dataset_name}_time_vs_size.png")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Benchmark PyFraug and tsaug augmenters and transforms."
@@ -196,7 +274,7 @@ def main():
     parser.add_argument(
         "--augmenter_configs",
         type=pathlib.Path,
-        default="../augmenters.yaml",
+        default="../augmenter_configs.yaml",
         help="Path to the YAML file containing augmenter configurations (default: ../augmenter_configs.yaml)",
     )
     args = parser.parse_args()
@@ -220,9 +298,17 @@ def main():
 
     aug_results.extend(run_pipeline_benchmarks(AUGMENTERS, x, y))
 
+    aug_results.extend(benchmark_time_dataset_size(x, y))
+
     df = pd.DataFrame(aug_results)
     df.to_csv(f"./results/{dataset_name}_time_benchmark.csv", index=False)
     print(f"Benchmark results saved to results/{dataset_name}_time_benchmark.csv")
+
+    save_file_path = benchmark_time_dataset_size(AUGMENTERS, x, y, dataset_name)
+    print(f"Time vs Size results saved to {save_file_path}")
+
+    plot_time_vs_size(df, dataset_name)
+
     return 0
 
 
