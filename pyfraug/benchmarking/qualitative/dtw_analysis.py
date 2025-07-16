@@ -41,7 +41,7 @@ def main():
     csv_path = pathlib.Path(f"../../../examples/{dataset_name}/{dataset_name}.csv")
     print(f"Loading data from {csv_path}")
 
-    with open("../augmenters.yaml", "r") as f:
+    with open("../augmenter_configs.yaml", "r") as f:
         AUGMENTERS = yaml.safe_load(f)
 
     x, y = load_data(csv_path)

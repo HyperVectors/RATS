@@ -56,4 +56,4 @@ You also need to install the documentation dependencies from `docs/requirements.
 
 ### Benchmarking
 In `benchmarking/` are scripts that automatically benchmark this library against the Python-native library [`tsaug`](https://tsaug.readthedocs.io/en/stable/). 
-Which augmenters should be benchmarked can be configured using the `benchmarking/augmenters.yaml` file.
+Which augmenters should be benchmarked can be configured using the `benchmarking/augmenter_configs.yaml` file.
