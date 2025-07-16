@@ -4,6 +4,7 @@ use fraug::augmenters::{
     Permutate, Pool, PoolingMethod, Quantize, RandomTimeWarpAugmenter, Repeat, Resize, Reverse,
     Rotation, Scaling,
 };
+use fraug::quality_benchmarking::dtw;
 
 use fraug::transforms::fastfourier::{dataset_fft, dataset_ifft};
 use fraug::transforms::dct::{dataset_dct, dataset_idct};
@@ -441,3 +442,29 @@ fn random_time_warp_full_series_full_window() {
         assert_eq!(ele.len(), 4)
     }
 }
+
+#[test]
+fn time_warp_with_dtw(){
+    let mut data = Dataset {
+        features: vec![vec![0.0, 1.0, 2.0, 3.0], vec![4.0, 5.0, 6.0, 7.0]],
+        labels: vec!["L".into(), "L".into()],
+    };
+    let original = data.features.clone();
+    let aug = RandomTimeWarpAugmenter::new(2, (0.5, 2.0));
+    aug.augment_batch(&mut data, true, true);
+    let (distance, _) = dtw(&original[0], &data.features[0]);
+    assert_ne!(distance , 0.0);
+}   
+
+#[test]
+fn time_warp_with_dtw_full_window(){
+    let mut data = Dataset {
+        features: vec![vec![0.0, 1.0, 2.0, 3.0], vec![4.0, 5.0, 6.0, 7.0]],
+        labels: vec!["L".into(), "L".into()],
+    };
+    let original = data.features.clone();
+    let aug = RandomTimeWarpAugmenter::new(0, (0.5, 2.0));
+    aug.augment_batch(&mut data, true, true);
+    let (distance, _) = dtw(&original[0], &data.features[0]);
+    assert_ne!(distance , 0.0);
+}   
