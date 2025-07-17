@@ -246,7 +246,7 @@ def plot_time_vs_size(csv_path: str, dataset_name: str):
         df["Dataset_size"],
         df["PyFraug_time_sec"],
         label="PyFraug Time",
-        color="black",
+        color="blue",
         marker="o",
     )
 
@@ -291,7 +291,7 @@ def main():
     args = parser.parse_args()
     dataset_name = args.dataset
 
-    csv_path = pathlib.Path(f"../../../examples/{dataset_name}/{dataset_name}.csv")
+    csv_path = pathlib.Path(f"../../../data/{dataset_name}/{dataset_name}.csv")
     print(f"Loading data from {csv_path}")
 
     # loading data

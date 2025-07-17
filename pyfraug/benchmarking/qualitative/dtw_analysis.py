@@ -38,7 +38,7 @@ def main():
     args = parser.parse_args()
     dataset_name = args.dataset
 
-    csv_path = pathlib.Path(f"../../../examples/{dataset_name}/{dataset_name}.csv")
+    csv_path = pathlib.Path(f"../../../data/{dataset_name}/{dataset_name}.csv")
     print(f"Loading data from {csv_path}")
 
     with open("../augmenter_configs.yaml", "r") as f:
@@ -72,11 +72,11 @@ def main():
         save_dir.mkdir(parents=True, exist_ok=True)
         plt.figure(figsize=(12, 6))
         plt.plot(orig_sample, label="Original", alpha=1.0, color="blue")
-        plt.plot(aug_sample, label="Augmented", alpha=0.7, color="red")
+        plt.plot(aug_sample, label="Augmented", alpha=0.7, color="orange")
         for i, j in optimum_path:
             plt.plot([i, j], [orig_sample[i], aug_sample[j]], alpha=0.5)
         plt.title(
-            f"{dataset_name} dataset : {aug_name} - DTW Alignment : Distance = {dtw_distance:.2f}"
+            f"{dataset_name} dataset : {aug_name} - DTW Alignment : Percentage Similarity = {(1 - abs(dtw_distance))*100:.2f}%"
         )
         plt.xlabel("Time")
         plt.ylabel("Value")
