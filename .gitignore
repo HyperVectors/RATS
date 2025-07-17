@@ -4,3 +4,4 @@ data/
 *.png
 .idea
 **/*.csv
+.DS_Store
