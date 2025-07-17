@@ -52,5 +52,5 @@ pub fn dtw(a: &[f64], b: &[f64]) -> (f64, Vec<(usize, usize)>) {
         }
     }
     path.reverse();
-    (distance, path)
+    (distance / n as f64, path)
 }
