@@ -23,13 +23,13 @@ def main():
     parser.add_argument(
         "--time_csv",
         type=str,
-        default=f"./results/{dataset_name}_time_benchmark.csv",
+        required=True,
         help="Path to the time benchmark CSV file (default: ./results/Car_time_benchmark.csv)",
     )
     parser.add_argument(
         "--memory_csv",
         type=str,
-        default=f"./results/{dataset_name}_memory_benchmark.csv",
+        required=True,
         help="Path to the memory benchmark CSV file (default: ./results/Car_memory_benchmark.csv)",
     )
     parser.add_argument(
