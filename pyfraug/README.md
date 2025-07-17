@@ -54,6 +54,16 @@ The resulting HTML files will be in `docs/_build/html`.
 
 You also need to install the documentation dependencies from `docs/requirements.txt`.
 
+### Tests
+To test the installation of pyFraug in your `venv` and run some initial tests, we provide unit tests for each of pyFraug's classes as well as the entire pipeline in the `/tests` directory. 
+
+Run the following commands to run tests: 
+
+```shell
+cd tests
+python -m unittest test_pyfraug
+```
+
 ### Benchmarking
 In `benchmarking/` are scripts that automatically benchmark this library against the Python-native library [`tsaug`](https://tsaug.readthedocs.io/en/stable/). 
 Which augmenters should be benchmarked can be configured using the `benchmarking/augmenter_configs.yaml` file.
