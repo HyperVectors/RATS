@@ -187,7 +187,9 @@ def run_pipeline_benchmarks(
     return results
 
 
-def benchmark_time_dataset_size(augmenters, x, y, dataset_name) -> str:
+def benchmark_time_dataset_size(
+    augmenters, x, y, dataset_name, n_iterations: int
+) -> str:
     """
     Benchmark the time taken by the augmentation pipeline with varying dataset sizes.
     Args:
@@ -195,13 +197,14 @@ def benchmark_time_dataset_size(augmenters, x, y, dataset_name) -> str:
         x (np.ndarray): Input data features.
         y (np.ndarray): Input data labels.
         dataset_name (str): Name of the dataset for saving results.
+        n_iterations (int): Number of iterations to run the benchmark. At every iteration, the dataset size is doubled.
     Returns:
         str: Path to the CSV file containing time benchmarks for varying dataset sizes.
     """
     time_benchmarks = []
     dataset = pf.Dataset(x, y)
 
-    for i in range(13):
+    for i in range(n_iterations):
         repeat_augmenter = pf.Repeat(times=2)
         result_list = run_pipeline_benchmarks(
             augmenters, dataset.features, dataset.labels
@@ -229,14 +232,14 @@ def benchmark_time_dataset_size(augmenters, x, y, dataset_name) -> str:
     return f"./results/{dataset_name}_time_vs_size.csv"
 
 
-def plot_time_vs_size(df: pd.DataFrame, dataset_name: str):
+def plot_time_vs_size(csv_path: str, dataset_name: str):
     """
     Plot the time taken by PyFraug and tsaug for varying dataset sizes.
     Args:
         df (pd.DataFrame): DataFrame containing time benchmarks.
         dataset_name (str): Name of the dataset for saving the plot.
     """
-    df = pd.read_csv(f"./results/{dataset_name}_time_vs_size.csv")
+    df = pd.read_csv(csv_path)
 
     plt.figure(figsize=(12, 6))
     plt.plot(
@@ -277,6 +280,14 @@ def main():
         default="../augmenter_configs.yaml",
         help="Path to the YAML file containing augmenter configurations (default: ../augmenter_configs.yaml)",
     )
+
+    parser.add_argument(
+        "--n_iterations",
+        type=int,
+        default=5,
+        help="Number of iterations for time vs size benchmark (default: 5)",
+    )
+
     args = parser.parse_args()
     dataset_name = args.dataset
 
@@ -298,16 +309,16 @@ def main():
 
     aug_results.extend(run_pipeline_benchmarks(AUGMENTERS, x, y))
 
-    aug_results.extend(benchmark_time_dataset_size(x, y))
-
     df = pd.DataFrame(aug_results)
     df.to_csv(f"./results/{dataset_name}_time_benchmark.csv", index=False)
     print(f"Benchmark results saved to results/{dataset_name}_time_benchmark.csv")
 
-    save_file_path = benchmark_time_dataset_size(AUGMENTERS, x, y, dataset_name)
+    save_file_path = benchmark_time_dataset_size(
+        AUGMENTERS, x, y, dataset_name, args.n_iterations
+    )
     print(f"Time vs Size results saved to {save_file_path}")
 
-    plot_time_vs_size(df, dataset_name)
+    plot_time_vs_size(save_file_path, dataset_name)
 
     return 0
 
