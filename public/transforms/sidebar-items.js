@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["fastfourier"]};
+window.SIDEBAR_ITEMS = {"mod":["accuracy","dct","fastfourier"]};

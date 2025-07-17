@@ -1,4 +1,4 @@
-//! Module for the `Augmenter` trait and all augmenters this crate provides
+//! Module for the `Augmenter` trait and all augmenters this crate implements.
 //! 
 //! Every augmenter implements the `Augmenter` trait which enables a unified interface
 //! with the methods `augment_batch` and `augment_one`

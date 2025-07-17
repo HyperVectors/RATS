@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["augmenters","transforms"],"struct":["Dataset"]};
+window.SIDEBAR_ITEMS = {"mod":["augmenters","quality_benchmarking","transforms"],"struct":["Dataset"]};

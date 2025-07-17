@@ -1,3 +1,3 @@
-var srcIndex = new Map(JSON.parse('[["fraug",["",[["augmenters",[],["addnoise.rs","amplitude_phase_perturbation.rs","base.rs","convolve.rs","crop.rs","drift.rs","drop.rs","dtw.rs","frequency_mask.rs","jittering.rs","mod.rs","permutate.rs","pool.rs","quantize.rs","repeat.rs","resize.rs","reverse.rs","rotation.rs","scaling.rs","time_warp.rs"]],["transforms",[],["fastfourier.rs","mod.rs"]]],["lib.rs"]]]]'));
+var srcIndex = new Map(JSON.parse('[["fraug",["",[["augmenters",[],["addnoise.rs","amplitude_phase_perturbation.rs","base.rs","convolve.rs","crop.rs","drift.rs","drop.rs","frequency_mask.rs","jittering.rs","mod.rs","permutate.rs","pool.rs","quantize.rs","repeat.rs","resize.rs","reverse.rs","rotation.rs","scaling.rs","time_warp.rs"]],["quality_benchmarking",[],["dtw.rs","mod.rs"]],["transforms",[],["accuracy.rs","dct.rs","fastfourier.rs","mod.rs"]]],["lib.rs"]]]]'));
 createSrcSidebar();
-//{"start":36,"fragment_lengths":[367]}
+//{"start":36,"fragment_lengths":[429]}

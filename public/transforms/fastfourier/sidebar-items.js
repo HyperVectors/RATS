@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["compare_datasets_within_tolerance","dataset_fft","dataset_ifft"]};
+window.SIDEBAR_ITEMS = {"fn":["dataset_fft","dataset_ifft"]};

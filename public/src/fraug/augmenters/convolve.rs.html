@@ -87,7 +87,7 @@
 <a href=#87 id=87 data-nosnippet>87</a>    }
 <a href=#88 id=88 data-nosnippet>88</a>
 <a href=#89 id=89 data-nosnippet>89</a>    <span class="comment">// reimplementing augment_batch to make sure kernel is created only once for each batch
-<a href=#90 id=90 data-nosnippet>90</a>    </span><span class="kw">fn </span>augment_batch(<span class="kw-2">&amp;</span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span><span class="kw">crate</span>::Dataset, parallel: bool)
+<a href=#90 id=90 data-nosnippet>90</a>    </span><span class="kw">fn </span>augment_batch(<span class="kw-2">&amp;</span><span class="self">self</span>, input: <span class="kw-2">&amp;mut </span><span class="kw">crate</span>::Dataset, parallel: bool, per_sample: bool)
 <a href=#91 id=91 data-nosnippet>91</a>    <span class="kw">where
 <a href=#92 id=92 data-nosnippet>92</a>        </span><span class="self">Self</span>: Sync,
 <a href=#93 id=93 data-nosnippet>93</a>    {

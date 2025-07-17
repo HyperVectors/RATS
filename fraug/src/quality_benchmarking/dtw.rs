@@ -1,3 +1,20 @@
+/// Implementation of Dynamic Time Warping (DTW) algorithm.
+/// This function computes the DTW distance between two sequences and returns the distance
+/// along with the optimal path.
+/// # Arguments
+/// * `a` - First sequence as a slice of f64 values.
+/// * `b` - Second sequence as a slice of f64 values.
+/// # Returns
+/// A tuple containing the DTW distance (f64) and a vector of tuples representing the
+/// optimal path as pairs of indices (usize, usize).
+/// # Examples
+/// ```
+/// use fraug::quality_benchmarking::dtw;
+/// let a = vec![1.0, 2.0, 3.0];
+/// let b = vec![2.0, 3.0, 4.0];
+/// let (distance, path) = dtw(&a, &b);
+/// ```
+
 pub fn dtw(a: &[f64], b: &[f64]) -> (f64, Vec<(usize, usize)>) {
     let n = a.len();
     let m = b.len();

@@ -1,6 +1,6 @@
 use crate::Dataset;
 
-/// maximum absolute difference between two Datasets and check if all differences are within a tolerance.
+/// Computes maximum absolute difference between two Datasets and check if all differences are within a tolerance.
 pub fn compare_datasets_within_tolerance(
     original: &Dataset,
     reconstructed: &Dataset,

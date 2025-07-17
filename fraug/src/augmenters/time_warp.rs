@@ -2,10 +2,10 @@ use super::base::Augmenter;
 use rand::{Rng, rng};
 use tracing:: {info, info_span};
 
-// Augmenter that applied random time warping to the dataset
-// This augmenter randomly selects a window of the time series, specified by the `window_size` argument and applies a speed change to it.
-// The speed change is defined by the `speed_ratio_range` argument, which specifies the minimum and maximum speed ratio.
-// The speed ratio is a multiplier that affects how fast or slow the selected window is stretched or compressed.
+/// Augmenter that applied random time warping to the dataset
+/// This augmenter randomly selects a window of the time series, specified by the `window_size` argument and applies a speed change to it.
+/// The speed change is defined by the `speed_ratio_range` argument, which specifies the minimum and maximum speed ratio.
+/// The speed ratio is a multiplier that affects how fast or slow the selected window is stretched or compressed.
 /// If the window size is 0 or larger than the time series length, the entire series is warped.
 pub struct RandomTimeWarpAugmenter {
     pub name: String,
