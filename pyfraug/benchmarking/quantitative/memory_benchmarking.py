@@ -16,6 +16,7 @@ import argparse
 from io import StringIO
 import sys
 import pathlib
+import matplotlib.pyplot as plt
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from utils import fix_pf_kwargs, load_data
@@ -241,6 +242,81 @@ def run_pipeline_memory_benchmarks(
     return results
 
 
+def run_memory_size_benchmarks(
+    x: np.ndarray,
+    y: np.ndarray,
+    augmenters: list[dict],
+    dataset_name: str,
+    n_iterations: int,
+) -> str:
+    """
+     Run memory usage benchmarks for pyfraug and compares them with tsaug for different dataset sizes.
+    Args:
+        x (np.ndarray): Input data features.
+        y (np.ndarray): Input data labels.
+        augmenters (list): List of augmenter configurations.
+        dataset_name (str): Name of the dataset for saving results.
+        n_iterations (int): Number of iterations for the benchmark.
+    """
+    mem_benchmarks = []
+    dataset = pf.Dataset(x, y)
+
+    for i in range(n_iterations):
+        repeat_augmenter = pf.Repeat(times=2)
+        result_list = run_pipeline_memory_benchmarks(
+            dataset.features, dataset.labels, augmenters
+        )
+
+        print(
+            f"Results for dataset size {len(dataset.features)}: Pyfraug: {result_list[0]['PyFraug_peak_mem_MB']}, tsaug: {result_list[0]['tsaug_peak_mem_MB']}"
+        )
+
+        mem_benchmarks.append(
+            {
+                "Dataset Size": len(dataset.features),
+                "PyFraug Peak Memory (MB)": result_list[0]["PyFraug_peak_mem_MB"],
+                "tsaug Peak Memory (MB)": result_list[0]["tsaug_peak_mem_MB"],
+            }
+        )
+        repeat_augmenter.augment_batch(dataset, parallel=True)
+
+    df = pd.DataFrame(mem_benchmarks)
+    df.to_csv(f"./results/{dataset_name}_memory_vs_size.csv", index=False)
+
+    return f"./results/{dataset_name}_memory_vs_size_{n_iterations}_iterations.csv"
+
+
+def plot_mem_vs_size(save_dir: str, dataset_name: str):
+    """
+    Plot the memory usage vs dataset size for PyFraug and tsaug augmenters.
+    Args:
+        save_dir (str): Directory where the CSV file is saved.
+        dataset_name (str): Name of the dataset for saving the plot.
+    """
+
+    df = pd.read_csv(save_dir)
+    plt.figure(figsize=(12, 6))
+    plt.plot(
+        df["Dataset Size"],
+        df["PyFraug Peak Memory (MB)"],
+        label="PyFraug",
+        marker="o",
+    )
+    plt.plot(
+        df["Dataset Size"],
+        df["tsaug Peak Memory (MB)"],
+        label="tsaug",
+        marker="x",
+    )
+    plt.xlabel("Dataset Size")
+    plt.ylabel("Peak Memory Usage (MB)")
+    plt.title(f"Memory Usage vs Dataset Size - {dataset_name}")
+    plt.legend()
+    plt.grid()
+    plt.savefig(f"./results/{dataset_name}_memory_vs_size.png")
+    plt.close()
+
+
 def main():
     """
     Entry point for the memory benchmarking script.
@@ -265,6 +341,14 @@ def main():
         default="../augmenter_configs.yaml",
         help="Path to the augmenter config YAML file (default: ../augmenter_configs.yaml)",
     )
+
+    parser.add_argument(
+        "--n_iterations",
+        type=int,
+        default=3,
+        help="Number of iterations for time vs size benchmark (default: 10)",
+    )
+
     args = parser.parse_args()
     dataset_name = args.dataset
 
@@ -276,16 +360,25 @@ def main():
     with open(args.augmenter_configs, "r") as f:
         AUGMENTERS = yaml.safe_load(f)
 
-    aug_results = run_individual_memory_benchmarks(x, y, AUGMENTERS)
+    # aug_results = run_individual_memory_benchmarks(x, y, AUGMENTERS)
 
-    aug_results.extend(run_frequency_memory_benchmarks(x, y))
+    # aug_results.extend(run_frequency_memory_benchmarks(x, y))
 
-    aug_results.extend(run_pipeline_memory_benchmarks(x, y, AUGMENTERS))
+    # aug_results.extend(run_pipeline_memory_benchmarks(x, y, AUGMENTERS))
 
-    # Save results
-    df = pd.DataFrame(aug_results)
-    df.to_csv(f"./results/{dataset_name}_memory_benchmark.csv", index=False)
-    print(f"Benchmark results saved to results/{dataset_name}_memory_benchmark.csv")
+    # # Save results
+    # df = pd.DataFrame(aug_results)
+    # df.to_csv(f"./results/{dataset_name}_memory_benchmark.csv", index=False)
+    # print(f"Benchmark results saved to results/{dataset_name}_memory_benchmark.csv")
+
+    save_dir = run_memory_size_benchmarks(
+        x, y, AUGMENTERS, dataset_name, args.n_iterations
+    )
+
+    print(f"Memory vs Size results saved to {save_dir}")
+
+    plot_mem_vs_size(save_dir, dataset_name)
+
     return 0
 
 
