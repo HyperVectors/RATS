@@ -281,7 +281,10 @@ def run_memory_size_benchmarks(
         repeat_augmenter.augment_batch(dataset, parallel=True)
 
     df = pd.DataFrame(mem_benchmarks)
-    df.to_csv(f"./results/{dataset_name}_memory_vs_size.csv", index=False)
+    df.to_csv(
+        f"./results/{dataset_name}_memory_vs_size_{n_iterations}_iterations.csv",
+        index=False,
+    )
 
     return f"./results/{dataset_name}_memory_vs_size_{n_iterations}_iterations.csv"
 
