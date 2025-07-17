@@ -16,16 +16,15 @@ large = df[(df["Length"] * (df["TrainSize"] + df["TestSize"])) > 50000]
 print(large.sort_values(["TrainSize"], ascending=False))
 
 
-
 parser = argparse.ArgumentParser(
     description="Load a time series classification dataset.",
-    usage="python dataLoader.py --dataset <DATASET_NAME>"
+    usage="python dataLoader.py --dataset <DATASET_NAME>",
 )
 parser.add_argument(
     "--dataset",
     type=str,
     default="GunPoint",
-    help="Name of the time series dataset to load (default: GunPoint)"
+    help="Name of the time series dataset to load (default: GunPoint)",
 )
 
 try:
@@ -37,9 +36,7 @@ except Exception as e:
 
 try:
     X, y, meta_data = load_classification(
-        name=args.dataset,
-        split=None,
-        return_metadata=True
+        name=args.dataset, split=None, return_metadata=True
     )
 except Exception as e:
     print(f"Failed to load dataset '{args.dataset}': {e}")
@@ -54,8 +51,8 @@ print(" Meta data = ", meta_data)
 # directory with the name of the dataset if it doesn't exist
 
 
-if not os.path.exists('../../data/' + args.dataset):
-    os.makedirs('../../data/' + args.dataset)
+if not os.path.exists("../../data/" + args.dataset):
+    os.makedirs("../../data/" + args.dataset, exist_ok=True)
 
 
 if hasattr(X, "to_numpy"):

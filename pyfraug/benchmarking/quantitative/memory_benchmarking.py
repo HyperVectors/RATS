@@ -355,7 +355,7 @@ def main():
     args = parser.parse_args()
     dataset_name = args.dataset
 
-    csv_path = pathlib.Path(f"../../../examples/{dataset_name}/{dataset_name}.csv")
+    csv_path = pathlib.Path(args.data_path)
     print(f"Loading data from {csv_path}")
 
     x, y = load_data(csv_path)
@@ -363,16 +363,16 @@ def main():
     with open(args.augmenter_configs, "r") as f:
         AUGMENTERS = yaml.safe_load(f)
 
-    # aug_results = run_individual_memory_benchmarks(x, y, AUGMENTERS)
+    aug_results = run_individual_memory_benchmarks(x, y, AUGMENTERS)
 
-    # aug_results.extend(run_frequency_memory_benchmarks(x, y))
+    aug_results.extend(run_frequency_memory_benchmarks(x, y))
 
-    # aug_results.extend(run_pipeline_memory_benchmarks(x, y, AUGMENTERS))
+    aug_results.extend(run_pipeline_memory_benchmarks(x, y, AUGMENTERS))
 
-    # # Save results
-    # df = pd.DataFrame(aug_results)
-    # df.to_csv(f"./results/{dataset_name}_memory_benchmark.csv", index=False)
-    # print(f"Benchmark results saved to results/{dataset_name}_memory_benchmark.csv")
+    # Save results
+    df = pd.DataFrame(aug_results)
+    df.to_csv(f"./results/{dataset_name}_memory_benchmark.csv", index=False)
+    print(f"Benchmark results saved to results/{dataset_name}_memory_benchmark.csv")
 
     save_dir = run_memory_size_benchmarks(
         x, y, AUGMENTERS, dataset_name, args.n_iterations
