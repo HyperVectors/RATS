@@ -404,9 +404,9 @@ pub struct Permutate {
 #[pymethods]
 impl Permutate {
     #[new]
-    fn new(size: usize) -> Self {
+    fn new(window_size: usize, segment_size: usize) -> Self {
         Permutate {
-            inner: fraug::augmenters::Permutate::new(size),
+            inner: fraug::augmenters::Permutate::new(window_size, segment_size),
         }
     }
 }

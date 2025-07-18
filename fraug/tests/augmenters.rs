@@ -229,7 +229,7 @@ fn jittering() {
 fn permutate() {
     let series = vec![1.0, 2.0, 3.0, 4.0];
 
-    let aug = Permutate::new(2);
+    let aug = Permutate::new(2, 2);
     let series = aug.augment_one(&series);
 
     assert!(series == vec![3.0, 4.0, 1.0, 2.0] || series == vec![1.0, 2.0, 3.0, 4.0]);

@@ -4,9 +4,9 @@
   tsaug_kwargs: null
 
 - name: Scaling
-  pf_kwargs: {min: 0.8, max: 1.2}
+  pf_kwargs: {min: 1.5, max: 2.0}
   tsaug_class: null
-  tsaug_kwargs: {min: 0.8, max: 1.2}
+  tsaug_kwargs: {min: 1.5, max: 2.0}
 
 - name: Rotation
   pf_kwargs: {anchor: 1.0}
@@ -39,9 +39,9 @@
   tsaug_kwargs: null
 
 - name: Quantize
-  pf_kwargs: {levels: 50}
+  pf_kwargs: {levels: 10}
   tsaug_class: Quantize
-  tsaug_kwargs: {n_levels: 50}
+  tsaug_kwargs: {n_levels: 10}
 
 - name: Resize
   pf_kwargs: {size: 200}
@@ -54,12 +54,12 @@
   tsaug_kwargs: {}
 
 - name: Permutate
-  pf_kwargs: {size: 50}
+  pf_kwargs: {window_size: 20, segment_size: 5}
   tsaug_class: null
   tsaug_kwargs: {n_segments: 50}
 
 - name: AddNoise
-  pf_kwargs: {noise_type: Gaussian, mean: 0.0, std_dev: 0.1}
+  pf_kwargs: {noise_type: Slope, mean: 0.0, std_dev: 0.1, bounds: [0.01, 0.02]}
   tsaug_class: AddNoise
   tsaug_kwargs: {scale: 0.1}
 
@@ -69,9 +69,9 @@
   tsaug_kwargs: null
 
 - name: Pool
-  pf_kwargs: {kind: Average, size: 2}
+  pf_kwargs: {kind: Average, size: 10}
   tsaug_class: Pool
-  tsaug_kwargs: {kind: ave, size: 2}
+  tsaug_kwargs: {kind: ave, size: 10}
 
 - name: Drift
   pf_kwargs: {max_drift: 1.0, n_drift_points: 5}
