@@ -4,20 +4,19 @@
 //! compression in time series analysis.
 //! # Examples
 //! ```
-//! use fraug::transforms::{FastFourier, DCT};
+//! use fraug::transforms::fastfourier::*;
+//! use fraug::transforms::dct::*;
 //! use fraug::Dataset;
 //! let series = vec![1.0, 2.0, 3.0, 4.0, 5.0];
 //! let dataset = Dataset {
 //!    features: vec![series],
 //!   labels: vec![String::from("1")],
 //! };
-//! let fft = FastFourier::new();
-//! let dct = DCT::new();
-//! let transformed_fft = fft.transform(&dataset);
-//! let transformed_dct = dct.transform(&dataset);
+//! let transformed_fft = dataset_fft(&dataset, true);
+//! let transformed_dct = dataset_dct(&dataset, true);
 //! 
-//! let inverse_fft = fft.inverse(&transformed_fft);
-//! let inverse_dct = dct.inverse(&transformed_dct);
+//! let inverse_fft = dataset_ifft(&transformed_fft, true);
+//! let inverse_dct = dataset_idct(&transformed_dct, true);
 //! ```
 pub mod fastfourier;
 pub mod dct;
