@@ -246,7 +246,6 @@ def plot_time_vs_size(csv_path: str, dataset_name: str):
         df["Dataset_size"],
         df["PyFraug_time_sec"],
         label="PyFraug Time",
-        color="blue",
         marker="o",
     )
 
@@ -301,24 +300,24 @@ def main():
     with open(args.augmenter_configs, "r") as f:
         AUGMENTERS = yaml.safe_load(f)
 
-    os.makedirs("results", exist_ok=True)
+    # os.makedirs("results", exist_ok=True)
 
-    aug_results = run_individual_time_benchmarks(AUGMENTERS, x, y)
+    # aug_results = run_individual_time_benchmarks(AUGMENTERS, x, y)
 
-    aug_results.extend(run_freq_transformation_benchmarks(dataset))
+    # aug_results.extend(run_freq_transformation_benchmarks(dataset))
 
-    aug_results.extend(run_pipeline_benchmarks(AUGMENTERS, x, y))
+    # aug_results.extend(run_pipeline_benchmarks(AUGMENTERS, x, y))
 
-    df = pd.DataFrame(aug_results)
-    df.to_csv(f"./results/{dataset_name}_time_benchmark.csv", index=False)
-    print(f"Benchmark results saved to results/{dataset_name}_time_benchmark.csv")
+    # df = pd.DataFrame(aug_results)
+    # df.to_csv(f"./results/{dataset_name}_time_benchmark.csv", index=False)
+    # print(f"Benchmark results saved to results/{dataset_name}_time_benchmark.csv")
 
-    save_file_path = benchmark_time_dataset_size(
-        AUGMENTERS, x, y, dataset_name, args.n_iterations
-    )
-    print(f"Time vs Size results saved to {save_file_path}")
+    # save_file_path = benchmark_time_dataset_size(
+    #     AUGMENTERS, x, y, dataset_name, args.n_iterations
+    # )
+    # print(f"Time vs Size results saved to {save_file_path}")
 
-    plot_time_vs_size(save_file_path, dataset_name)
+    plot_time_vs_size("./results/Car_time_vs_size.csv", dataset_name)
 
     return 0
 
