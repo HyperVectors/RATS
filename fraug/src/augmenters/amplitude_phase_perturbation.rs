@@ -5,8 +5,12 @@ use rand::{Rng, rng};
 use rand_distr::{Distribution, Normal};
 use tracing::{info_span};
 
-/// Amplitude & Phase Perturbation (APP) augmenter.
-/// Adds small Gaussian noise to each bin’s magnitude and phase.
+/// This augmenter perturbs the frequency representation of each time series by adding Gaussian noise
+/// to the magnitude and phase of each frequency bin. If `is_time_domain` is true, the input is first
+/// transformed to the frequency domain using FFT, the perturbation is applied, and then the result is
+/// transformed back to the time domain using IFFT.
+/// The standard deviations of the noise for magnitude
+/// and phase are controlled by `magnitude_std` and `phase_std`, respectively.
 pub struct AmplitudePhasePerturbation {
     pub name: String,
     pub magnitude_std: f64,

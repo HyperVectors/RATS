@@ -2,7 +2,8 @@ use crate::Dataset;
 use rayon::prelude::*;
 use rustdct::{DctPlanner};
 
-/// Computes Discrete Cosine Transform (DCT‐II) over each series in the dataset.
+/// Discrete Cosine Transform (DCT-II) for time series data.
+/// Converts each real-valued time series in the dataset into DCT coefficients (real, frequency representation)
 pub fn dataset_dct(dataset: &Dataset, parallel: bool) -> Dataset {
     let dct_features: Vec<Vec<f64>> = if parallel {
         dataset
@@ -38,7 +39,8 @@ pub fn dataset_dct(dataset: &Dataset, parallel: bool) -> Dataset {
     }
 }
 
-/// Compute the inverse Discrete Cosine Transform (DCT‐III) over each series in the dataset.
+/// Inverse Discrete Cosine Transform (DCT-III) for time series data.
+/// Reconstructs each time series from its DCT coefficients, recovering the original signal
 pub fn dataset_idct(dataset: &Dataset, parallel: bool) -> Dataset {
     let time_features: Vec<Vec<f64>> = if parallel {
         dataset

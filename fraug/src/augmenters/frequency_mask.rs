@@ -3,7 +3,11 @@ use crate::Dataset;
 use crate::transforms::fastfourier::{dataset_fft, dataset_ifft};
 use rand::{Rng, rng};
 use tracing::info_span;
-/// todo!
+
+
+/// This augmenter applies a frequency-domain mask to each time series, zeroing out a contiguous block of frequency bins.
+/// - If `is_time_domain` is true, the input is first transformed to the frequency domain using FFT, the mask is applied, and then the result is transformed back to the time domain using IFFT.
+/// The width of the mask is controlled by `mask_width`, and the masked region is chosen randomly for each sample.
 pub struct FrequencyMask {
     pub name: String,
     pub mask_width: usize,

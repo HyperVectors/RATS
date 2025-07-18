@@ -3,6 +3,8 @@ use rustfft::{FftPlanner, num_complex::Complex};
 
 use rayon::prelude::*;
 
+/// Converts each real-valued time series in the dataset into its frequency domain representation,
+/// storing the result as interleaved real and imaginary parts: [re0, im0, re1, im1, ...]
 pub fn dataset_fft(dataset: &Dataset, parallel: bool) -> Dataset {
     let freq_features: Vec<Vec<f64>> = if parallel {
         dataset
@@ -50,7 +52,8 @@ pub fn dataset_fft(dataset: &Dataset, parallel: bool) -> Dataset {
     }
 }
 
-/// Reconstruct from [re0, im0, re1, im1, ...] using inverse FFT.
+
+/// Reconstructs each time series from its frequency domain representation (interleaved real/imag parts),
 pub fn dataset_ifft(dataset: &Dataset, parallel: bool) -> Dataset {
     let time_features: Vec<Vec<f64>> = if parallel {
         dataset
