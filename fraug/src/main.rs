@@ -16,7 +16,7 @@ use transforms::fastfourier::{dataset_fft, dataset_ifft};
 
 fn main() {
     // dataset name from CLI argument | USAGE : cargo run -- <dataset_name>
-    tracing_subscriber::fmt::init();
+    // tracing_subscriber::fmt::init();
     let args: Vec<String> = env::args().collect();
     let dataset_name = if args.len() > 1 { &args[1] } else { "Car" };
 
@@ -53,19 +53,21 @@ fn main() {
     );
 
     let mut pipeline = AugmentationPipeline::new()
-        // + Crop::new(250)
-        // + Scaling::new(0.5, 2.0)
-        // + AddNoise::new(NoiseType::Spike, Some((-2.0, 2.0)), None, None);
-        // + Drop::new(0.05, None);
-        // + RandomTimeWarpAugmenter::new(10, (0.5, 0.9));
-        // + AmplitudePhasePerturbation::new(-10.0, 1.7, true)
+        + Crop::new(250)
+        + Scaling::new(0.5, 2.0)
+        + AddNoise::new(NoiseType::Spike, Some((-2.0, 2.0)), None, None)
+        + Drop::new(0.05, None)
+        + RandomTimeWarpAugmenter::new(10, (0.5, 0.9))
         // + FrequencyMask::new(10, true)
         //+ Convolve::new(ConvolveWindow::Flat, 7)
         + Convolve::new(ConvolveWindow::Gaussian, 31)
         + Drift::new(1.0, 5);
     //     + { let mut a = Drift::new(1.0, 5); a.set_probability(0.5); a };
 
-    pipeline.augment_batch(&mut data, true, true);
+    let start_time   = std::time::Instant::now();
+    pipeline.augment_batch(&mut data, true, false);
+    let end_time   = std::time::Instant::now();
+    println!("Time elapsed: {:?}", end_time - start_time);
 
     // // let dtw_augmenter = DynamicTimeWarpAugmenter::new(10);
 

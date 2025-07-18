@@ -234,8 +234,15 @@ impl AddNoise {
 
 wrap_augmentation_functions!(AddNoise);
 
-/// Amplitude & Phase Perturbation (APP) augmenter.
-/// Adds small Gaussian noise to each bin’s magnitude and phase.
+/// This augmenter perturbs the frequency representation of each time series by adding Gaussian noise
+/// to the magnitude and phase of each frequency bin. 
+/// 
+/// If `is_time_domain` is true, the input is first
+/// transformed to the frequency domain using FFT, the perturbation is applied, and then the result is
+/// transformed back to the time domain using IFFT.
+/// 
+/// The standard deviations of the noise for magnitude
+/// and phase are controlled by `magnitude_std` and `phase_std`, respectively.
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct AmplitudePhasePerturbation {
@@ -258,7 +265,11 @@ impl AmplitudePhasePerturbation {
 
 wrap_augmentation_functions!(AmplitudePhasePerturbation);
 
-/// todo!
+/// This augmenter applies a frequency-domain mask to each time series, zeroing out a contiguous block of frequency bins.
+/// 
+/// - If `is_time_domain` is true, the input is first transformed to the frequency domain using FFT, the mask is applied, and then the result is transformed back to the time domain using IFFT.
+/// 
+/// The width of the mask is controlled by `mask_width`, and the masked region is chosen randomly for each sample.
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct FrequencyMask {
@@ -277,6 +288,11 @@ impl FrequencyMask {
 
 wrap_augmentation_functions!(FrequencyMask);
 
+/// Augmenter that applies random time warping to the dataset
+/// This augmenter randomly selects a window of the time series, specified by the `window_size` argument and applies a speed change to it.
+/// The speed change is defined by the `speed_ratio_range` argument, which specifies the minimum and maximum speed ratio.
+/// The speed ratio is a multiplier that affects how fast or slow the selected window is stretched or compressed.
+/// If the window size is 0 or larger than the time series length, the entire series is warped.
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct RandomTimeWarpAugmenter {

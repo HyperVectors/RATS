@@ -43,8 +43,15 @@ class AddNoise:
 
 class AmplitudePhasePerturbation:
     r"""
-    Amplitude & Phase Perturbation (APP) augmenter.
-    Adds small Gaussian noise to each bin’s magnitude and phase.
+    This augmenter perturbs the frequency representation of each time series by adding Gaussian noise
+    to the magnitude and phase of each frequency bin. 
+    
+    If `is_time_domain` is true, the input is first
+    transformed to the frequency domain using FFT, the perturbation is applied, and then the result is
+    transformed back to the time domain using IFFT.
+    
+    The standard deviations of the noise for magnitude
+    and phase are controlled by `magnitude_std` and `phase_std`, respectively.
     """
     name: builtins.str
     probability: builtins.float
@@ -191,7 +198,11 @@ class Drop:
 
 class FrequencyMask:
     r"""
-    todo!
+    This augmenter applies a frequency-domain mask to each time series, zeroing out a contiguous block of frequency bins.
+    
+    - If `is_time_domain` is true, the input is first transformed to the frequency domain using FFT, the mask is applied, and then the result is transformed back to the time domain using IFFT.
+    
+    The width of the mask is controlled by `mask_width`, and the masked region is chosen randomly for each sample.
     """
     name: builtins.str
     probability: builtins.float
@@ -289,6 +300,34 @@ class Pool:
         a series in a batch with the specified probability
         """
 
+class QualityBenchmarking:
+    r"""
+    Class to perform quality benchmarking of augmenters
+    
+    This module provides functionality to evaluate and compare the quality of different data augmentation techniques.
+    
+    Currently, it includes using the Dynamic Time Warping (DTW) algorithm to measure the similarity between original and augmented time series data.
+    """
+    @staticmethod
+    def compute_dtw(a:typing.Sequence[builtins.float], b:typing.Sequence[builtins.float]) -> tuple[builtins.float, builtins.list[tuple[builtins.int, builtins.int]]]:
+        r"""
+        Implementation of Dynamic Time Warping (DTW) algorithm.
+        
+        This function computes the DTW distance between two sequences and returns the distance
+        along with the optimal path.
+        
+        # Arguments
+        
+        * `a` - First sequence as a list[float].
+        
+        * `b` - Second sequence as a list[float].
+        
+        # Returns
+        
+        A tuple containing the DTW distance (float) and a list of tuples representing the
+        optimal path as pairs of indices (int, int).
+        """
+
 class Quantize:
     r"""
     Quantize time series to a level set
@@ -316,6 +355,13 @@ class Quantize:
         """
 
 class RandomTimeWarpAugmenter:
+    r"""
+    Augmenter that applies random time warping to the dataset
+    This augmenter randomly selects a window of the time series, specified by the `window_size` argument and applies a speed change to it.
+    The speed change is defined by the `speed_ratio_range` argument, which specifies the minimum and maximum speed ratio.
+    The speed ratio is a multiplier that affects how fast or slow the selected window is stretched or compressed.
+    If the window size is 0 or larger than the time series length, the entire series is warped.
+    """
     name: builtins.str
     probability: builtins.float
     def augment_batch(self, dataset:pyfraug.Dataset, parallel:builtins.bool) -> None:
@@ -463,6 +509,45 @@ class Scaling:
         r"""
         By setting a probability with this function the augmenter will only augment
         a series in a batch with the specified probability
+        """
+
+class Transforms:
+    r"""
+    Class containing various frequency domain transforms for time series data.
+    
+    This module provides implementations of different frequency domain transforms such as Fast Fourier Transform (FFT) and Discrete Cosine Transform (DCT).
+    
+    These transforms can be used for various purposes, including feature extraction, noise reduction, and data
+    compression in time series analysis.
+    """
+    @staticmethod
+    def fft(dataset:Dataset, parallel:builtins.bool) -> Dataset:
+        r"""
+        Converts each real-valued time series in the dataset into its frequency domain representation,
+        storing the result as interleaved real and imaginary parts: [re0, im0, re1, im1, ...]
+        """
+    @staticmethod
+    def ifft(dataset:Dataset, parallel:builtins.bool) -> Dataset:
+        r"""
+        Reconstructs each time series from its frequency domain representation (interleaved real/imag parts).
+        """
+    @staticmethod
+    def dct(dataset:Dataset, parallel:builtins.bool) -> Dataset:
+        r"""
+        Discrete Cosine Transform (DCT-II) for time series data.
+        
+        Converts each real-valued time series in the dataset into DCT coefficients (real, frequency representation)
+        """
+    @staticmethod
+    def idct(dataset:Dataset, parallel:builtins.bool) -> Dataset:
+        r"""
+        Inverse Discrete Cosine Transform (DCT-III) for time series data.
+        Reconstructs each time series from its DCT coefficients, recovering the original signal.
+        """
+    @staticmethod
+    def compare_within_tolerance(original:Dataset, reconstructed:Dataset, tolerance:builtins.float) -> tuple[builtins.float, builtins.bool]:
+        r"""
+        Computes maximum absolute difference between two Datasets and check if all differences are within a tolerance.
         """
 
 class ConvolveWindow(Enum):
