@@ -1,0 +1,279 @@
+name: Python bindings
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  generate-stub:
+    name: Run stub generator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: moonrepo/setup-rust@v1
+      - working-directory: ratspy
+        run: |
+          cargo run --bin stub_gen
+      - name: Upload stub as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ratspy.pyi
+          path: ratspy/ratspy/
+
+  linux_wheels:
+    name: Build wheels for Linux ${{ matrix.target }}
+    needs: generate-stub
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [x86_64, x86, aarch64, armv7]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download stub artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ratspy.pyi
+          path: ratspy/ratspy/
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.target }}
+          args: --release --out wheelhouse --auditwheel repair -m ratspy/Cargo.toml
+          manylinux: 2014
+      - name: Audit & fix wheels
+        run: |
+          pip install auditwheel
+          auditwheel repair wheelhouse/*.whl
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-linux-${{ matrix.target }}
+          path: wheelhouse
+
+  macos_wheels:
+    name: Build wheels for macOS ${{ matrix.target }}
+    needs: generate-stub
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-13
+            target: x86_64
+          - runner: macos-14
+            target: aarch64
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download stub artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ratspy.pyi
+          path: ratspy/ratspy/
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.target }}
+          args: --release --out wheelhouse -m ratspy/Cargo.toml
+      - name: Audit & fix wheels
+        run: |
+          pip install delocate
+          delocate-wheel -v wheelhouse/*.whl
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-macos-${{ matrix.target }}
+          path: wheelhouse
+
+  windows_wheels:
+    name: Build wheels for Windows ${{ matrix.target }}
+    needs: generate-stub
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [x64, x86]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download stub artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ratspy.pyi
+          path: ratspy/ratspy/
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+          architecture: ${{ matrix.target }}
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.target }}
+          args: --release --out wheelhouse -m ratspy/Cargo.toml
+      - name: Audit wheels
+        run: |
+          pip install delvewheel
+          delvewheel show -v wheelhouse/*.whl
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-windows-${{ matrix.target }}
+          path: wheelhouse
+
+  sdist:
+    name: Build source distribution
+    needs: generate-stub
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download stub artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ratspy.pyi
+          path: ratspy/ratspy/
+      - name: Build sdist
+        uses: PyO3/maturin-action@v1
+        with:
+          command: sdist
+          args: --out dist -m ratspy/Cargo.toml
+      - name: Upload sdist
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-sdist
+          path: dist
+
+#  publish:
+#    name: Publish to PyPI
+#    runs-on: ubuntu-latest
+#    if: ${{ startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch' }}
+#    needs: [linux_wheels, macos_wheels, windows_wheels, sdist, rust_tests, python_tests, docs]
+#    steps:
+#      - uses: actions/download-artifact@v4
+#        with:
+#          pattern: wheels-*
+#          merge-multiple: true
+#      - uses: actions/setup-python@v5
+#        with:
+#          python-version: 3.x
+#      - name: Install dependencies
+#        run: |
+#          python -m pip install --upgrade pip
+#          pip install twine
+#      - name: Upload wheels
+#        env:
+#          TWINE_USERNAME: __token__
+#          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+#        run: |
+#          ls
+#          twine upload --skip-existing *.whl *.tar.gz
+
+  build_wheel_dev:
+    name: Build wheel for documentation and tests
+    runs-on: ubuntu-latest
+    outputs:
+      filename: ${{ steps.get_filename.outputs.file_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+      - name: Build wheel
+        uses: PyO3/maturin-action@v1
+        with:
+          target: x86_64
+          args: --release --out dist -m ratspy/Cargo.toml
+          manylinux: auto
+      - name: Get wheel name
+        id: get_filename
+        run: |
+          FILE_NAME=$(ls dist)
+          echo "file_name=$FILE_NAME" >> $GITHUB_OUTPUT
+      - name: Upload wheel
+        uses: actions/upload-artifact@v4
+        with:
+          name: doc_tests_wheel
+          path: dist
+
+  docs:
+    name: Build documentation
+    needs: build_wheel_dev
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+      - name: Download wheel
+        uses: actions/download-artifact@v4
+        with:
+          name: doc_tests_wheel
+          path: ratspy/dist/
+      - name: Append output to file
+        run: |
+          echo "/dist/${{ needs.build_wheel_dev.outputs.filename }}" >> ratspy/docs/requirements.txt
+      - uses: ammaraskar/sphinx-action@8.2.3
+        with:
+          docs-folder: "ratspy/docs/"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DocumentationHTML
+          path: ratspy/docs/_build/html/
+
+#  read_the_docs:
+#    name: Read the Docs trigger
+#    needs: [docs, publish]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Trigger Read the Docs build
+#        run: |
+#          curl -X POST -d "branches=main" -d "token=${{ secrets.READTHEDOCS_TOKEN }}" WEBHOOK_URL
+
+  rust_tests:
+    name: Build and test rats
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup update stable && rustup default stable
+      - working-directory: rats
+        run: cargo build -r --verbose
+      - working-directory: rats
+        run: cargo test -r --verbose
+
+  python_tests:
+    name: Run ratspy tests
+    needs: build_wheel_dev
+    defaults:
+      run:
+        shell: bash -l {0}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+      - name: Install Python dependencies
+        uses: py-actions/py-dependency-install@v4
+        with:
+          path: "ratspy/requirements.txt"
+      - name: Download wheel
+        uses: actions/download-artifact@v4
+        with:
+          name: doc_tests_wheel
+          path: dist/
+      - run: pip install dist/${{ needs.build_wheel_dev.outputs.filename }}
+      - name: Run tests
+        working-directory: ratspy/tests
+        run: python -m unittest test_RATSpy.py
