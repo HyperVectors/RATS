@@ -1,8 +1,8 @@
-# Fraug
+# RATS
 
 [![ReadTheDocs](https://img.shields.io/badge/Readthedocs-%23000000.svg?style=for-the-badge&logo=readthedocs&logoColor=white)](https://effairust2025-031aba.pages.rwth-aachen.de/)
 
-Fraug is a **f**ast **r**ust-based **aug**mentation library for time series. It is available as a rust crate under `fraug` and as a python package under `pyfraug`.
+RATS is a **RA**pid **T**ime **S**eries rust based library for augmentations. It is available as a rust crate under `RATS` and as a python package under `RATSpy`.
 
 ## Project structure
 The crate provides many different augmenters. All of them are implemented in their own file in the `augmenters` module. They all implement the `Augmenter` trait which is implemented in `src/augmenters/base.rs` which allows a common interface and the incorporation into a `AugmentationPipeline` which executes many arbitrary augmenters at once.

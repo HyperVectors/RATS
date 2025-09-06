@@ -73,20 +73,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "48c757948c5ede0e46177b7add2e67155f70e33c07fea8284df6576da70b3719"
 
 [[package]]
-name = "fraug"
-version = "0.1.0"
-dependencies = [
- "csv",
- "rand",
- "rand_distr",
- "rayon",
- "rustdct",
- "rustfft",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
 name = "getrandom"
 version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -269,6 +255,20 @@ checksum = "6a8615d50dcf34fa31f7ab52692afec947c4dd0ab803cc87cb3b0b4570ff7463"
 dependencies = [
  "num-traits",
  "rand",
+]
+
+[[package]]
+name = "rats"
+version = "0.1.0"
+dependencies = [
+ "csv",
+ "rand",
+ "rand_distr",
+ "rayon",
+ "rustdct",
+ "rustfft",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
