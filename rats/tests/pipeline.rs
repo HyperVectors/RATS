@@ -1,5 +1,5 @@
-use fraug::Dataset;
-use fraug::augmenters::{AugmentationPipeline, Augmenter, Crop, Drop, Repeat, Scaling};
+use rats::Dataset;
+use rats::augmenters::{AugmentationPipeline, Augmenter, Crop, Drop, Repeat, Scaling};
 
 #[test]
 fn combine_two_augmenters() {

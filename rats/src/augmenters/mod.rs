@@ -7,7 +7,7 @@
 //! Every augmenter can be used analogously to these examples
 //! 
 //! ```
-//! use fraug::augmenters::{Augmenter, Rotation};
+//! use rats::augmenters::{Augmenter, Rotation};
 //! 
 //! let series = vec![1.0; 100];
 //!
@@ -18,8 +18,8 @@
 //! ```
 //! 
 //! ```
-//! use fraug::Dataset;
-//! use fraug::augmenters::*;
+//! use rats::Dataset;
+//! use rats::augmenters::*;
 //!
 //! let series = vec![1.0; 100];
 //! let mut set = Dataset {

@@ -1,14 +1,14 @@
-use fraug::Dataset;
-use fraug::augmenters::{
+use rats::Dataset;
+use rats::augmenters::{
     AddNoise, AmplitudePhasePerturbation, Augmenter, Crop, FrequencyMask, Jittering, NoiseType,
     Permutate, Pool, PoolingMethod, Quantize, RandomTimeWarpAugmenter, Repeat, Resize, Reverse,
     Rotation, Scaling,
 };
-use fraug::quality_benchmarking::dtw;
+use rats::quality_benchmarking::dtw;
 
-use fraug::transforms::fastfourier::{dataset_fft, dataset_ifft};
-use fraug::transforms::dct::{dataset_dct, dataset_idct};
-use fraug::transforms::accuracy::compare_datasets_within_tolerance;
+use rats::transforms::fastfourier::{dataset_fft, dataset_ifft};
+use rats::transforms::dct::{dataset_dct, dataset_idct};
+use rats::transforms::accuracy::compare_datasets_within_tolerance;
 
 fn make_test_dataset() -> Dataset {
     Dataset {
@@ -173,7 +173,7 @@ fn crop_smaller() {
 fn drop_all() {
     let series = vec![1.0; 100];
 
-    let drop = fraug::augmenters::Drop::new(1.0, None);
+    let drop = rats::augmenters::Drop::new(1.0, None);
     let series = drop.augment_one(&series);
 
     assert_eq!(series, vec![0.0; 100]);
@@ -183,7 +183,7 @@ fn drop_all() {
 fn drop_none() {
     let series = vec![1.0; 100];
 
-    let drop = fraug::augmenters::Drop::new(0.0, None);
+    let drop = rats::augmenters::Drop::new(0.0, None);
     let series = drop.augment_one(&series);
 
     assert_eq!(series, vec![1.0; 100]);
