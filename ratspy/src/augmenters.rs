@@ -1,5 +1,5 @@
 use crate::Dataset;
-use fraug::augmenters::Augmenter;
+use rats::augmenters::Augmenter;
 use numpy::{PyArray1, PyArrayMethods, ToPyArray};
 use pyo3::prelude::*;
 use pyo3_stub_gen::derive::{gen_stub_pyclass, gen_stub_pyclass_enum, gen_stub_pymethods};
@@ -62,7 +62,7 @@ macro_rules! wrap_augmentation_functions {
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct Repeat {
-    inner: fraug::augmenters::Repeat,
+    inner: rats::augmenters::Repeat,
 }
 
 #[pymethods]
@@ -70,7 +70,7 @@ impl Repeat {
     #[new]
     fn new(times: usize) -> Self {
         Repeat {
-            inner: fraug::augmenters::Repeat::new(times),
+            inner: rats::augmenters::Repeat::new(times),
         }
     }
 }
@@ -82,7 +82,7 @@ wrap_augmentation_functions!(Repeat);
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct Scaling {
-    inner: fraug::augmenters::Scaling,
+    inner: rats::augmenters::Scaling,
 }
 
 #[pymethods]
@@ -90,7 +90,7 @@ impl Scaling {
     #[new]
     fn new(min: f64, max: f64) -> Self {
         Scaling {
-            inner: fraug::augmenters::Scaling::new(min, max),
+            inner: rats::augmenters::Scaling::new(min, max),
         }
     }
 }
@@ -101,7 +101,7 @@ wrap_augmentation_functions!(Scaling);
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct Rotation {
-    inner: fraug::augmenters::Rotation,
+    inner: rats::augmenters::Rotation,
 }
 
 #[pymethods]
@@ -109,7 +109,7 @@ impl Rotation {
     #[new]
     fn new(anchor: f64) -> Self {
         Rotation {
-            inner: fraug::augmenters::Rotation::new(anchor),
+            inner: rats::augmenters::Rotation::new(anchor),
         }
     }
 }
@@ -122,7 +122,7 @@ wrap_augmentation_functions!(Rotation);
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct Jittering {
-    inner: fraug::augmenters::Jittering,
+    inner: rats::augmenters::Jittering,
 }
 
 #[pymethods]
@@ -130,7 +130,7 @@ impl Jittering {
     #[new]
     fn new(standard_deviation: f64) -> Self {
         Jittering {
-            inner: fraug::augmenters::Jittering::new(standard_deviation),
+            inner: rats::augmenters::Jittering::new(standard_deviation),
         }
     }
 }
@@ -145,7 +145,7 @@ wrap_augmentation_functions!(Jittering);
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct Drop {
-    inner: fraug::augmenters::Drop,
+    inner: rats::augmenters::Drop,
 }
 
 #[pymethods]
@@ -154,7 +154,7 @@ impl Drop {
     #[pyo3(signature = (percentage, *, default=None))]
     fn new(percentage: f64, default: Option<f64>) -> Self {
         Drop {
-            inner: fraug::augmenters::Drop::new(percentage, default),
+            inner: rats::augmenters::Drop::new(percentage, default),
         }
     }
 }
@@ -167,7 +167,7 @@ wrap_augmentation_functions!(Drop);
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct Crop {
-    inner: fraug::augmenters::Crop,
+    inner: rats::augmenters::Crop,
 }
 
 #[pymethods]
@@ -175,7 +175,7 @@ impl Crop {
     #[new]
     fn new(size: usize) -> Self {
         Crop {
-            inner: fraug::augmenters::Crop::new(size),
+            inner: rats::augmenters::Crop::new(size),
         }
     }
 }
@@ -206,7 +206,7 @@ pub enum NoiseType {
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct AddNoise {
-    inner: fraug::augmenters::AddNoise,
+    inner: rats::augmenters::AddNoise,
 }
 
 #[pymethods]
@@ -220,14 +220,14 @@ impl AddNoise {
         std_dev: Option<f64>,
     ) -> Self {
         let int_noise_type = match noise_type {
-            NoiseType::Uniform => fraug::augmenters::NoiseType::Uniform,
-            NoiseType::Gaussian => fraug::augmenters::NoiseType::Gaussian,
-            NoiseType::Spike => fraug::augmenters::NoiseType::Spike,
-            NoiseType::Slope => fraug::augmenters::NoiseType::Slope,
+            NoiseType::Uniform => rats::augmenters::NoiseType::Uniform,
+            NoiseType::Gaussian => rats::augmenters::NoiseType::Gaussian,
+            NoiseType::Spike => rats::augmenters::NoiseType::Spike,
+            NoiseType::Slope => rats::augmenters::NoiseType::Slope,
         };
 
         AddNoise {
-            inner: fraug::augmenters::AddNoise::new(int_noise_type, bounds, mean, std_dev),
+            inner: rats::augmenters::AddNoise::new(int_noise_type, bounds, mean, std_dev),
         }
     }
 }
@@ -246,7 +246,7 @@ wrap_augmentation_functions!(AddNoise);
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct AmplitudePhasePerturbation {
-    inner: fraug::augmenters::AmplitudePhasePerturbation,
+    inner: rats::augmenters::AmplitudePhasePerturbation,
 }
 
 #[pymethods]
@@ -254,7 +254,7 @@ impl AmplitudePhasePerturbation {
     #[new]
     fn new(magnitude_std: f64, phase_std: f64, is_time_domain: bool) -> Self {
         AmplitudePhasePerturbation {
-            inner: fraug::augmenters::AmplitudePhasePerturbation::new(
+            inner: rats::augmenters::AmplitudePhasePerturbation::new(
                 magnitude_std,
                 phase_std,
                 is_time_domain,
@@ -273,7 +273,7 @@ wrap_augmentation_functions!(AmplitudePhasePerturbation);
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct FrequencyMask {
-    inner: fraug::augmenters::FrequencyMask,
+    inner: rats::augmenters::FrequencyMask,
 }
 
 #[pymethods]
@@ -281,7 +281,7 @@ impl FrequencyMask {
     #[new]
     fn new(mask_width: usize, is_time_domain: bool) -> Self {
         FrequencyMask {
-            inner: fraug::augmenters::FrequencyMask::new(mask_width, is_time_domain),
+            inner: rats::augmenters::FrequencyMask::new(mask_width, is_time_domain),
         }
     }
 }
@@ -296,7 +296,7 @@ wrap_augmentation_functions!(FrequencyMask);
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct RandomTimeWarpAugmenter {
-    inner: fraug::augmenters::RandomTimeWarpAugmenter,
+    inner: rats::augmenters::RandomTimeWarpAugmenter,
 }
 
 #[pymethods]
@@ -304,7 +304,7 @@ impl RandomTimeWarpAugmenter {
     #[new]
     fn new(window_size: usize, speed_ratio_range: (f64, f64)) -> Self {
         RandomTimeWarpAugmenter {
-            inner: fraug::augmenters::RandomTimeWarpAugmenter::new(window_size, speed_ratio_range),
+            inner: rats::augmenters::RandomTimeWarpAugmenter::new(window_size, speed_ratio_range),
         }
     }
 }
@@ -324,7 +324,7 @@ pub enum PoolingMethod {
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct Pool {
-    inner: fraug::augmenters::Pool,
+    inner: rats::augmenters::Pool,
 }
 
 #[pymethods]
@@ -332,13 +332,13 @@ impl Pool {
     #[new]
     fn new(kind: &PoolingMethod, size: usize) -> Self {
         let int_kind = match kind {
-            PoolingMethod::Max => fraug::augmenters::PoolingMethod::Max,
-            PoolingMethod::Min => fraug::augmenters::PoolingMethod::Min,
-            PoolingMethod::Average => fraug::augmenters::PoolingMethod::Average,
+            PoolingMethod::Max => rats::augmenters::PoolingMethod::Max,
+            PoolingMethod::Min => rats::augmenters::PoolingMethod::Min,
+            PoolingMethod::Average => rats::augmenters::PoolingMethod::Average,
         };
 
         Pool {
-            inner: fraug::augmenters::Pool::new(int_kind, size),
+            inner: rats::augmenters::Pool::new(int_kind, size),
         }
     }
 }
@@ -351,7 +351,7 @@ wrap_augmentation_functions!(Pool);
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct Quantize {
-    inner: fraug::augmenters::Quantize,
+    inner: rats::augmenters::Quantize,
 }
 
 #[pymethods]
@@ -359,7 +359,7 @@ impl Quantize {
     #[new]
     fn new(levels: usize) -> Self {
         Quantize {
-            inner: fraug::augmenters::Quantize::new(levels),
+            inner: rats::augmenters::Quantize::new(levels),
         }
     }
 }
@@ -372,7 +372,7 @@ wrap_augmentation_functions!(Quantize);
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct Resize {
-    inner: fraug::augmenters::Resize,
+    inner: rats::augmenters::Resize,
 }
 
 #[pymethods]
@@ -380,7 +380,7 @@ impl Resize {
     #[new]
     fn new(size: usize) -> Self {
         Resize {
-            inner: fraug::augmenters::Resize::new(size),
+            inner: rats::augmenters::Resize::new(size),
         }
     }
 }
@@ -393,7 +393,7 @@ wrap_augmentation_functions!(Resize);
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct Reverse {
-    inner: fraug::augmenters::Reverse,
+    inner: rats::augmenters::Reverse,
 }
 
 #[pymethods]
@@ -401,7 +401,7 @@ impl Reverse {
     #[new]
     fn new() -> Self {
         Reverse {
-            inner: fraug::augmenters::Reverse::new(),
+            inner: rats::augmenters::Reverse::new(),
         }
     }
 }
@@ -414,7 +414,7 @@ wrap_augmentation_functions!(Reverse);
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct Permutate {
-    inner: fraug::augmenters::Permutate,
+    inner: rats::augmenters::Permutate,
 }
 
 #[pymethods]
@@ -422,7 +422,7 @@ impl Permutate {
     #[new]
     fn new(window_size: usize, segment_size: usize) -> Self {
         Permutate {
-            inner: fraug::augmenters::Permutate::new(window_size, segment_size),
+            inner: rats::augmenters::Permutate::new(window_size, segment_size),
         }
     }
 }
@@ -437,7 +437,7 @@ wrap_augmentation_functions!(Permutate);
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct Drift {
-    inner: fraug::augmenters::Drift,
+    inner: rats::augmenters::Drift,
 }
 
 #[pymethods]
@@ -445,7 +445,7 @@ impl Drift {
     #[new]
     fn new(max_drift: f64, n_drift_points: usize) -> Self {
         Drift {
-            inner: fraug::augmenters::Drift::new(max_drift, n_drift_points),
+            inner: rats::augmenters::Drift::new(max_drift, n_drift_points),
         }
     }
 }
@@ -469,7 +469,7 @@ pub enum ConvolveWindow {
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct Convolve {
-    inner: fraug::augmenters::Convolve,
+    inner: rats::augmenters::Convolve,
 }
 
 #[pymethods]
@@ -477,11 +477,11 @@ impl Convolve {
     #[new]
     fn new(window: &ConvolveWindow, size: usize) -> Self {
         let int_window = match window {
-            ConvolveWindow::Flat => fraug::augmenters::ConvolveWindow::Flat,
-            ConvolveWindow::Gaussian => fraug::augmenters::ConvolveWindow::Gaussian,
+            ConvolveWindow::Flat => rats::augmenters::ConvolveWindow::Flat,
+            ConvolveWindow::Gaussian => rats::augmenters::ConvolveWindow::Gaussian,
         };
         Convolve {
-            inner: fraug::augmenters::Convolve::new(int_window, size),
+            inner: rats::augmenters::Convolve::new(int_window, size),
         }
     }
 }

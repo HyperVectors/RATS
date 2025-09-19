@@ -23,7 +23,7 @@ class AddNoise:
     """
     name: builtins.str
     probability: builtins.float
-    def augment_batch(self, dataset:pyfraug.Dataset, parallel:builtins.bool) -> None:
+    def augment_batch(self, dataset:ratspy.Dataset, parallel:builtins.bool) -> None:
         r"""
         Augment a whole batch
         
@@ -55,7 +55,7 @@ class AmplitudePhasePerturbation:
     """
     name: builtins.str
     probability: builtins.float
-    def augment_batch(self, dataset:pyfraug.Dataset, parallel:builtins.bool) -> None:
+    def augment_batch(self, dataset:ratspy.Dataset, parallel:builtins.bool) -> None:
         r"""
         Augment a whole batch
         
@@ -84,7 +84,7 @@ class Convolve:
     """
     name: builtins.str
     probability: builtins.float
-    def augment_batch(self, dataset:pyfraug.Dataset, parallel:builtins.bool) -> None:
+    def augment_batch(self, dataset:ratspy.Dataset, parallel:builtins.bool) -> None:
         r"""
         Augment a whole batch
         
@@ -110,7 +110,7 @@ class Crop:
     """
     name: builtins.str
     probability: builtins.float
-    def augment_batch(self, dataset:pyfraug.Dataset, parallel:builtins.bool) -> None:
+    def augment_batch(self, dataset:ratspy.Dataset, parallel:builtins.bool) -> None:
         r"""
         Augment a whole batch
         
@@ -150,7 +150,7 @@ class Drift:
     """
     name: builtins.str
     probability: builtins.float
-    def augment_batch(self, dataset:pyfraug.Dataset, parallel:builtins.bool) -> None:
+    def augment_batch(self, dataset:ratspy.Dataset, parallel:builtins.bool) -> None:
         r"""
         Augment a whole batch
         
@@ -178,7 +178,7 @@ class Drop:
     """
     name: builtins.str
     probability: builtins.float
-    def augment_batch(self, dataset:pyfraug.Dataset, parallel:builtins.bool) -> None:
+    def augment_batch(self, dataset:ratspy.Dataset, parallel:builtins.bool) -> None:
         r"""
         Augment a whole batch
         
@@ -206,7 +206,7 @@ class FrequencyMask:
     """
     name: builtins.str
     probability: builtins.float
-    def augment_batch(self, dataset:pyfraug.Dataset, parallel:builtins.bool) -> None:
+    def augment_batch(self, dataset:ratspy.Dataset, parallel:builtins.bool) -> None:
         r"""
         Augment a whole batch
         
@@ -232,7 +232,7 @@ class Jittering:
     """
     name: builtins.str
     probability: builtins.float
-    def augment_batch(self, dataset:pyfraug.Dataset, parallel:builtins.bool) -> None:
+    def augment_batch(self, dataset:ratspy.Dataset, parallel:builtins.bool) -> None:
         r"""
         Augment a whole batch
         
@@ -258,7 +258,7 @@ class Permutate:
     """
     name: builtins.str
     probability: builtins.float
-    def augment_batch(self, dataset:pyfraug.Dataset, parallel:builtins.bool) -> None:
+    def augment_batch(self, dataset:ratspy.Dataset, parallel:builtins.bool) -> None:
         r"""
         Augment a whole batch
         
@@ -282,7 +282,7 @@ class Pool:
     """
     name: builtins.str
     probability: builtins.float
-    def augment_batch(self, dataset:pyfraug.Dataset, parallel:builtins.bool) -> None:
+    def augment_batch(self, dataset:ratspy.Dataset, parallel:builtins.bool) -> None:
         r"""
         Augment a whole batch
         
@@ -336,7 +336,7 @@ class Quantize:
     """
     name: builtins.str
     probability: builtins.float
-    def augment_batch(self, dataset:pyfraug.Dataset, parallel:builtins.bool) -> None:
+    def augment_batch(self, dataset:ratspy.Dataset, parallel:builtins.bool) -> None:
         r"""
         Augment a whole batch
         
@@ -364,7 +364,7 @@ class RandomTimeWarpAugmenter:
     """
     name: builtins.str
     probability: builtins.float
-    def augment_batch(self, dataset:pyfraug.Dataset, parallel:builtins.bool) -> None:
+    def augment_batch(self, dataset:ratspy.Dataset, parallel:builtins.bool) -> None:
         r"""
         Augment a whole batch
         
@@ -392,7 +392,7 @@ class Repeat:
     """
     name: builtins.str
     probability: builtins.float
-    def augment_batch(self, dataset:pyfraug.Dataset, parallel:builtins.bool) -> None:
+    def augment_batch(self, dataset:ratspy.Dataset, parallel:builtins.bool) -> None:
         r"""
         Augment a whole batch
         
@@ -418,7 +418,7 @@ class Resize:
     """
     name: builtins.str
     probability: builtins.float
-    def augment_batch(self, dataset:pyfraug.Dataset, parallel:builtins.bool) -> None:
+    def augment_batch(self, dataset:ratspy.Dataset, parallel:builtins.bool) -> None:
         r"""
         Augment a whole batch
         
@@ -444,7 +444,7 @@ class Reverse:
     """
     name: builtins.str
     probability: builtins.float
-    def augment_batch(self, dataset:pyfraug.Dataset, parallel:builtins.bool) -> None:
+    def augment_batch(self, dataset:ratspy.Dataset, parallel:builtins.bool) -> None:
         r"""
         Augment a whole batch
         
@@ -468,7 +468,7 @@ class Rotation:
     """
     name: builtins.str
     probability: builtins.float
-    def augment_batch(self, dataset:pyfraug.Dataset, parallel:builtins.bool) -> None:
+    def augment_batch(self, dataset:ratspy.Dataset, parallel:builtins.bool) -> None:
         r"""
         Augment a whole batch
         
@@ -493,7 +493,7 @@ class Scaling:
     """
     name: builtins.str
     probability: builtins.float
-    def augment_batch(self, dataset:pyfraug.Dataset, parallel:builtins.bool) -> None:
+    def augment_batch(self, dataset:ratspy.Dataset, parallel:builtins.bool) -> None:
         r"""
         Augment a whole batch
         

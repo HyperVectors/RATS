@@ -1,5 +1,5 @@
 from random import random
-from .pyfraug import *
+from .ratspy import *
 
 class AugmentationPipeline:
     r"""A pipeline of augmenters
@@ -7,9 +7,9 @@ class AugmentationPipeline:
     Executes many augmenters at once. Append augmenters to the pipeline by adding them to the pipeline:
 
     ```
-    import pyfraug as pf
+    import ratspy as rp
 
-    pipeline = pf.AugmentationPipeline() + pf.Repeat(5) + pf.Crop(20)
+    pipeline = rp.AugmentationPipeline() + rp.Repeat(5) + rp.Crop(20)
     ```
     """
 

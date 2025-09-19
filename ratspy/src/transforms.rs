@@ -19,14 +19,14 @@ impl Transforms {
     /// storing the result as interleaved real and imaginary parts: [re0, im0, re1, im1, ...]
     #[staticmethod]
     pub fn fft(dataset: &Dataset, parallel: bool) -> Dataset {
-        let result = fraug::transforms::fastfourier::dataset_fft(&dataset.inner, parallel);
+        let result = rats::transforms::fastfourier::dataset_fft(&dataset.inner, parallel);
         Dataset { inner: result }
     }
 
     /// Reconstructs each time series from its frequency domain representation (interleaved real/imag parts).
     #[staticmethod]
     pub fn ifft(dataset: &Dataset, parallel: bool) -> Dataset {
-        let result = fraug::transforms::fastfourier::dataset_ifft(&dataset.inner, parallel);
+        let result = rats::transforms::fastfourier::dataset_ifft(&dataset.inner, parallel);
         Dataset { inner: result }
     }
 
@@ -35,7 +35,7 @@ impl Transforms {
     /// Converts each real-valued time series in the dataset into DCT coefficients (real, frequency representation)
     #[staticmethod]
     pub fn dct(dataset: &Dataset, parallel: bool) -> Dataset {
-        let result = fraug::transforms::dct::dataset_dct(&dataset.inner, parallel);
+        let result = rats::transforms::dct::dataset_dct(&dataset.inner, parallel);
         Dataset { inner: result }
     }
 
@@ -43,7 +43,7 @@ impl Transforms {
     /// Reconstructs each time series from its DCT coefficients, recovering the original signal.
     #[staticmethod]
     pub fn idct(dataset: &Dataset, parallel: bool) -> Dataset {
-        let result = fraug::transforms::dct::dataset_idct(&dataset.inner, parallel);
+        let result = rats::transforms::dct::dataset_idct(&dataset.inner, parallel);
         Dataset { inner: result }
     }
 
@@ -54,7 +54,7 @@ impl Transforms {
         reconstructed: &Dataset,
         tolerance: f64,
     ) -> (f64, bool) {
-        fraug::transforms::accuracy::compare_datasets_within_tolerance(
+        rats::transforms::accuracy::compare_datasets_within_tolerance(
             &original.inner,
             &reconstructed.inner,
             tolerance,

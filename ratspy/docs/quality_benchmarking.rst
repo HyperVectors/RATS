@@ -1,7 +1,7 @@
 Quality Benchmarking
 ====================
 
-.. currentmodule:: pyfraug
+.. currentmodule:: ratspy
 
 .. autoclass:: QualityBenchmarking
     :members: compute_dtw
