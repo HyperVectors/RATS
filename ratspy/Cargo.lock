@@ -141,20 +141,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
 
 [[package]]
-name = "fraug"
-version = "0.1.0"
-dependencies = [
- "csv",
- "rand",
- "rand_distr",
- "rayon",
- "rustdct",
- "rustfft",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
 name = "getrandom"
 version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -437,21 +423,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "pyfraug"
-version = "0.1.0"
-dependencies = [
- "bytemuck",
- "fraug",
- "ndarray",
- "numpy",
- "pyo3",
- "pyo3-stub-gen",
- "rand",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
 name = "pyo3"
 version = "0.25.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -600,6 +571,35 @@ checksum = "6a8615d50dcf34fa31f7ab52692afec947c4dd0ab803cc87cb3b0b4570ff7463"
 dependencies = [
  "num-traits",
  "rand",
+]
+
+[[package]]
+name = "rats"
+version = "0.1.0"
+dependencies = [
+ "csv",
+ "rand",
+ "rand_distr",
+ "rayon",
+ "rustdct",
+ "rustfft",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "ratspy"
+version = "0.1.0"
+dependencies = [
+ "bytemuck",
+ "ndarray",
+ "numpy",
+ "pyo3",
+ "pyo3-stub-gen",
+ "rand",
+ "rats",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]

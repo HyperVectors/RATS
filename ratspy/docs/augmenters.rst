@@ -1,7 +1,7 @@
 Augmenters
 ==========
 
-.. currentmodule:: pyfraug
+.. currentmodule:: ratspy
 
 .. autoclass:: Dataset
 

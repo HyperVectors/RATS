@@ -1,7 +1,7 @@
 Transforms
 ==========
 
-.. currentmodule:: pyfraug
+.. currentmodule:: ratspy
 
 .. autoclass:: Transforms
     :members:

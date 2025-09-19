@@ -1,4 +1,4 @@
-# High Performance Time Series Augmentation Libraries (fraug & pyFraug)
+# High Performance Time Series Augmentation Libraries (RATS & RATSpy)
 
 This is the repository for **Team 02** for the `Efficient AI with Rust` lab in Summer Semester 2025.
 
@@ -11,8 +11,8 @@ Just as in any other type of data, augmentation is an important technique used f
 
 ## Fast Rust-based Augmentation
 
-We introduce **F**ast **Rust**-based **Aug**mentation- **fraug** , a high-performance time-series data augmentation crate developed in Rust. Fraug is available as a Rust-crate and leverages rust's core features as well as parallelism to speed-up 
-the augmentation process. To enable cross-language integration, we have also developed a python wrapper for fraug, namely, **pyFraug**. 
+We introduce **RA**pid **T**ime **S**eries **Aug**mentation- **RATS** , a high-performance time-series data augmentation crate developed in Rust. RATS is available as a Rust-crate and leverages rust's core features as well as parallelism to speed-up 
+the augmentation process. To enable cross-language integration, we have also developed a python wrapper for RATS, namely, **RATSpy**. 
 
 ## Benchmarking 
 
@@ -20,7 +20,7 @@ The popular python-based time-sries library [tsaug](https://tsaug.readthedocs.io
 
 ## Usage
 
-Our Rust crate can be found in the [fraug](fraug/) directory and the Python bindings in [pyfraug](pyfraug/). All additional information regarding **installation**, **usage** and a **detailed documentation** of both these libraries can be found in the corresponding READMEs for [fraug](fraug/README.md) and [pyFraug](pyfraug/README.md).
+Our Rust crate can be found in the [rats](rats/) directory and the Python bindings in [ratspy](ratspy/). All additional information regarding **installation**, **usage** and a **detailed documentation** of both these libraries can be found in the corresponding READMEs for [rats](rats/README.md) and [ratspy](ratspy/README.md).
 
 ## Acknowledgments
 

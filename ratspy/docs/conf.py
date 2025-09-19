@@ -3,12 +3,12 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
-import pyfraug
+import ratspy
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'pyFraug'
+project = 'RATSpy'
 copyright = '2025, Felix Kern, Tejas Pradhan, Aryamaan Basu Roy'
 author = 'Felix Kern, Tejas Pradhan, Aryamaan Basu Roy'
 

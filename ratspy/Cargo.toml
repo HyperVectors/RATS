@@ -1,15 +1,15 @@
 [package]
-name = "pyfraug"
+name = "ratspy"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
-name = "pyfraug"
+name = "ratspy"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-fraug = { path = "../fraug" }
+rats = { path = "../RATS" }
 ndarray = "0.16.1"
 numpy = "0.25.0"
 bytemuck = "1.23.1"

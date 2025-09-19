@@ -13,12 +13,12 @@ use pyo3_stub_gen::derive::{gen_stub_pyclass, gen_stub_pymethods};
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct Dataset {
-    pub(crate) inner: fraug::Dataset,
+    pub(crate) inner: rats::Dataset,
 }
 
 impl PyStubType for &mut Dataset {
     fn type_output() -> TypeInfo {
-        TypeInfo::with_module("pyfraug.Dataset", "pyfraug".into())
+        TypeInfo::with_module("ratspy.Dataset", "ratspy".into())
     }
 }
 
@@ -33,7 +33,7 @@ impl Dataset {
         let features: Vec<Vec<f64>> = features.rows().into_iter().map(|x| x.to_vec()).collect();
 
         Dataset {
-            inner: fraug::Dataset { features, labels },
+            inner: rats::Dataset { features, labels },
         }
     }
 
@@ -72,7 +72,7 @@ impl Dataset {
 
 /// A Python module implemented in Rust.
 #[pymodule]
-fn pyfraug(m: &Bound<'_, PyModule>) -> PyResult<()> {
+fn ratspy(m: &Bound<'_, PyModule>) -> PyResult<()> {
 
     // // Only initialize once to avoid panics on reload
     // static INIT: std::sync::Once = std::sync::Once::new();
