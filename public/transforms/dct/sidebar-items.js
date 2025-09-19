@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["dataset_dct","dataset_idct"]};
