@@ -8,6 +8,7 @@ import os
 from aeon.datasets import get_dataset_meta_data
 
 df = get_dataset_meta_data()
+df = df[df["Channels"] == 1]
 print(f"Total datasets available: {len(df)}")
 
 parser = argparse.ArgumentParser(
@@ -48,6 +49,8 @@ print(" Meta data = ", meta_data)
 if not os.path.exists("./data/" + args.dataset_idx):
     os.makedirs("./data/" + args.dataset_idx, exist_ok=True)
 
+if not os.path.exists("./results/" + args.dataset_idx):
+    os.makedirs("./results/" + args.dataset_idx, exist_ok=True)
 
 if hasattr(X, "to_numpy"):
     X_np = X.to_numpy()
@@ -67,7 +70,7 @@ df.to_csv(csv_filename, index=False)
 print(f"Saved dataset to {csv_filename}")
 
 # metadata as JSON
-meta_filename = f"./data/{args.dataset_idx}/{args.dataset_idx}_meta.json"
+meta_filename = f"./results/{args.dataset_idx}/{args.dataset_idx}_meta.json"
 with open(meta_filename, "w") as f:
     json.dump(meta_data, f, indent=4)
 print(f"Saved metadata to {meta_filename}")

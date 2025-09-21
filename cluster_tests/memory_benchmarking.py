@@ -368,13 +368,13 @@ def main():
     df.to_csv(f"./results/{dataset_index}/{dataset_index}_memory_benchmark.csv", index=False)
     print(f"Benchmark results saved to results/{dataset_index}/{dataset_index}_memory_benchmark.csv")
 
-    save_dir = run_memory_size_benchmarks(
-        x, y, AUGMENTERS, dataset_index, args.n_iterations
-    )
+    #save_dir = run_memory_size_benchmarks(
+    #    x, y, AUGMENTERS, dataset_index, args.n_iterations
+    #)
 
-    print(f"Memory vs Size results saved to {save_dir}")
+    #print(f"Memory vs Size results saved to {save_dir}")
 
-    plot_mem_vs_size(save_dir, dataset_index)
+    #plot_mem_vs_size(save_dir, dataset_index)
 
     return 0
 

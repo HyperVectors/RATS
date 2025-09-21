@@ -310,12 +310,12 @@ def main():
     df.to_csv(f"./results/{dataset_index}/{dataset_index}_time_benchmark.csv", index=False)
     print(f"Benchmark results saved to results/{dataset_index}/{dataset_index}_time_benchmark.csv")
 
-    save_file_path = benchmark_time_dataset_size(
-        AUGMENTERS, x, y, dataset_index, args.n_iterations
-    )
-    print(f"Time vs Size results saved to {save_file_path}")
+    #save_file_path = benchmark_time_dataset_size(
+    #    AUGMENTERS, x, y, dataset_index, args.n_iterations
+    #)
+    #print(f"Time vs Size results saved to {save_file_path}")
 
-    plot_time_vs_size(f"./results/{dataset_index}/{dataset_index}_time_vs_size.csv", dataset_index)
+    #plot_time_vs_size(f"./results/{dataset_index}/{dataset_index}_time_vs_size.csv", dataset_index)
 
     return 0
 
