@@ -4,6 +4,7 @@ import pandas as pd
 import json
 from aeon.datasets import load_classification
 import os
+import numpy as np
 
 from aeon.datasets import get_dataset_meta_data
 
@@ -38,6 +39,8 @@ except Exception as e:
     print("Usage: python dataLoader.py --dataset-idx <DATASET_INDEX>")
     sys.exit(1)
 
+X = np.array(X)
+y = np.array(y)
 print(" Shape of X = ", X.shape)
 print(" Meta data = ", meta_data)
 

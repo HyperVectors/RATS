@@ -24,7 +24,7 @@ def main():
     parser.add_argument(
         "--remove_cols",
         nargs="+",
-        default=["Pipeline", "FFT", "IFFT", "Compare"],
+        default=["Pipeline", "fft", "ifft", "compare_within_tolerance", "Repeat", "Scaling", "Rotation", "AmplitudePhasePerturbation", "FrequencyMask", "Permutate", "RandomTimeWarpAugmenter"],
         help="List of augmenter names to remove from the plots (default: Pipeline FFT IFFT Compare)",
     )
     args = parser.parse_args()

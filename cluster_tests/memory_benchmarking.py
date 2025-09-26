@@ -88,6 +88,10 @@ def run_individual_memory_benchmarks(
         ):
             tsaug_kwargs["window"] = tuple(tsaug_kwargs["window"])
 
+        if tsaug_class_name == "Crop" and x.shape[-1] < tsaug_kwargs.get("size"):
+            tsaug_kwargs["size"] = x.shape[-1]//2
+            rp_kwargs["size"] = x.shape[-1]//2
+
         rp_mem = rp_aug_memory(aug_name, rp_kwargs, x, y)
         if tsaug_class_name:
             tsaug_mem = tsaug_memory(tsaug_class_name, tsaug_kwargs, x)
@@ -200,6 +204,10 @@ def run_pipeline_memory_benchmarks(
             tsaug_kwargs.get("window", None), list
         ):
             tsaug_kwargs["window"] = tuple(tsaug_kwargs["window"])
+
+        if tsaug_class_name == "Crop" and x.shape[-1] > tsaug_kwargs.get("size"):
+            tsaug_kwargs["size"] = x.shape[-1]//2
+            rp_kwargs["size"] = x.shape[-1]//2
 
         if tsaug_class_name:
             rp_pipeline_tsaug = rp_pipeline_tsaug + getattr(rp, aug_name)(**rp_kwargs)

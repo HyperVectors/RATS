@@ -50,6 +50,10 @@ def run_individual_time_benchmarks(
         ):
             tsaug_kwargs["window"] = tuple(tsaug_kwargs["window"])
 
+        if tsaug_class_name == "Crop" and x.shape[-1] < tsaug_kwargs.get("size"):
+            tsaug_kwargs["size"] = x.shape[-1]//2
+            rp_kwargs["size"] = x.shape[-1]//2
+
         rp_aug_class = getattr(rp, aug_name)
         rp_aug = rp_aug_class(**rp_kwargs)
 
@@ -149,6 +153,10 @@ def run_pipeline_benchmarks(
             tsaug_kwargs.get("window", None), list
         ):
             tsaug_kwargs["window"] = tuple(tsaug_kwargs["window"])
+
+        if tsaug_class_name == "Crop" and x.shape[-1] > tsaug_kwargs.get("size"):
+            tsaug_kwargs["size"] = x.shape[-1]//2
+            rp_kwargs["size"] = x.shape[-1]//2
 
         rp_aug_class = getattr(rp, aug_name)
         if tsaug_class_name:
