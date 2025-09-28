@@ -12,3 +12,6 @@ rustfft = "6"
 rustdct = "0.7"
 tracing = "0.1.41"
 tracing-subscriber = "0.3.19"
+
+[dev-dependencies]
+cargo-tarpaulin = "0.27"

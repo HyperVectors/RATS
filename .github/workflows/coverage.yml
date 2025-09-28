@@ -1,0 +1,96 @@
+name: Code Coverage
+
+on:
+  push:
+    branches: [ '*' ]  # Run on all branches
+  pull_request:
+    branches: [ '*' ]  # Run on PRs to any branch
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        components: rustfmt, clippy
+        override: true
+    
+    - name: Cache cargo registry
+      uses: actions/cache@v3
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+    
+    - name: Cache cargo index
+      uses: actions/cache@v3
+      with:
+        path: ~/.cargo/git
+        key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+    
+    - name: Cache cargo build
+      uses: actions/cache@v3
+      with:
+        path: target
+        key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+    
+    # Install cargo-tarpaulin for coverage
+    - name: Install cargo-tarpaulin
+      run: cargo install cargo-tarpaulin
+    
+    # Run coverage for main rats crate
+    - name: Run coverage for rats
+      run: |
+        cd rats
+        cargo tarpaulin --out Xml --output-dir ../coverage --exclude-files "*/tests/*" "*/examples/*"
+        # Rename to avoid conflicts
+        mv ../coverage/cobertura.xml ../coverage/rats-coverage.xml
+    
+    # Run coverage for ratspy crate
+    - name: Run coverage for ratspy
+      run: |
+        cd ratspy
+        cargo tarpaulin --out Xml --output-dir ../coverage --exclude-files "*/tests/*" "*/examples/*"
+        # Rename to avoid conflicts
+        mv ../coverage/cobertura.xml ../coverage/ratspy-coverage.xml
+    
+    # Install Python dependencies
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install Python dependencies
+      run: |
+        cd ratspy
+        pip install -r requirements.txt
+        pip install coverage pytest-cov
+    
+    # Build ratspy for Python coverage
+    - name: Build ratspy
+      run: |
+        cd ratspy
+        pip install maturin
+        maturin develop --release
+    
+    # Run Python coverage
+    - name: Run Python coverage
+      run: |
+        cd ratspy
+        coverage run --source=ratspy -m pytest tests/
+        coverage xml -o ../coverage/python-coverage.xml
+        coverage report
+    
+    # Upload coverage to Codecov
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage/rats-coverage.xml,./coverage/ratspy-coverage.xml,./coverage/python-coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+        verbose: true
