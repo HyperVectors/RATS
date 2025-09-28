@@ -2,9 +2,9 @@ name: Code Coverage
 
 on:
   push:
-    branches: [ '*' ]  # Run on all branches
+    branches: [ '*' ]  
   pull_request:
-    branches: [ '*' ]  # Run on PRs to any branch
+    branches: [ '*' ] 
 
 jobs:
   coverage:
@@ -38,11 +38,11 @@ jobs:
         path: target
         key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
     
-    # Install cargo-tarpaulin for coverage
+    # cargo-tarpaulin for coverage
     - name: Install cargo-tarpaulin
       run: cargo install cargo-tarpaulin
     
-    # Run coverage for main rats crate
+    # coverage for main rats crate
     - name: Run coverage for rats
       run: |
         cd rats
@@ -50,7 +50,7 @@ jobs:
         # Rename to avoid conflicts
         mv ../coverage/cobertura.xml ../coverage/rats-coverage.xml
     
-    # Run coverage for ratspy crate
+    # coverage for ratspy crate
     - name: Run coverage for ratspy
       run: |
         cd ratspy
@@ -58,7 +58,7 @@ jobs:
         # Rename to avoid conflicts
         mv ../coverage/cobertura.xml ../coverage/ratspy-coverage.xml
     
-    # Install Python dependencies
+    # Python dependencies
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -75,7 +75,11 @@ jobs:
       run: |
         cd ratspy
         pip install maturin
-        maturin develop --release
+        # Build and install using maturin
+        maturin build --release
+        # Install the wheel file (use ls to find the exact name)
+        ls target/wheels/
+        pip install target/wheels/$(ls target/wheels/ | grep .whl)
     
     # Run Python coverage
     - name: Run Python coverage
@@ -85,7 +89,7 @@ jobs:
         coverage xml -o ../coverage/python-coverage.xml
         coverage report
     
-    # Upload coverage to Codecov
+    # Upload all coverage to Codecov
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
