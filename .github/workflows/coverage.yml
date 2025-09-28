@@ -85,6 +85,9 @@ jobs:
     - name: Run Python coverage
       run: |
         cd ratspy
+        # Set PYTHONPATH to include the ratspy directory
+        export PYTHONPATH=$PWD/ratspy:$PYTHONPATH
+        # Run coverage
         coverage run --source=ratspy -m pytest tests/
         coverage xml -o ../coverage/python-coverage.xml
         coverage report
