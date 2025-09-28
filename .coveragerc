@@ -1,0 +1,62 @@
+[run]
+source = ratspy
+
+omit = 
+    */tests/*
+    */test_*.py
+    
+    rats/utils/*
+    ratspy/benchmarking/*
+    ratspy/docs/*
+    
+    */__pycache__/*
+    */build/*
+    */dist/*
+    
+    */docs/*
+    *.md
+    *.rst
+    
+    setup.py
+    pyproject.toml
+    requirements.txt
+
+branch = True
+
+data_file = .coverage
+
+[report]
+exclude_lines =
+    pragma: no cover
+
+    def __repr__
+    if self\.debug
+
+    raise AssertionError
+    raise NotImplementedError
+
+    if 0:
+    if __name__ == .__main__.:
+
+    @(abc\.)?abstractmethod
+
+show_missing = True
+
+precision = 2
+
+# Skip covered files in report
+skip_covered = False
+
+# Sort report by coverage percentage
+sort = Cover
+
+[html]
+# Directory for HTML report
+directory = htmlcov
+
+# Title for HTML report
+title = RATSpy Coverage Report
+
+[xml]
+# Output file for XML report
+output = coverage.xml
