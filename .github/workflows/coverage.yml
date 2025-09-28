@@ -83,14 +83,13 @@ jobs:
     
     # Run Python coverage
     - name: Run Python coverage
+      working-directory: ratspy
       run: |
-        cd ratspy
-        # Set PYTHONPATH to include the ratspy directory
-        export PYTHONPATH=$PWD/ratspy:$PYTHONPATH
-        # Run coverage
-        coverage run --source=ratspy -m pytest tests/
+        mkdir -p ../coverage
+        coverage run --source=ratspy -m pytest -q tests
         coverage xml -o ../coverage/python-coverage.xml
-        coverage report
+        coverage report -m
+
     
     # Upload all coverage to Codecov
     - name: Upload coverage to Codecov
