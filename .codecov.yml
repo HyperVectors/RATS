@@ -1,0 +1,46 @@
+# Codecov configuration for RATS repository
+coverage:
+  status:
+    project:
+      default:
+        target: 80%  # Minimum coverage threshold
+        threshold: 5%  # Allow 5% decrease before failing
+    patch:
+      default:
+        target: 70%  # Minimum coverage for new changes
+        threshold: 5%
+
+# Ignore files and directories from coverage
+ignore:
+  # Python helper scripts
+  - "rats/utils/*.py"
+  - "ratspy/benchmarking/**/*.py"
+  - "ratspy/docs/**/*.py"
+  - "ratspy/tests/**/*.py"
+  
+  # Rust generated files
+  - "**/target/**"
+  - "**/Cargo.lock"
+  
+  # Documentation and examples
+  - "**/*.md"
+  - "**/*.rst"
+  - "example_notebook.ipynb"
+  
+  # Configuration files
+  - "**/*.toml"
+  - "**/*.yaml"
+  - "**/*.yml"
+  - "**/*.json"
+
+# Comment on pull requests
+comment:
+  layout: "header, diff, files, footer"
+  behavior: default
+  require_changes: false
+  require_base: no
+  require_head: yes
+
+# Notify about coverage changes
+notify:
+  wait_for_ci: true
