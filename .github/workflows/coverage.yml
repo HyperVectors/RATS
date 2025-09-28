@@ -83,12 +83,13 @@ jobs:
     
     # Run Python coverage
     - name: Run Python coverage
-      working-directory: ratspy
       run: |
-        mkdir -p ../coverage
-        coverage run --source=ratspy -m pytest -q tests
+        mkdir -p testrun coverage
+        cd testrun
+        coverage run --source=ratspy -m pytest -q --import-mode=importlib ../ratspy/tests
         coverage xml -o ../coverage/python-coverage.xml
         coverage report -m
+
 
     
     # Upload all coverage to Codecov

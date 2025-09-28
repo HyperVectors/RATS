@@ -1,5 +1,8 @@
 from random import random
-from .ratspy import *
+try:
+    from .ratspy import *
+except ModuleNotFoundError:
+    from ._ratspy import *
 
 class AugmentationPipeline:
     r"""A pipeline of augmenters
