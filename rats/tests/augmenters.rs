@@ -2,7 +2,7 @@ use rats::Dataset;
 use rats::augmenters::{
     AddNoise, AmplitudePhasePerturbation, Augmenter, Crop, FrequencyMask, Jittering, NoiseType,
     Permutate, Pool, PoolingMethod, Quantize, RandomTimeWarpAugmenter, Repeat, Resize, Reverse,
-    Rotation, Scaling,
+    Rotation, Scaling, Drift, Convolve, ConvolveWindow
 };
 use rats::quality_benchmarking::dtw;
 
@@ -18,6 +18,56 @@ fn make_test_dataset() -> Dataset {
         ],
         labels: vec!["A".into(), "B".into()],
     }
+}
+
+#[test]
+fn convolve_flat() {
+    let series = vec![1.0, 2.0, 3.0, 4.0, 5.0];
+    
+    let augmenter = Convolve::new(ConvolveWindow::Flat, 3);
+    let result = augmenter.augment_one(&series);
+    
+    // Should be different from original (smoothed)
+    assert_ne!(result, series);
+    // Length should be preserved
+    assert_eq!(result.len(), series.len());
+}
+
+#[test]
+fn convolve_gaussian() {
+    let series = vec![0.0, 1.0, 0.0, 1.0, 0.0];
+    
+    let augmenter = Convolve::new(ConvolveWindow::Gaussian, 3);
+    let result = augmenter.augment_one(&series);
+    
+    // Should be different from original (smoothed)
+    assert_ne!(result, series);
+    // Length should be preserved
+    assert_eq!(result.len(), series.len());
+}
+
+#[test]
+fn drift_basic() {
+    let series = vec![1.0; 100];
+    
+    let augmenter = Drift::new(0.5, 5);
+    let result = augmenter.augment_one(&series);
+    
+    // Should be different from original
+    assert_ne!(result, series);
+    // Length should be preserved
+    assert_eq!(result.len(), series.len());
+}
+
+#[test]
+fn drift_zero() {
+    let series = vec![1.0, 2.0, 3.0, 4.0];
+    
+    let augmenter = Drift::new(0.0, 3);
+    let result = augmenter.augment_one(&series);
+    
+    // With zero drift, should be identical
+    assert_eq!(result, series);
 }
 
 #[test]

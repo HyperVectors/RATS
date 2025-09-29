@@ -7,13 +7,13 @@ data/
 .DS_Store
 
 # Coverage files
-coverage/
 .coverage
 .coverage.*
 htmlcov/
 *.coverage
-coverage.xml
+*coverage.xml
 *.lcov
+coverage_report.txt
 
 # Python cache
 __pycache__/
