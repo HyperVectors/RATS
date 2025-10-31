@@ -4,6 +4,8 @@ import seaborn as sns
 import glob
 import os
 
+plt.rcParams.update({'font.size': 16})
+
 # Path to results folders
 base_path = "results"
 
@@ -26,7 +28,7 @@ for file in csv_files:
         id_vars=["Augmenter"],
         value_vars=["RATSpy_time_sec", "tsaug_time_sec"],
         var_name="Set",
-        value_name="Values"
+        value_name="Time in s"
     )
 
     # Clean up Set names (remove "_time_sec")
@@ -42,7 +44,7 @@ print(final_df.head(10))
 
 # ---- Plot aggregated results ----
 plt.figure(figsize=(14, 6))
-sns.boxplot(x="Augmenter", y="Values", hue="Set", data=final_df)
+sns.boxplot(x="Augmenter", y="Time in s", hue="Set", data=final_df)
 plt.xticks(rotation=45, ha="right")
 plt.yscale("log")
 plt.title("Aggregated Benchmarking Time per Augmenter (All Datasets)")
@@ -72,7 +74,7 @@ for file in csv_files:
         id_vars=["Augmenter"],
         value_vars=["RATSpy_peak_mem_MB", "tsaug_peak_mem_MB"],
         var_name="Set",
-        value_name="Values"
+        value_name="Peak Memory in MB"
     )
 
     # Clean up Set names (remove "_time_sec")
@@ -88,9 +90,10 @@ print(final_df.head(10))
 
 # ---- Plot aggregated results ----
 plt.figure(figsize=(14, 6))
-sns.boxplot(x="Augmenter", y="Values", hue="Set", data=final_df)
+sns.boxplot(x="Augmenter", y="Peak Memory in MB", hue="Set", data=final_df)
 plt.xticks(rotation=45, ha="right")
 plt.yscale("log")
+plt.ylim(100, 10000)
 plt.title("Aggregated Benchmarking Memory Usage per Augmenter (All Datasets)")
 plt.tight_layout()
 # plt.show()
