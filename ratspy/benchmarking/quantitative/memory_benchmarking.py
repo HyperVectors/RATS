@@ -349,7 +349,8 @@ def plot_mem_vs_size(save_dir: str, dataset_name: str):
     plt.legend(fontsize=22)
     plt.grid(alpha=0.3)
     plt.tight_layout()
-    plt.savefig(f"./results/{dataset_name}_memory_vs_size.png", dpi=300, bbox_inches='tight')
+    plt.savefig(f"results/{dataset_name}_memory_vs_size.eps", format="eps", bbox_inches='tight')
+    plt.savefig(f"results/{dataset_name}_memory_vs_size.pdf", format="pdf", bbox_inches='tight')
     plt.close()
 
 
