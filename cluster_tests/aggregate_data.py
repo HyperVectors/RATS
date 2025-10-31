@@ -50,8 +50,8 @@ plt.yscale("log")
 plt.title("Aggregated Benchmarking Time per Augmenter (All Datasets)")
 plt.tight_layout()
 # plt.show()
-plt.savefig(os.path.join(base_path, "time_box_plot.png"))
-
+plt.savefig(os.path.join(base_path, "time_box_plot.eps"), format='eps')
+plt.savefig(os.path.join(base_path, "time_box_plot.pdf"), format='pdf')
 
 
 
@@ -97,4 +97,5 @@ plt.ylim(100, 10000)
 plt.title("Aggregated Benchmarking Memory Usage per Augmenter (All Datasets)")
 plt.tight_layout()
 # plt.show()
-plt.savefig(os.path.join(base_path, "memory_box_plot.png"))
+plt.savefig(os.path.join(base_path, "memory_box_plot.eps"), format='eps')
+plt.savefig(os.path.join(base_path, "memory_box_plot.pdf"), format='pdf')
