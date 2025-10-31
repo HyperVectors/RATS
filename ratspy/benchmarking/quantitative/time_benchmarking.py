@@ -8,6 +8,16 @@ import sys
 import os
 import matplotlib.pyplot as plt
 
+plt.rcParams.update({
+    'font.size': 24,           # Base font size
+    'axes.titlesize': 28,      # Title font size
+    'axes.labelsize': 24,      # Axis label font size
+    'xtick.labelsize': 20,     # X-axis tick label size
+    'ytick.labelsize': 20,     # Y-axis tick label size
+    'legend.fontsize': 22,     # Legend font size
+    'figure.titlesize': 30     # Figure title size
+})
+
 ## To mount utils on to the default interpreter path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from utils import fix_rp_kwargs, load_data
@@ -188,7 +198,7 @@ def run_pipeline_benchmarks(
 
 
 def benchmark_time_dataset_size(
-    augmenters, x, y, dataset_name, n_iterations: int
+    augmenters, x, y, dataset_name, n_iterations: int, max_dataset_size: int = None
 ) -> str:
     """
     Benchmark the time taken by the augmentation pipeline with varying dataset sizes.
@@ -198,13 +208,23 @@ def benchmark_time_dataset_size(
         y (np.ndarray): Input data labels.
         dataset_name (str): Name of the dataset for saving results.
         n_iterations (int): Number of iterations to run the benchmark. At every iteration, the dataset size is doubled.
+        max_dataset_size (int, optional): Maximum dataset size. If specified, stops when dataset size exceeds this value.
     Returns:
         str: Path to the CSV file containing time benchmarks for varying dataset sizes.
     """
     time_benchmarks = []
     dataset = rp.Dataset(x, y)
 
-    for i in range(n_iterations):
+    iteration = 0
+    while True:
+        if max_dataset_size is not None:
+            if len(dataset.features) > max_dataset_size:
+                print(f"Stopping: Dataset size {len(dataset.features)} exceeds max_dataset_size {max_dataset_size}")
+                break
+        else:
+            if iteration >= n_iterations:
+                break
+
         repeat_augmenter = rp.Repeat(times=2)
         result_list = run_pipeline_benchmarks(
             augmenters, dataset.features, dataset.labels
@@ -225,6 +245,8 @@ def benchmark_time_dataset_size(
             dataset,
             parallel=True,
         )
+        
+        iteration += 1
 
     df = pd.DataFrame(time_benchmarks)
     df.to_csv(f"./results/{dataset_name}_time_vs_size.csv", index=False)
@@ -241,12 +263,14 @@ def plot_time_vs_size(csv_path: str, dataset_name: str):
     """
     df = pd.read_csv(csv_path)
 
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(16, 10))  # Increased size
     plt.plot(
         df["Dataset_size"],
         df["RATSpy_time_sec"],
         label="RATSpy Time",
         marker="o",
+        linewidth=3,
+        markersize=10,
     )
 
     plt.plot(
@@ -255,13 +279,18 @@ def plot_time_vs_size(csv_path: str, dataset_name: str):
         label="tsaug Time",
         color="orange",
         marker="x",
+        linewidth=3,
+        markersize=12,
     )
-    plt.xlabel("Dataset Size")
-    plt.ylabel("Time (seconds)")
-    plt.title(f"Time Benchmark for Varying Dataset Sizes")
-    plt.legend()
-    plt.grid()
-    plt.savefig(f"results/{dataset_name}_time_vs_size.png")
+    plt.xlabel("Dataset Size", fontsize=28)
+    plt.ylabel("Time (seconds)", fontsize=28)
+    plt.title(f"Time Benchmark for Varying Dataset Sizes", fontsize=36, pad=30)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
+    plt.legend(fontsize=22)
+    plt.grid(alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(f"results/{dataset_name}_time_vs_size.png", dpi=300, bbox_inches='tight')
 
     print(f"Time vs Size plot saved to results/{dataset_name}_time_vs_size.png")
 
@@ -285,6 +314,12 @@ def main():
         type=int,
         default=5,
         help="Number of iterations for time vs size benchmark (default: 5)",
+    )
+    parser.add_argument(
+        "--max_dataset_size",
+        type=int,
+        default=None,
+        help="Maximum dataset size for time vs size benchmark. If specified, overrides n_iterations and stops when dataset size exceeds this value.",
     )
 
     args = parser.parse_args()
@@ -313,7 +348,7 @@ def main():
     print(f"Benchmark results saved to results/{dataset_name}_time_benchmark.csv")
 
     save_file_path = benchmark_time_dataset_size(
-        AUGMENTERS, x, y, dataset_name, args.n_iterations
+        AUGMENTERS, x, y, dataset_name, args.n_iterations, args.max_dataset_size
     )
     print(f"Time vs Size results saved to {save_file_path}")
 

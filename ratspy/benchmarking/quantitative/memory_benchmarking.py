@@ -18,6 +18,16 @@ import sys
 import pathlib
 import matplotlib.pyplot as plt
 
+plt.rcParams.update({
+    'font.size': 24,           # Base font size
+    'axes.titlesize': 28,      # Title font size
+    'axes.labelsize': 24,      # Axis label font size
+    'xtick.labelsize': 20,     # X-axis tick label size
+    'ytick.labelsize': 20,     # Y-axis tick label size
+    'legend.fontsize': 22,     # Legend font size
+    'figure.titlesize': 30     # Figure title size
+})
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from utils import fix_rp_kwargs, load_data
 
@@ -248,6 +258,7 @@ def run_memory_size_benchmarks(
     augmenters: list[dict],
     dataset_name: str,
     n_iterations: int,
+    max_dataset_size: int = None,
 ) -> str:
     """
      Run memory usage benchmarks for RATSpy and compares them with tsaug for different dataset sizes.
@@ -257,11 +268,21 @@ def run_memory_size_benchmarks(
         augmenters (list): List of augmenter configurations.
         dataset_name (str): Name of the dataset for saving results.
         n_iterations (int): Number of iterations for the benchmark.
+        max_dataset_size (int, optional): Maximum dataset size. If specified, stops when dataset size exceeds this value.
     """
     mem_benchmarks = []
     dataset = rp.Dataset(x, y)
 
-    for i in range(n_iterations):
+    iteration = 0
+    while True:
+        if max_dataset_size is not None:
+            if len(dataset.features) > max_dataset_size:
+                print(f"Stopping: Dataset size {len(dataset.features)} exceeds max_dataset_size {max_dataset_size}")
+                break
+        else:
+            if iteration >= n_iterations:
+                break
+
         repeat_augmenter = rp.Repeat(times=2)
         result_list = run_pipeline_memory_benchmarks(
             dataset.features, dataset.labels, augmenters
@@ -279,14 +300,19 @@ def run_memory_size_benchmarks(
             }
         )
         repeat_augmenter.augment_batch(dataset, parallel=True)
+        
+        iteration += 1
 
     df = pd.DataFrame(mem_benchmarks)
+    
+    # Use actual iterations in filename if max_dataset_size was used
+    actual_iterations = len(mem_benchmarks)
     df.to_csv(
-        f"./results/{dataset_name}_memory_vs_size_{n_iterations}_iterations.csv",
+        f"./results/{dataset_name}_memory_vs_size_{actual_iterations}_iterations.csv",
         index=False,
     )
 
-    return f"./results/{dataset_name}_memory_vs_size_{n_iterations}_iterations.csv"
+    return f"./results/{dataset_name}_memory_vs_size_{actual_iterations}_iterations.csv"
 
 
 def plot_mem_vs_size(save_dir: str, dataset_name: str):
@@ -298,25 +324,32 @@ def plot_mem_vs_size(save_dir: str, dataset_name: str):
     """
 
     df = pd.read_csv(save_dir)
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(16, 10))  # Increased size
     plt.plot(
         df["Dataset Size"],
         df["RATSpy Peak Memory (MB)"],
         label="RATSpy",
         marker="o",
+        linewidth=3,
+        markersize=10,
     )
     plt.plot(
         df["Dataset Size"],
         df["tsaug Peak Memory (MB)"],
         label="tsaug",
         marker="x",
+        linewidth=3,
+        markersize=12,
     )
-    plt.xlabel("Dataset Size")
-    plt.ylabel("Peak Memory Usage (MB)")
-    plt.title(f"Memory Usage vs Dataset Size - {dataset_name}")
-    plt.legend()
-    plt.grid()
-    plt.savefig(f"./results/{dataset_name}_memory_vs_size.png")
+    plt.xlabel("Dataset Size", fontsize=28)
+    plt.ylabel("Peak Memory Usage (MB)", fontsize=28)
+    plt.title(f"Memory Usage vs Dataset Size - {dataset_name}", fontsize=36, pad=30)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
+    plt.legend(fontsize=22)
+    plt.grid(alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(f"./results/{dataset_name}_memory_vs_size.png", dpi=300, bbox_inches='tight')
     plt.close()
 
 
@@ -349,7 +382,13 @@ def main():
         "--n_iterations",
         type=int,
         default=3,
-        help="Number of iterations for time vs size benchmark (default: 10)",
+        help="Number of iterations for memory vs size benchmark (default: 3)",
+    )
+    parser.add_argument(
+        "--max_dataset_size",
+        type=int,
+        default=None,
+        help="Maximum dataset size for memory vs size benchmark. If specified, overrides n_iterations and stops when dataset size exceeds this value.",
     )
 
     args = parser.parse_args()
@@ -375,7 +414,7 @@ def main():
     print(f"Benchmark results saved to results/{dataset_name}_memory_benchmark.csv")
 
     save_dir = run_memory_size_benchmarks(
-        x, y, AUGMENTERS, dataset_name, args.n_iterations
+        x, y, AUGMENTERS, dataset_name, args.n_iterations, args.max_dataset_size
     )
 
     print(f"Memory vs Size results saved to {save_dir}")

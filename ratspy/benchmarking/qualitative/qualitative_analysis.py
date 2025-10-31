@@ -7,6 +7,16 @@ import yaml
 import ratspy as rp
 import importlib
 
+plt.rcParams.update({
+    'font.size': 24,           # Base font size
+    'axes.titlesize': 28,      # Title font size
+    'axes.labelsize': 24,      # Axis label font size
+    'xtick.labelsize': 20,     # X-axis tick label size
+    'ytick.labelsize': 20,     # Y-axis tick label size
+    'legend.fontsize': 22,     # Legend font size
+    'figure.titlesize': 30     # Figure title size
+})
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from utils import fix_rp_kwargs, load_data
 
@@ -54,14 +64,18 @@ for aug in augmenters:
     # Plotting first sample comparison
     orig_sample = X[0]
     aug_sample = aug_X[0]
-    plt.figure(figsize=(12, 6))
-    plt.plot(orig_sample, label="Original", alpha=1.0)
-    plt.plot(aug_sample, label="Augmented", alpha=0.7)
-    plt.title(f"{dataset_name} dataset : {aug_name} - First Sample Comparison")
-    plt.xticks([], [])
-    plt.legend()
+    plt.figure(figsize=(16, 10))  # Significantly increased size
+    plt.plot(orig_sample, label="Original", alpha=1.0, linewidth=3)
+    plt.plot(aug_sample, label="Augmented", alpha=0.7, linewidth=3)
+    plt.title(f"{dataset_name} dataset : {aug_name} - First Sample Comparison", fontsize=36, pad=30)
+    plt.xlabel("Time Step", fontsize=28)
+    plt.ylabel("Value", fontsize=28)
+    x_ticks = range(0, len(orig_sample), 100)
+    plt.xticks(x_ticks, fontsize=20)
+    plt.yticks(fontsize=20)
+    plt.legend(fontsize=22)
     plt.tight_layout()
-    plt.savefig(f"{sample_plot_dir}/{dataset_name}_{aug_name}_comparison.png")
+    plt.savefig(f"{sample_plot_dir}/{aug_name}_comparison.png", dpi=300, bbox_inches='tight')
     plt.close()
 
     # Plotting mean and std deviation comparison
@@ -70,21 +84,25 @@ for aug in augmenters:
     aug_mean = aug_X.mean(axis=0)
     aug_std = aug_X.std(axis=0)
 
-    plt.figure(figsize=(12, 6))
-    plt.plot(orig_mean, label="Original Mean")
+    plt.figure(figsize=(16, 10)) 
+    plt.plot(orig_mean, label="Original Mean", linewidth=3)
     plt.fill_between(
         range(len(orig_mean)), orig_mean - orig_std, orig_mean + orig_std, alpha=0.2
     )
-    plt.plot(aug_mean, label="Augmented Mean")
+    plt.plot(aug_mean, label="Augmented Mean", linewidth=3)
     plt.fill_between(
         range(len(aug_mean)), aug_mean - aug_std, aug_mean + aug_std, alpha=0.2
     )
-    plt.title(f"{dataset_name} dataset : {aug_name} - Mean and Std Comparison")
-    plt.xlabel("Time Step")
-    plt.ylabel("Value")
-    plt.legend()
+    plt.title(f"{dataset_name} dataset : {aug_name} - Mean and Std Comparison", fontsize=36, pad=30)
+    plt.xlabel("Time Step", fontsize=28)
+    plt.ylabel("Value", fontsize=28)
+    x_ticks = range(0, len(orig_mean), 100)
+    plt.xticks(x_ticks, fontsize=20)
+    plt.yticks(fontsize=20)
+    plt.legend(fontsize=22)
+    plt.tick_params(axis='both', which='major', labelsize=20)
     plt.tight_layout()
-    plt.savefig(f"{meanstd_plot_dir}/{dataset_name}_{aug_name}_mean_std_comparison.png")
+    plt.savefig(f"{meanstd_plot_dir}/{dataset_name}_{aug_name}_mean_std_comparison.png", dpi=300, bbox_inches='tight')
     plt.close()
 
     # Plotting first sample comparison for tsaug if available
@@ -104,21 +122,28 @@ for aug in augmenters:
                 tsaug_aug_sample = tsaug_aug_sample[0]
 
             # Side-by-side plot
-            fig, axs = plt.subplots(1, 2, figsize=(16, 6), sharey=True)
+            fig, axs = plt.subplots(1, 2, figsize=(24, 10), sharey=True) 
             # RATSpy
-            axs[0].plot(orig_sample, label="Original", alpha=1.0)
-            axs[0].plot(aug_sample, label="RATSpy Augmented", alpha=0.7)
-            axs[0].set_title(f"{dataset_name}: {aug_name} (RATSpy)")
-            axs[0].legend()
-            axs[0].set_xticks([])
+            axs[0].plot(orig_sample, label="Original", alpha=1.0, linewidth=3)
+            axs[0].plot(aug_sample, label="RATSpy Augmented", alpha=0.7, linewidth=3)
+            axs[0].set_title(f"{dataset_name} dataset : {aug_name} (RATSpy)", fontsize=36, pad=20)
+            axs[0].set_xlabel("Time Step", fontsize=28)
+            axs[0].set_ylabel("Value", fontsize=28)
+            x_ticks = range(0, len(orig_sample), 100)
+            axs[0].set_xticks(x_ticks)
+            axs[0].tick_params(axis='both', which='major', labelsize=20)
+            axs[0].legend(fontsize=22)
             # tsaug
-            axs[1].plot(orig_sample, label="Original", alpha=1.0)
-            axs[1].plot(tsaug_aug_sample, label="tsaug Augmented", alpha=0.7)
-            axs[1].set_title(f"{dataset_name}: {aug_name} (tsaug)")
-            axs[1].legend()
-            axs[1].set_xticks([])
+            axs[1].plot(orig_sample, label="Original", alpha=1.0, linewidth=3)
+            axs[1].plot(tsaug_aug_sample, label="tsaug Augmented", alpha=0.7, linewidth=3)
+            axs[1].set_title(f"{dataset_name} dataset : {aug_name} (tsaug)", fontsize=36, pad=20)
+            axs[1].set_xlabel("Time Step", fontsize=28)
+            axs[1].set_ylabel("Value", fontsize=28)
+            axs[1].set_xticks(x_ticks)
+            axs[1].tick_params(axis='both', which='major', labelsize=20)
+            axs[1].legend(fontsize=22)
             plt.tight_layout()
-            plt.savefig(f"{tsaug_plot_dir}/{dataset_name}_{aug_name}_vs_RATSpy.png")
+            plt.savefig(f"{tsaug_plot_dir}/{dataset_name}_{aug_name}_vs_RATSpy.png", dpi=300, bbox_inches='tight')
             plt.close()
         except Exception as e:
             print(f"Skipping tsaug plot for {aug_name}: {e}")

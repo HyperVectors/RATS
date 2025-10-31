@@ -9,6 +9,16 @@ import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 
+plt.rcParams.update({
+    'font.size': 24,           # Base font size
+    'axes.titlesize': 28,      # Title font size
+    'axes.labelsize': 24,      # Axis label font size
+    'xtick.labelsize': 20,     # X-axis tick label size
+    'ytick.labelsize': 20,     # Y-axis tick label size
+    'legend.fontsize': 22,     # Legend font size
+    'figure.titlesize': 30     # Figure title size
+})
+
 
 def main():
     """
@@ -23,13 +33,13 @@ def main():
     parser.add_argument(
         "--time_csv",
         type=str,
-        required=True,
+        default="./results/Car_time_benchmark.csv",
         help="Path to the time benchmark CSV file (default: ./results/Car_time_benchmark.csv)",
     )
     parser.add_argument(
         "--memory_csv",
         type=str,
-        required=True,
+        default="./results/Car_memory_benchmark.csv",
         help="Path to the memory benchmark CSV file (default: ./results/Car_memory_benchmark.csv)",
     )
     parser.add_argument(
@@ -62,7 +72,7 @@ def main():
     mem_augs = mem_df[~mem_df["Augmenter"].isin(remove_cols)]
 
     # RATSpy vs tsaug time
-    plt.figure(figsize=(12, 5))
+    plt.figure(figsize=(16, 10))  # Increased size
     plt.bar(
         time_augs["Augmenter"],
         time_augs["RATSpy_time_sec"],
@@ -77,16 +87,18 @@ def main():
         label="tsaug",
         align="edge",
     )
-    plt.ylabel("Time (seconds)")
-    plt.title(f"{dataset_name} Dataset Augmentation Time: RATSpy vs tsaug")
-    plt.xticks(rotation=45, ha="right")
-    plt.legend()
+    plt.ylabel("Time (seconds)", fontsize=28)
+    plt.xlabel("Augmenter", fontsize=28)
+    plt.title(f"{dataset_name} Dataset Augmentation Time: RATSpy vs tsaug", fontsize=36, pad=30)
+    plt.xticks(rotation=45, ha="right", fontsize=20)
+    plt.yticks(fontsize=20)
+    plt.legend(fontsize=22)
     plt.tight_layout()
-    plt.savefig(f"results/plots/{dataset_name}_time_benchmark_bar.png")
+    plt.savefig(f"results/plots/{dataset_name}_time_benchmark_bar.png", dpi=300, bbox_inches='tight')
     plt.close()
 
     # RATSpy vs tsaug memory
-    plt.figure(figsize=(12, 5))
+    plt.figure(figsize=(16, 10))  # Increased size
     plt.bar(
         mem_augs["Augmenter"],
         mem_augs["RATSpy_peak_mem_MB"],
@@ -101,12 +113,14 @@ def main():
         label="tsaug",
         align="edge",
     )
-    plt.ylabel("Peak Memory (MB)")
-    plt.title(f"{dataset_name} Dataset Augmentation Peak Memory: RATSpy vs tsaug")
-    plt.xticks(rotation=45, ha="right")
-    plt.legend()
+    plt.ylabel("Peak Memory (MB)", fontsize=28)
+    plt.xlabel("Augmenter", fontsize=28)
+    plt.title(f"{dataset_name} Dataset Augmentation Peak Memory: RATSpy vs tsaug", fontsize=36, pad=30)
+    plt.xticks(rotation=45, ha="right", fontsize=20)
+    plt.yticks(fontsize=20)
+    plt.legend(fontsize=22)
     plt.tight_layout()
-    plt.savefig(f"results/plots/{dataset_name}_memory_benchmark_bar.png")
+    plt.savefig(f"results/plots/{dataset_name}_memory_benchmark_bar.png", dpi=300, bbox_inches='tight')
     plt.close()
 
     # Time vs Memory (only augmenters present in both)
@@ -121,7 +135,7 @@ def main():
         )
     ]
 
-    plt.figure(figsize=(8, 6))
+    plt.figure(figsize=(12, 10))  # Increased height
     for lib, color in [("RATSpy", "tab:blue"), ("tsaug", "tab:orange")]:
         x = []
         y = []
@@ -137,18 +151,21 @@ def main():
                 x.append(t)
                 y.append(m)
                 labels.append(aug)
-        plt.scatter(x, y, label=lib, color=color)
+        plt.scatter(x, y, label=lib, color=color, s=100)  # Increased marker size
         for xi, yi, label in zip(x, y, labels):
-            plt.annotate(label, (xi, yi), fontsize=8, alpha=0.7)
+            plt.annotate(label, (xi, yi), fontsize=18, alpha=0.8)  # Increased annotation size
 
-    plt.xlabel("Time (seconds)")
-    plt.ylabel("Peak Memory (MB)")
+    plt.xlabel("Time (seconds)", fontsize=28)
+    plt.ylabel("Peak Memory (MB)", fontsize=28)
     plt.title(
-        f"{dataset_name} Dataset Time vs Memory: RATSpy vs tsaug (per augmenter)"
+        f"{dataset_name} Dataset : RATSpy vs tsaug",
+        fontsize=36, pad=30
     )
-    plt.legend()
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
+    plt.legend(fontsize=22)
     plt.tight_layout()
-    plt.savefig(f"results/plots/{dataset_name}_time_vs_memory_scatter.png")
+    plt.savefig(f"results/plots/{dataset_name}_time_vs_memory_scatter.png", dpi=300, bbox_inches='tight')
     plt.close()
 
     print(
