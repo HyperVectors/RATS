@@ -28,9 +28,10 @@ for file in csv_files:
         id_vars=["Augmenter"],
         value_vars=["RATSpy_time_sec", "tsaug_time_sec"],
         var_name="Set",
-        value_name="Time in s"
+        value_name="Time in ms"
     )
-
+    tidy["Time in ms"] *= 1000
+    
     # Clean up Set names (remove "_time_sec")
     tidy["Set"] = tidy["Set"].str.replace("_time_sec", "", regex=False)
 
@@ -44,7 +45,7 @@ print(final_df.head(10))
 
 # ---- Plot aggregated results ----
 plt.figure(figsize=(14, 6))
-sns.boxplot(x="Augmenter", y="Time in s", hue="Set", data=final_df)
+sns.boxplot(x="Augmenter", y="Time in ms", hue="Set", data=final_df)
 plt.xticks(rotation=45, ha="right")
 plt.yscale("log")
 plt.title("Aggregated Benchmarking Time per Augmenter (All Datasets)")

@@ -7,6 +7,16 @@ from aeon.datasets import get_dataset_meta_data
 # Path to results folders
 base_path = "results"
 
+def format_num(t, cutoff):
+    t = round(t, 1)
+    if len(str(int(t))) <= cutoff:
+        if t == int(t):
+            return str(int(t))
+        
+        return str(t)
+
+    return str(int(t))
+
 # Time Box Plot:
 csv_files = glob.glob(os.path.join(base_path, "*", "*_time_benchmark.csv"))
 
@@ -54,7 +64,7 @@ for i in range(150):
     pipeline_time_RATS = df_time.loc[df_time["Augmenter"] == "Pipeline"]["RATSpy_time_sec"].values[0]
     pipeline_time_tsaug = df_time.loc[df_time["Augmenter"] == "Pipeline"]["tsaug_time_sec"].values[0]
     
-    speedup = pipeline_time_tsaug / pipeline_time_RATS
+    speedup = (pipeline_time_tsaug-pipeline_time_RATS) / pipeline_time_tsaug
     if speedup < min_speedup[1]:
         min_speedup = (name, speedup)
     if speedup > max_speedup[1]:
@@ -64,14 +74,14 @@ for i in range(150):
     pipeline_memory_RATS = df_memory.loc[df_memory["Augmenter"] == "Pipeline"]["RATSpy_peak_mem_MB"].values[0]
     pipeline_memory_tsaug = df_memory.loc[df_memory["Augmenter"] == "Pipeline"]["tsaug_peak_mem_MB"].values[0]
     
-    mem_reduction = pipeline_memory_RATS / pipeline_memory_tsaug
+    mem_reduction = (pipeline_memory_tsaug - pipeline_memory_RATS) / pipeline_memory_tsaug
     if mem_reduction < min_mem_reduction[1]:
         min_mem_reduction = (name, mem_reduction)
     if mem_reduction > max_mem_reduction[1]:
         max_mem_reduction = (name, mem_reduction)
     avg_mem_reduction += mem_reduction
     
-    table += f"{name} & {n_samples} & {sample_length} & {round(pipeline_time_RATS, 4)} & {round(pipeline_memory_RATS, 1)} & {round(pipeline_time_tsaug, 4)} & {round(pipeline_memory_tsaug, 1)} \\\\ \n"
+    table += f"{name} & {n_samples} & {sample_length} & {format_num(pipeline_time_RATS * 1000, 1)} & {round(pipeline_memory_RATS, 1)} & {format_num(pipeline_time_tsaug * 1000, 1)} & {round(pipeline_memory_tsaug, 1)} & {format_num(speedup*100,3)} & {format_num(mem_reduction*100, 3)} \\\\ \n"
     count += 1
 
 avg_speedup /= count
@@ -80,4 +90,4 @@ avg_mem_reduction /= count
 print(f"Speedup: min {min_speedup}, max {max_speedup}, avg {avg_speedup}")
 print(f"Memory Reduction: min {min_mem_reduction}, max {max_mem_reduction}, avg {avg_mem_reduction}")
 print(count)
-#print(table)
+print(table)
