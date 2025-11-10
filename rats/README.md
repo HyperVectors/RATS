@@ -2,7 +2,7 @@
 
 [![ReadTheDocs](https://img.shields.io/badge/Readthedocs-%23000000.svg?style=for-the-badge&logo=readthedocs&logoColor=white)](https://effairust2025-031aba.pages.rwth-aachen.de/)
 
-RATS is a **RA**pid **T**ime **S**eries rust based library for augmentations. It is available as a rust crate under `RATS` and as a python package under `RATSpy`.
+RATS is a **R**apid **A**ugmentations for **T**ime **S**eries Rust-based library. It is available as a rust crate under `RATS` and as a python package under `RATSpy`.
 
 ## Project structure
 The crate provides many different augmenters. All of them are implemented in their own file in the `augmenters` module. They all implement the `Augmenter` trait which is implemented in `src/augmenters/base.rs` which allows a common interface and the incorporation into a `AugmentationPipeline` which executes many arbitrary augmenters at once.
