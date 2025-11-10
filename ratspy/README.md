@@ -1,5 +1,5 @@
 # RATSpy
-RATSpy provides Python bindings for `RATS`, a rust crate for **RA**pid **T**ime **S**eries augmentation on labeled univariate time series data.
+RATSpy provides Python bindings for `RATS`, a rust crate for **R**apid **A**ugmentations for **T**ime **S**eries on univariate time series data.
 
 See the original [`RATS` documentation](https://effairust2025-031aba.pages.rwth-aachen.de/) for a more detailed overview of the library.
 
