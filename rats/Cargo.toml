@@ -1,6 +1,6 @@
 [package]
 name = "rats"
-version = "0.1.0"
+version = "0.1.0-alpha"
 edition = "2024"
 
 [dependencies]

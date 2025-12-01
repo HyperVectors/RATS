@@ -155,30 +155,30 @@ jobs:
           name: wheels-sdist
           path: dist
 
-#  publish:
-#    name: Publish to PyPI
-#    runs-on: ubuntu-latest
-#    if: ${{ startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch' }}
-#    needs: [linux_wheels, macos_wheels, windows_wheels, sdist, rust_tests, python_tests, docs]
-#    steps:
-#      - uses: actions/download-artifact@v4
-#        with:
-#          pattern: wheels-*
-#          merge-multiple: true
-#      - uses: actions/setup-python@v5
-#        with:
-#          python-version: 3.x
-#      - name: Install dependencies
-#        run: |
-#          python -m pip install --upgrade pip
-#          pip install twine
-#      - name: Upload wheels
-#        env:
-#          TWINE_USERNAME: __token__
-#          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-#        run: |
-#          ls
-#          twine upload --skip-existing *.whl *.tar.gz
+  publish:
+    name: Publish to PyPI
+    runs-on: ubuntu-latest
+    if: ${{ startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch' }}
+    needs: [linux_wheels, macos_wheels, windows_wheels, sdist, rust_tests, python_tests, docs]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: wheels-*
+          merge-multiple: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install twine
+      - name: Upload wheels
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          ls
+          twine upload --skip-existing *.whl *.tar.gz
 
   build_wheel_dev:
     name: Build wheel for documentation and tests
