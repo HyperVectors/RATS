@@ -9,8 +9,8 @@ import ratspy
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'RATSpy'
-copyright = '2025, Felix Kern, Tejas Pradhan, Aryamaan Basu Roy'
-author = 'Felix Kern, Tejas Pradhan, Aryamaan Basu Roy'
+copyright = '2025, HyperVectors'
+author = 'HyperVectors'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
