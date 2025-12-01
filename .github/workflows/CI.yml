@@ -232,14 +232,14 @@ jobs:
           name: DocumentationHTML
           path: ratspy/docs/_build/html/
 
-  read_the_docs:
-    name: Read the Docs trigger
-    needs: [docs]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger Read the Docs build
-        run: |
-          curl -X POST -d "branches=main" -d "token=${{ secrets.READTHEDOCS_TOKEN }}" https://app.readthedocs.org/api/v2/webhook/ratspy/314743/
+  # read_the_docs:
+  #   name: Read the Docs trigger
+  #   needs: [docs]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Trigger Read the Docs build
+  #       run: |
+  #         curl -X POST -d "branches=main" -d "token=${{ secrets.READTHEDOCS_TOKEN }}" https://app.readthedocs.org/api/v2/webhook/ratspy/314743/
 
   rust_tests:
     name: Build and test rats
