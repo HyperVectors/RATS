@@ -14,7 +14,7 @@ build:
       - asdf global rust 1.90.0
       - py=$(which python) && base="${py%python}" && export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${base}../lib" && cd ratspy && cargo run --bin stub_gen --no-default-features
       - cd ratspy && maturin build
-      - pip install target/wheels/*.whl
+      - file=target/wheels/*.whl && pip install ${file}
 
 sphinx:
   configuration: ratspy/docs/conf.py
