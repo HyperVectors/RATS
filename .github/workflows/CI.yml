@@ -239,7 +239,7 @@ jobs:
     steps:
       - name: Trigger Read the Docs build
         run: |
-          curl -X POST -d "branches=main" -d "token=${{ secrets.READTHEDOCS_TOKEN }}" https://app.readthedocs.org/api/v2/webhook/ratspy/314741/
+          curl -X POST -d "branches=main" -d "token=${{ secrets.READTHEDOCS_TOKEN }}" https://app.readthedocs.org/api/v2/webhook/ratspy/314743/
 
   rust_tests:
     name: Build and test rats
