@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "ratspy"
-version = "0.1.0a1"
+version = "0.1.0a0"
 description = "Python bindings for RATS, a rust crate for Rapid Augmentations for Time Series."
 keywords = ["augmentation", "time series", "rust"]
 license = "Apache-2.0"
