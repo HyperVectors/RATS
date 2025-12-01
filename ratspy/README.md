@@ -1,17 +1,15 @@
 # RATSpy
+
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 RATSpy provides Python bindings for `RATS`, a rust crate for **R**apid **A**ugmentations for **T**ime **S**eries on univariate time series data.
 
-See the original [`RATS` documentation](https://effairust2025-031aba.pages.rwth-aachen.de/) for a more detailed overview of the library.
-
 ## Installation
-An installation using the Python packaging index is currently not possible, meaning that the package needs to be built manually.
-
-## Build instructions
-1. Clone the repository
-2. cd to the `ratspy` directory
-3. Install all required Python packages from `requirements.txt` in a virtual environment of your choice: `pip install -r requirements.txt`
-4. Now, to build the project, use maturin: `maturin develop -r`
-    - Maturin automatically installs the resulting binary in your Python environment
+Install the package using PyPI
+```
+pip install ratspy
+```
+Python version 3.8+ is required.
 
 ## Usage
 Example to reconstruct the surface from an input file, apply some post-processing methods and write the data back to a file:
@@ -43,13 +41,21 @@ pipeline.augment_batch(dataset, parallel=True)
 ```
 
 ## Development notes
+
+### Manual Build instructions
+1. Clone the repository
+2. cd to the `ratspy` directory
+3. Install all required Python packages from `requirements.txt` in a virtual environment of your choice: `pip install -r requirements.txt`
+4. Now, to build the project, use maturin: `maturin develop -r`
+   - Maturin automatically installs the resulting binary in your Python environment
+
 ### Stub file generation
 To automatically generate a stub file (`ratspy.pyi`) for the package, run `cargo run --bin stub_gen`.
 
 This will expose Rust documentation comments to the Python side as docstrings.
 
 ### Sphinx Documentation
-To generate the Sphinx documentation, make sure that the package is installed through, e.g., maturin, and then run make html in the `docs` directory.
+To generate the Sphinx documentation, make sure that the package is installed through, e.g., maturin, and then run `make html` in the `docs` directory.
 The resulting HTML files will be in `docs/_build/html`.
 
 You also need to install the documentation dependencies from `docs/requirements.txt`.
