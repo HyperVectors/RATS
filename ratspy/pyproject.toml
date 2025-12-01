@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "ratspy"
-version = "0.1.0a2"
+version = "0.1.0a3"
 description = "Python bindings for RATS, a rust crate for Rapid Augmentations for Time Series."
 keywords = ["augmentation", "time series", "rust"]
 license = "Apache-2.0"
@@ -18,3 +18,7 @@ readme = "README.md"
 
 [tool.maturin]
 features = ["pyo3/extension-module"]
+
+[project.urls]
+Repository = "https://github.com/HyperVectors/RATS"
+Documentation = "https://ratspy.readthedocs.io"

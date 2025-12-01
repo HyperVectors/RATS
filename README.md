@@ -1,7 +1,7 @@
 # High Performance Time Series Augmentation Libraries (RATS & RATSpy)
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![ReadTheDocs](https://img.shields.io/badge/Readthedocs-%23000000.svg?style=for-the-badge&logo=readthedocs&logoColor=white)](https://effairust2025-031aba.pages.rwth-aachen.de/)
+[![ReadTheDocs](https://img.shields.io/badge/Readthedocs-%23000000.svg?style=for-the-badge&logo=readthedocs&logoColor=white)](https://ratspy.readthedocs.io)
 
 
 This repository contains the code for **RATS** - a rust-based rapid time-series data augmentation library and its python wrapper - **RATSpy**. 
