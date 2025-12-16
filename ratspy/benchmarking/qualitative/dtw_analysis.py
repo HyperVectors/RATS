@@ -18,6 +18,16 @@ import yaml
 from tqdm import tqdm
 import pathlib
 
+plt.rcParams.update({
+    'font.size': 24,
+    'axes.titlesize': 55,
+    'axes.labelsize': 50,
+    'xtick.labelsize': 45,
+    'ytick.labelsize': 45,
+    'legend.fontsize': 30,
+    'figure.titlesize': 55
+})
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -70,18 +80,25 @@ def main():
         # Plotting the DTW path
         save_dir = pathlib.Path(args.save_dir)
         save_dir.mkdir(parents=True, exist_ok=True)
-        plt.figure(figsize=(12, 6))
+        plt.figure(figsize=(24, 12))
         plt.plot(orig_sample, label="Original", alpha=1.0, color="blue")
         plt.plot(aug_sample, label="Augmented", alpha=0.7, color="orange")
         for i, j in optimum_path:
             plt.plot([i, j], [orig_sample[i], aug_sample[j]], alpha=0.5)
         plt.title(
-            f"{dataset_name} dataset : {aug_name} - DTW Alignment : Percentage Similarity = {(1 - abs(dtw_distance))*100:.2f}%"
+            f"{aug_name} - Similarity = {(1 - abs(dtw_distance))*100:.2f}%",
+            fontsize=55, pad=30
         )
-        plt.xlabel("Time")
-        plt.ylabel("Value")
-        plt.legend()
-        plt.savefig(save_dir / f"dtw_{dataset_name}_{aug_name}.png")
+        plt.xlabel("Time", fontsize=50)
+        plt.ylabel("Value", fontsize=50)
+        plt.xticks(fontsize=45)
+        plt.yticks(fontsize=45)
+        plt.tick_params(axis='both', which='major', labelsize=45)
+        # No legend
+        plt.tight_layout()
+        plt.savefig(save_dir / f"dtw_{dataset_name}_{aug_name}.eps", bbox_inches='tight')
+        plt.savefig(save_dir / f"dtw_{dataset_name}_{aug_name}.pdf", bbox_inches='tight')
+        plt.close()
 
 
 if __name__ == "__main__":

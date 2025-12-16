@@ -10,13 +10,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 plt.rcParams.update({
-    'font.size': 24,           # Base font size
-    'axes.titlesize': 28,      # Title font size
-    'axes.labelsize': 24,      # Axis label font size
-    'xtick.labelsize': 20,     # X-axis tick label size
-    'ytick.labelsize': 20,     # Y-axis tick label size
-    'legend.fontsize': 22,     # Legend font size
-    'figure.titlesize': 30     # Figure title size
+    'font.size': 24,           
+    'axes.titlesize': 28,      
+    'axes.labelsize': 24,      
+    'xtick.labelsize': 20,     
+    'ytick.labelsize': 20,     
+    'legend.fontsize': 22,     
+    'figure.titlesize': 30     
 })
 
 
