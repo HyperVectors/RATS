@@ -15,4 +15,4 @@ Assuming you have both Rust and cargo installed, building the crate is as simple
 To verify your installation, you can run the unit tests: `cargo test`
 
 ### Documentation
-To build a local documentation of this crate, run `cargo doc`. However, we also provide a detailed documentation along with usage examples of this library [here](https://effairust2025-031aba.pages.rwth-aachen.de/).
+To build a local documentation of this crate, run `cargo doc`. However, we also provide a detailed documentation along with usage examples of this library [here](https://docs.rs/rats-rs).
