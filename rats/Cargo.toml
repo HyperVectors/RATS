@@ -1,5 +1,5 @@
 [package]
-name = "rats"
+name = "rats-rs"
 version = "0.1.0-alpha"
 edition = "2024"
 license = "Apache-2.0"

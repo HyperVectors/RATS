@@ -4,9 +4,9 @@
 //! compression in time series analysis.
 //! # Examples
 //! ```
-//! use rats::transforms::fastfourier::*;
-//! use rats::transforms::dct::*;
-//! use rats::Dataset;
+//! use rats_rs::transforms::fastfourier::*;
+//! use rats_rs::transforms::dct::*;
+//! use rats_rs::Dataset;
 //! let series = vec![1.0, 2.0, 3.0, 4.0, 5.0];
 //! let dataset = Dataset {
 //!    features: vec![series],

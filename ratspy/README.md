@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![ReadTheDocs](https://img.shields.io/badge/Readthedocs-%23000000.svg?style=for-the-badge&logo=readthedocs&logoColor=white)](https://ratspy.readthedocs.io)
 
-RATSpy provides Python bindings for `RATS`, a rust crate for **R**apid **A**ugmentations for **T**ime **S**eries on univariate time series data.
+RATSpy provides Python bindings for `rats-rs`, a rust crate for **R**apid **A**ugmentations for **T**ime **S**eries on univariate time series data.
 
 ## Installation
 Install the package using PyPI

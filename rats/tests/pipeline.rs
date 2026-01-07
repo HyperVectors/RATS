@@ -1,5 +1,5 @@
-use rats::Dataset;
-use rats::augmenters::{AugmentationPipeline, Augmenter, Crop, Drop, Repeat, Scaling};
+use rats_rs::Dataset;
+use rats_rs::augmenters::{AugmentationPipeline, Augmenter, Crop, Drop, Repeat, Scaling};
 
 #[test]
 fn combine_two_augmenters() {

@@ -1,7 +1,7 @@
 use crate::Dataset;
-
 use super::base::Augmenter;
 use tracing::info_span;
+
 /// Augmenter that repeats all data rows `n` times
 ///
 /// Resource intensive because the data needs to be copied `n` times

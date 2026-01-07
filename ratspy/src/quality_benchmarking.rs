@@ -1,4 +1,4 @@
-use rats::quality_benchmarking::dtw;
+use rats_rs::quality_benchmarking::dtw;
 use pyo3::prelude::*;
 use pyo3_stub_gen::derive::{gen_stub_pyclass, gen_stub_pymethods};
 

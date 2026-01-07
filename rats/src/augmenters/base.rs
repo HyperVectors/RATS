@@ -61,8 +61,8 @@ pub trait Augmenter {
 /// # Example
 ///
 /// ```
-///  use rats::Dataset;
-///  use rats::augmenters::*;
+///  use rats_rs::Dataset;
+///  use rats_rs::augmenters::*;
 ///
 ///  let series = vec![1.0; 100];
 ///  let mut set = Dataset {

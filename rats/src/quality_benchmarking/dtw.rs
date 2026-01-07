@@ -9,7 +9,7 @@
 /// optimal path as pairs of indices (usize, usize).
 /// # Examples
 /// ```
-/// use rats::quality_benchmarking::dtw;
+/// use rats_rs::quality_benchmarking::dtw;
 /// let a = vec![1.0, 2.0, 3.0];
 /// let b = vec![2.0, 3.0, 4.0];
 /// let (distance, path) = dtw(&a, &b);

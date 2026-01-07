@@ -8,7 +8,7 @@ use augmenters::{
     ConvolveWindow, Crop, Drift, Drop, FrequencyMask, Jittering, Repeat,
     Rotation, Scaling,RandomTimeWarpAugmenter,
 };
-use rats::{Dataset};
+use rats_rs::{Dataset};
 use tracing_subscriber;
 use transforms::accuracy::compare_datasets_within_tolerance;
 use transforms::dct::{dataset_dct, dataset_idct};

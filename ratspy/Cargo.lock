@@ -564,7 +564,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rats"
+name = "rats-rs"
 version = "0.1.0-alpha"
 dependencies = [
  "csv",
@@ -587,7 +587,7 @@ dependencies = [
  "pyo3",
  "pyo3-stub-gen",
  "rand",
- "rats",
+ "rats-rs",
  "tracing",
  "tracing-subscriber",
 ]

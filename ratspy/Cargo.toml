@@ -9,7 +9,7 @@ name = "ratspy"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-rats = { path = "../rats" }
+rats-rs = { path = "../rats" }
 ndarray = "0.16.1"
 numpy = "0.25.0"
 bytemuck = "1.23.1"

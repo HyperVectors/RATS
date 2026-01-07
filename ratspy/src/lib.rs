@@ -13,7 +13,7 @@ use pyo3_stub_gen::derive::{gen_stub_pyclass, gen_stub_pymethods};
 #[gen_stub_pyclass]
 #[pyclass]
 pub struct Dataset {
-    pub(crate) inner: rats::Dataset,
+    pub(crate) inner: rats_rs::Dataset,
 }
 
 impl PyStubType for &mut Dataset {
@@ -33,7 +33,7 @@ impl Dataset {
         let features: Vec<Vec<f64>> = features.rows().into_iter().map(|x| x.to_vec()).collect();
 
         Dataset {
-            inner: rats::Dataset { features, labels },
+            inner: rats_rs::Dataset { features, labels },
         }
     }
 

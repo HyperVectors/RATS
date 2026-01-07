@@ -1,7 +1,7 @@
 use super::base::Augmenter;
 use rand::{Rng, rng};
 use rayon::prelude::*;
-use  tracing::{info_span};
+use tracing::{info_span};
 
 /// Enum to specify the kernel window for the `Convolve` augmenter
 pub enum ConvolveWindow {

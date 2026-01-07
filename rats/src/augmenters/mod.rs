@@ -7,7 +7,7 @@
 //! Every augmenter can be used analogously to these examples
 //! 
 //! ```
-//! use rats::augmenters::{Augmenter, Rotation};
+//! use rats_rs::augmenters::{Augmenter, Rotation};
 //! 
 //! let series = vec![1.0; 100];
 //!
@@ -18,8 +18,8 @@
 //! ```
 //! 
 //! ```
-//! use rats::Dataset;
-//! use rats::augmenters::*;
+//! use rats_rs::Dataset;
+//! use rats_rs::augmenters::*;
 //!
 //! let series = vec![1.0; 100];
 //! let mut set = Dataset {

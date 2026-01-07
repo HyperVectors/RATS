@@ -3,9 +3,9 @@
 //! Currently, it includes using the Dynamic Time Warping (DTW) algorithm to measure the similarity between original and augmented time series data.
 //! # Examples
 //! ```
-//! use rats::quality_benchmarking::dtw;
-//! use rats::augmenters::{Jittering, Augmenter};
-//! use rats::Dataset;
+//! use rats_rs::quality_benchmarking::dtw;
+//! use rats_rs::augmenters::{Jittering, Augmenter};
+//! use rats_rs::Dataset;
 //!
 //! let original_series = vec![1.0, 2.0, 3.0, 4.0, 5.0];
 //! let original_reference = original_series.clone();

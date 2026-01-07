@@ -258,7 +258,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rats"
+name = "rats-rs"
 version = "0.1.0-alpha"
 dependencies = [
  "csv",
