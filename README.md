@@ -1,6 +1,9 @@
 # High Performance Time Series Augmentation Libraries (RATS & RATSpy)
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![arXiv](https://img.shields.io/badge/arXiv-2601.03159-b31b1b.svg)](https://arxiv.org/abs/2601.03159)
+[![PyPI](https://img.shields.io/pypi/v/ratspy.svg)](https://pypi.org/project/ratspy/)
+
 [![ReadTheDocs](https://img.shields.io/badge/Readthedocs-%23000000.svg?style=for-the-badge&logo=readthedocs&logoColor=white)](https://ratspy.readthedocs.io)
 
 
@@ -29,10 +32,12 @@ The Rust crate can be found in the [rats](rats/) directory and the Python bindin
 If you use this repository, adapt any of its components, or find it helpful for your work, please cite:
 
 ```bibtex
-@misc{RATS,
+@misc{skaf-2026-RATS,
   title={Rapid Augmentations for Time Series ({RATS}): A High-Performance Library for Time Series Augmentation},
   author={Skaf, Wadie and Kern, Felix and Basu Roy, Aryamaan and Pradhan, Tejas and Kalkreuth, Roman and Hoos, Holger},
-  url={https://www.aim.rwth-aachen.de/assets/documents/papers/SkafEtAl25b.pdf}
+  year={2026},
+  eprint={2601.03159},
+  archivePrefix={arXiv},
 }
 ```
 
