@@ -50,8 +50,8 @@ jobs:
         uses: PyO3/maturin-action@v1
         with:
           target: ${{ matrix.target }}
-          args: --release --out wheelhouse --auditwheel repair -m ratspy/Cargo.toml
-          manylinux: 2014
+          args: --release --out wheelhouse -m ratspy/Cargo.toml
+          manylinux: auto
       - name: Audit & fix wheels
         run: |
           pip install auditwheel
