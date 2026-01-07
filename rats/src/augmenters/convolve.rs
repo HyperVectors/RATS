@@ -87,7 +87,7 @@ impl Augmenter for Convolve {
     }
 
     // reimplementing augment_batch to make sure kernel is created only once for each batch
-    fn augment_batch(&self, input: &mut crate::Dataset, parallel: bool, per_sample: bool)
+    fn augment_batch(&self, input: &mut crate::Dataset, parallel: bool, _per_sample: bool)
     where
         Self: Sync,
     {

@@ -16,5 +16,7 @@
 //! let (distance, path) = dtw(&original_series, &original_reference);
 //! ```
 
+#![allow(dead_code)]
+#![allow(unused_imports)]
 mod dtw;
 pub use dtw::*;

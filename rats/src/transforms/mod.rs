@@ -18,6 +18,8 @@
 //! let inverse_fft = dataset_ifft(&transformed_fft, true);
 //! let inverse_dct = dataset_idct(&transformed_dct, true);
 //! ```
+
+#![allow(dead_code)]
 pub mod fastfourier;
 pub mod dct;
 pub mod accuracy;

@@ -32,7 +32,7 @@ impl AmplitudePhasePerturbation {
 }
 
 impl Augmenter for AmplitudePhasePerturbation {
-    fn augment_batch(&self, data: &mut Dataset, _parallel: bool, per_sample: bool) {
+    fn augment_batch(&self, data: &mut Dataset, _parallel: bool, _per_sample: bool) {
         // tracing::info!("Rust: augment_batch called with per_sample = {}", per_sample);
         let span = info_span!("", component = self.get_name());
         let _enter = span.enter();

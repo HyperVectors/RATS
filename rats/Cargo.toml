@@ -2,6 +2,11 @@
 name = "rats"
 version = "0.1.0-alpha"
 edition = "2024"
+license = "Apache-2.0"
+description = "Rapid Augmentations for Time Series"
+repository = "https://github.com/HyperVectors/RATS"
+readme = "README.md"
+exclude = ["/src/main.rs", "/src/readcsv.rs", "/utils/*"]
 
 [dependencies]
 csv = "1.3"

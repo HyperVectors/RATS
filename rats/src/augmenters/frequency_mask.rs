@@ -27,7 +27,7 @@ impl FrequencyMask {
 }
 
 impl Augmenter for FrequencyMask {
-    fn augment_batch(&self, data: &mut Dataset, _parallel: bool, per_sample: bool) {
+    fn augment_batch(&self, data: &mut Dataset, _parallel: bool, _per_sample: bool) {
         let span = info_span!("", component = self.get_name());
         let _enter = span.enter();
         if self.is_time_domain {

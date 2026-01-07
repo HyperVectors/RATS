@@ -25,7 +25,7 @@ impl Repeat {
 }
 
 impl Augmenter for Repeat {
-    fn augment_batch(&self, input: &mut Dataset, _parallel: bool, per_sample: bool) {
+    fn augment_batch(&self, input: &mut Dataset, _parallel: bool, _per_sample: bool) {
         let span = info_span!("", component = self.get_name());
         let _enter = span.enter();
 

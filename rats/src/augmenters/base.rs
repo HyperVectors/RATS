@@ -10,7 +10,7 @@ pub trait Augmenter {
     /// Augment a whole batch
     ///
     /// Parallelized using rayon when `parallell` is set
-    fn augment_batch(&self, input: &mut Dataset, parallel: bool, per_sample: bool)
+    fn augment_batch(&self, input: &mut Dataset, parallel: bool, _per_sample: bool)
     where
         Self: Sync,
     {

@@ -41,6 +41,8 @@
 //! assert_eq!(set.features[3].len(), 20);
 //! ```
 
+#![allow(dead_code)]
+#![allow(unused_imports)]
 mod addnoise;
 mod amplitude_phase_perturbation;
 mod base;
