@@ -1,10 +1,10 @@
 # High Performance Time Series Augmentation Libraries (RATS & RATSpy)
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![PyPI Downloads](https://static.pepy.tech/personalized-badge/ratspy?period=total&units=INTERNATIONAL_SYSTEM&left_color=GRAY&right_color=BLUE&left_text=downloads)](https://pepy.tech/projects/ratspy)
 [![arXiv](https://img.shields.io/badge/arXiv-2601.03159-b31b1b.svg)](https://arxiv.org/abs/2601.03159)
 [![PyPI](https://img.shields.io/pypi/v/ratspy.svg)](https://pypi.org/project/ratspy/)
 [![Crates.io](https://img.shields.io/crates/v/rats-rs.svg)](https://crates.io/crates/rats-rs)
-[![PyPI Downloads](https://static.pepy.tech/personalized-badge/ratspy?period=total&units=INTERNATIONAL_SYSTEM&left_color=GRAY&right_color=BLUE&left_text=downloads)](https://pepy.tech/projects/ratspy)
 
 [![ReadTheDocs](https://img.shields.io/badge/Readthedocs-%23000000.svg?style=for-the-badge&logo=readthedocs&logoColor=white)](https://ratspy.readthedocs.io)
 
